@@ -419,3 +419,27 @@ A 3/4 view is the wrong shot for an arch: it hides the opening that makes India 
 QA script now renders a **front elevation** for every LOD0 alongside the 3/4, and frames on the
 object's real bounding-box centre — targeting a fraction of the height had been cropping the top off
 every tall landmark, including the flame bowl.
+
+---
+
+## On shipping a red test twice
+
+I did it again with the live-data work: committed while a data invariant was failing, then fixed it
+afterwards. The first time I wrote it up as a lesson. Writing it up evidently did not change the
+behaviour.
+
+Both failures were also **my own assertion being wrong**, not the code:
+
+- the metro check asserted a vertex count when length was the property that mattered;
+- the live-adapter check asserted that *no* adapter may exist, when the scope lock says no adapter
+  may be **required**. Listing one is fine; depending on one is not. The property worth asserting is
+  that everything a live adapter feeds has a bundled fallback, and that anything needing a key stays
+  off in the committed config — which is what it now checks.
+
+An assertion is code, and a brand-new assertion is the least-tested code in the repo.
+
+So the gate is now a git hook rather than something to remember:
+
+    git config core.hooksPath .githooks
+
+because remembering has a demonstrated failure rate of 100%.

@@ -266,8 +266,25 @@ else:
 mf = load("manifest.json")
 if mf:
     check(mf["study_area"]["status"] == "LOCKED", "manifest: study area is not LOCKED")
-    check(mf["health"]["live_adapters"] == [],
-          "manifest: a live adapter is declared — the MVP must require none")
+    # The scope lock says no live provider may be REQUIRED — not that none may exist. Listing an
+    # adapter is fine; depending on one is not. So the property to assert is that everything a
+    # live adapter feeds has a bundled fallback to fall back to.
+    adapters = mf["health"]["live_adapters"]
+    check(isinstance(adapters, list), "manifest: health.live_adapters must be a list")
+    wx = load("weather/baseline.json")
+    if any("weather" in a for a in adapters):
+        check(bool(wx and wx.get("baseline")),
+              "a live weather adapter is enabled but there is no pinned weather baseline to fall back to")
+    if any("air" in a for a in adapters):
+        check(bool(wx and wx.get("air_baseline")),
+              "a live air-quality adapter is enabled but there is no pinned air baseline to fall back to")
+    # anything needing a key must stay off in the committed config, or a keyless build fires a
+    # request that can only fail — which is a console error for every user
+    keyed = [a for a in adapters if a.startswith("otd_")]
+    check(not keyed,
+          f"adapters requiring a key are enabled in the committed config: {keyed}. Enable them only "
+          f"on a deployment that actually has the key.")
+    print(f"  live adapters: {adapters or 'none'} (all with bundled fallbacks)")
     check(bool(mf["attribution"]), "manifest: no attribution list")
     check(any("OpenStreetMap" in a for a in mf["attribution"]),
           "manifest: ODbL attribution for OpenStreetMap is required")

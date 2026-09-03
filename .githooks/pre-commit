@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# The gate exists to run BEFORE the commit. I have now shipped a red test twice by running it
+# after, so it is wired in rather than remembered.
+#
+# Enable once:  git config core.hooksPath .githooks
+# Skip once:    git commit --no-verify
+set -e
+cd "$(git rev-parse --show-toplevel)"
+if [ -x .venv/bin/python ] && [ -f pipeline/tests/test_outputs.py ] && [ -d "web/public/data/@v1" ]; then
+  if ! .venv/bin/python pipeline/tests/test_outputs.py >/dev/null; then
+    echo ""
+    echo "  pre-commit: data invariants FAILED. Run:"
+    echo "    .venv/bin/python pipeline/tests/test_outputs.py"
+    echo ""
+    exit 1
+  fi
+  echo "  pre-commit: data invariants pass"
+fi

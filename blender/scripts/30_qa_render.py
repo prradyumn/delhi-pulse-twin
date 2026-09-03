@@ -39,15 +39,20 @@ def studio(engine=A["engine"], res_x=RES, res_y=int(RES * 0.68)):
     sc.render.resolution_x, sc.render.resolution_y = res_x, res_y
     sc.render.image_settings.file_format = "PNG"
     sc.render.film_transparent = False
+    # QA sheets are for judging form, so the exposure has to hold shape rather than look pretty.
+    # The first pass blew every highlight to white and the massing became unreadable.
+    sc.view_settings.view_transform = "Standard"
+    sc.view_settings.exposure = -0.9
+    sc.view_settings.look = "None"
     world = bpy.data.worlds.new("qa")
     world.use_nodes = True
     bg = world.node_tree.nodes.get("Background")
     if bg:
-        bg.inputs[0].default_value = (0.62, 0.68, 0.74, 1.0)
-        bg.inputs[1].default_value = 1.1
+        bg.inputs[0].default_value = (0.42, 0.50, 0.58, 1.0)
+        bg.inputs[1].default_value = 0.30
     sc.world = world
     sun = bpy.data.objects.new("sun", bpy.data.lights.new("sun", "SUN"))
-    sun.data.energy = 3.0
+    sun.data.energy = 2.6
     sun.rotation_euler = (math.radians(52), 0, math.radians(-38))
     bpy.context.collection.objects.link(sun)
     return sc

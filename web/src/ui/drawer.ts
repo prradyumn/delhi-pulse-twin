@@ -23,12 +23,15 @@ export function drawer(onClose: () => void) {
   const node = el("aside", { class: "panel hidden", id: "drawer" },
     el("div", { class: "phead" }, title, closeBtn), body);
 
-  function provBlock(p: Provenance | null) {
+  /** `scope` names what the layer-level mode actually applies to. Without it a building reads
+   *  "Height: estimated" directly above "Mode: Observed", which looks like a contradiction —
+   *  the geometry is observed, the height is not, and the panel has to say which is which. */
+  function provBlock(p: Provenance | null, scope?: string) {
     if (!p) return el("p", { class: "note", text: "No provenance record — this should not happen." });
     return el("div", {},
       el("h3", { class: "sub", text: "Provenance" }),
       el("div", { class: "kv" },
-        el("dt", { text: "Mode" }),
+        el("dt", { text: scope ? `Mode — ${scope}` : "Mode" }),
         el("dd", {}, el("span", { class: `badge ${p.mode === "observed" ? "base" : p.mode === "estimated" ? "est" : "sim"}`,
                                   text: modeLabel(p.mode) })),
         el("dt", { text: "Provider" }), el("dd", { text: p.provider }),
@@ -68,7 +71,7 @@ export function drawer(onClose: () => void) {
               `This height was not measured. Rule v${rule.version} assigned ${rule.class_levels[b.c] ?? rule.class_levels["yes"]} storeys for building=${b.c}, at ${rule.storey_m} m each. ${rule.disclosure}`)
           : el("p", { class: "note", style: "margin-top:10px",
                       text: "This height comes from an OSM height or building:levels tag, not from the rule." }),
-        provBlock(sel.prov));
+        provBlock(sel.prov, "footprint geometry"));
       return;
     }
 
@@ -86,7 +89,7 @@ export function drawer(onClose: () => void) {
           el("dt", { text: "OSM id" }), el("dd", { class: "num", text: r.id.replace("r/", "") })),
         el("p", { class: "note", style: "margin-top:10px",
           text: "Geometry only. This layer carries no speed or volume measurement — corridor traffic is a separate, explicitly estimated layer." }),
-        provBlock(sel.prov));
+        provBlock(sel.prov, "centreline geometry"));
       return;
     }
 
@@ -126,7 +129,7 @@ export function drawer(onClose: () => void) {
           ? el("p", { class: "note", style: "margin-top:8px",
               text: "With no transit term available, its weight is redistributed across speed and weather rather than counted as zero." })
           : null,
-        provBlock(sel.prov));
+        provBlock(sel.prov, "spine geometry"));
       return;
     }
 
@@ -140,7 +143,7 @@ export function drawer(onClose: () => void) {
           el("dt", { text: "OSM id" }), el("dd", { class: "num", text: s.osm })),
         el("p", { class: "note", style: "margin-top:10px",
           text: "Stop position is observed OSM data. Arrival times are not available: the source carries no schedule, so no departure board can be shown honestly." }),
-        provBlock(sel.prov));
+        provBlock(sel.prov, "stop position"));
       return;
     }
 
@@ -153,7 +156,7 @@ export function drawer(onClose: () => void) {
         el("dt", { text: "OSM id" }), el("dd", { class: "num", text: s.id.replace("s/", "") })),
       el("p", { class: "note", style: "margin-top:10px",
         text: "Geographic context only. No live train service data is used anywhere in this product." }),
-      provBlock(sel.prov));
+      provBlock(sel.prov, "station position"));
   }
 
   function hide() { node.classList.add("hidden"); }

@@ -2,6 +2,7 @@ import * as THREE from "three";
 import type { Layer, LayerReport } from "./registry";
 import { fills, type XZ } from "./geom";
 import { PALETTE } from "./palette";
+import { applyGroundVariation } from "./facade";
 import * as load from "../geo/load";
 import type { GroundPoly } from "../geo/types";
 
@@ -29,6 +30,7 @@ export class GroundLayer implements Layer {
     );
     plate.rotation.x = -Math.PI / 2;
     plate.position.y = -0.35;
+    plate.receiveShadow = true;
     this.group.add(plate);
 
     this.polys = res.data.features;
@@ -48,9 +50,9 @@ export class GroundLayer implements Layer {
       color: colorOf[p.cat] ?? PALETTE.bare,
     })));
 
-    this.mesh = new THREE.Mesh(built.geometry, new THREE.MeshStandardMaterial({
-      vertexColors: true, roughness: 0.94, metalness: 0,
-    }));
+    this.mesh = new THREE.Mesh(built.geometry, applyGroundVariation(
+      new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92, metalness: 0 })));
+    this.mesh.receiveShadow = true;
     this.mesh.name = "ground";
     this.group.add(this.mesh);
 

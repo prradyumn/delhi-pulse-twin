@@ -5,16 +5,17 @@ const c = (hex: number) => new THREE.Color(hex);
 /** Grounded in the study area itself: Lutyens' Delhi is lime-washed stucco and red sandstone on
  *  dust, cut by very large lawns. Restrained on purpose — the PRD forbids anything that hides data. */
 export const PALETTE = {
-  bare:      c(0xc9bca8),
-  green:     c(0x7e9464),
-  pitch:     c(0x93a56d),
-  urban:     c(0xc0b5a4),
-  water:     c(0x6c93a8),
+  bare:      c(0xc6b7a1),
+  green:     c(0x6f8c56),
+  pitch:     c(0x8a9f62),
+  urban:     c(0xbcb0a0),
+  water:     c(0x5f89a2),
 
+  // asphalt darkens with class so hierarchy reads without labels
   road: {
-    motorway: c(0x6a6660), trunk: c(0x6a6660), primary: c(0x6f6b65),
-    secondary: c(0x736f69), tertiary: c(0x7a766f),
-    residential: c(0x847f78), unclassified: c(0x847f78), service: c(0x8b8680),
+    motorway: c(0x5c5952), trunk: c(0x5c5952), primary: c(0x635f58),
+    secondary: c(0x6a665f), tertiary: c(0x746f67),
+    residential: c(0x807a72), unclassified: c(0x807a72), service: c(0x8a847b),
   } as Record<string, THREE.Color>,
 
   buildingObserved:  c(0xb9ab9a),

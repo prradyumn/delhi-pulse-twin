@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { Layer, LayerReport } from "./registry";
 import { extrudeFootprints, fills, type XZ } from "./geom";
+import { applyFacadeDetail } from "./facade";
 import * as load from "../geo/load";
 import type { Payload, Provenance } from "../geo/types";
 
@@ -49,6 +50,10 @@ export class LandmarkLayer implements Layer {
         const gltf = await loader.loadAsync(url);
         gltf.scene.position.set(f.centroid[0], 0, f.centroid[1]);
         gltf.scene.name = `landmark_${f.id}`;
+        gltf.scene.traverse((o) => {
+          const m = o as THREE.Mesh;
+          if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; }
+        });
         return { f, obj: gltf.scene };
       } catch {
         return null;
@@ -70,9 +75,12 @@ export class LandmarkLayer implements Layer {
                              m: (f.height_mode === "observed" ? 0 : 1) as 0 | 1 })),
         { colorFor: () => new THREE.Color(0xb59f86) },
       );
-      this.massing = new THREE.Mesh(built.geometry, new THREE.MeshStandardMaterial({
-        vertexColors: true, roughness: 0.72, metalness: 0, flatShading: true,
-      }));
+      this.massing = new THREE.Mesh(built.geometry, applyFacadeDetail(
+        new THREE.MeshStandardMaterial({
+          vertexColors: true, roughness: 0.66, metalness: 0, flatShading: true,
+        }), { storeyM: 4.6, bayM: 5.4 }));
+      this.massing.castShadow = true;
+      this.massing.receiveShadow = true;
       this.massing.name = "landmark_massing";
       this.group.add(this.massing);
       tris += built.triangles; dc++;
@@ -84,8 +92,9 @@ export class LandmarkLayer implements Layer {
       // pretending to be a building. See docs/07-RENDER-CORRECTNESS.md rule 5 for the y budget.
       const built = fills(open.map((f) => ({ r: f.ring, y: -0.1, color: new THREE.Color(0xc7bda6) })));
       this.plazas = new THREE.Mesh(built.geometry, new THREE.MeshStandardMaterial({
-        vertexColors: true, roughness: 0.9, metalness: 0,
+        vertexColors: true, roughness: 0.88, metalness: 0,
       }));
+      this.plazas.receiveShadow = true;
       this.plazas.name = "landmark_plazas";
       this.group.add(this.plazas);
       tris += built.triangles; dc++;

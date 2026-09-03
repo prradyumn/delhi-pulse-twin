@@ -24,23 +24,41 @@ export class RoadsLayer implements Layer {
     if (!res.ok) return { ...base, status: "unavailable", error: res.error };
 
     this.roads = res.data.features;
+
+    // A kerb casing under each carriageway: a slightly wider, darker ribbon. This is the single
+    // cheapest thing that stops a road network reading as coloured tape on a plane — it gives
+    // every street an edge and makes junctions legible.
+    const casing = ribbons(this.roads.map((r) => {
+      const w = WIDTH[r.k] ?? 8;
+      return { p: r.p as XZ[], width: w + 3.4,
+               y: 0.012 + w * 0.002,
+               color: (PALETTE.road[r.k] ?? PALETTE.road.service).clone().multiplyScalar(0.66) };
+    }));
+    const kerb = new THREE.Mesh(casing.geometry, new THREE.MeshStandardMaterial({
+      vertexColors: true, roughness: 0.95, metalness: 0,
+    }));
+    kerb.receiveShadow = true;
+    kerb.name = "road_casing";
+    this.group.add(kerb);
+
     const built = ribbons(this.roads.map((r) => ({
       p: r.p as XZ[],
       width: WIDTH[r.k] ?? 8,
       // stack by class so a primary reads over a service road at a junction
-      y: 0.02 + (WIDTH[r.k] ?? 8) * 0.002,
+      y: 0.03 + (WIDTH[r.k] ?? 8) * 0.002,
       color: PALETTE.road[r.k] ?? PALETTE.road.service,
     })));
     this.vfeat = built.vertexFeature;
     this.mesh = new THREE.Mesh(built.geometry, new THREE.MeshStandardMaterial({
-      vertexColors: true, roughness: 0.86, metalness: 0,
+      vertexColors: true, roughness: 0.82, metalness: 0,
     }));
+    this.mesh.receiveShadow = true;
     this.mesh.name = "roads";
     this.group.add(this.mesh);
 
     return { ...base, status: "ready", provenance: res.data.provenance,
              features: this.roads.length, bytes: res.bytes, ms: res.ms,
-             drawCalls: 1, triangles: built.triangles };
+             drawCalls: 2, triangles: built.triangles + casing.triangles };
   }
 
   /** Roads are runtime geometry so that colour stays data. Repaint on traffic/corridor change. */

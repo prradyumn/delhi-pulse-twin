@@ -24,6 +24,13 @@ export async function grab<T>(rel: string): Promise<Fetched<T>> {
     });
     if (!res.ok) return { ok: false, error: `HTTP ${res.status} on ${rel}`, status: res.status };
     const text = await res.text();
+    // Static hosts commonly answer a missing file with index.html and a 200, so res.ok is not
+    // enough. Without this the data-status panel reports "Unexpected token '<'" — accurate, and
+    // useless to anyone trying to work out that a file is simply absent.
+    if (/^\s*<(?:!doctype|html)/i.test(text)) {
+      return { ok: false, error: `${rel} is missing — the server returned an HTML page instead`,
+               status: res.status };
+    }
     // Byte length of the decoded payload, not `text.length` (characters) and not the compressed
     // size on the wire. The UI has to name which of those it is showing.
     return {

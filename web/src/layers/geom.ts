@@ -26,12 +26,24 @@ export function orient(ring: XZ[]): XZ[] {
   return signedArea(ring) > 0 ? [...ring].reverse() : ring;
 }
 
-/** Triangulate a footprint ring into local index triples. THREE.ShapeUtils is earcut, and it
- *  preserves the input ring's winding, which is why `orient` runs first. */
+/**
+ * Triangulate a footprint ring into local index triples.
+ *
+ * `THREE.ShapeUtils.triangulateShape` is earcut, and it does **not** preserve the input ring's
+ * winding — it normalises internally and always emits triangles facing −Y in our XZ plane.
+ * Measured against three r169:
+ *
+ *     CCW input (shoelace +1)  ->  both triangles face −Y
+ *     CW  input (shoelace −1)  ->  both triangles face −Y
+ *
+ * So the triangle order has to be reversed here, once, for every consumer. Skipping this pointed
+ * every ground polygon, water area, plaza and building roof at the floor: invisible from above,
+ * with nothing logged. `orient()` still matters, but only for the hand-built wall quads.
+ */
 function fanIndices(ring: XZ[]): number[][] {
   const contour = ring.map(([x, z]) => new THREE.Vector2(x, z));
   try {
-    return THREE.ShapeUtils.triangulateShape(contour, []);
+    return THREE.ShapeUtils.triangulateShape(contour, []).map((t) => [t[2], t[1], t[0]]);
   } catch {
     return [];
   }

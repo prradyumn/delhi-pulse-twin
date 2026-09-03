@@ -118,3 +118,65 @@ provenance that nothing on screen is claiming to be a live position.
   grid. Access terms need checking; until then the honest thing is the coarse feed plus a clear
   statement of what it cannot resolve.
 - **An air-quality surface.** Not a scope decision — the data does not support it. See above.
+
+---
+
+# OTD key received — what the feed actually gives, verified
+
+Key configured 2026-09-04. Everything below is measured against the live endpoint, not read off the
+GTFS-Realtime spec.
+
+## Verified now
+
+| | |
+|---|---|
+| `GET /api/realtime/VehiclePositions.pb?key=…` | **HTTP 200** |
+| payload | 15 bytes — a valid `FeedHeader` |
+| `gtfs_realtime_version` | `2.0` |
+| `incrementality` | `0` (FULL_DATASET) |
+| feed timestamp | **2 seconds old** on repeat polls |
+| vehicle entities | **0**, at 23:55 and 00:01 IST |
+
+Zero vehicles is a real answer, not a failure: DTC and DIMTS buses are off the road at midnight and
+the operator publishes an empty feed. `pipeline/record_vehicles.py` is recording every 30 s through
+to late morning so the service-hours picture is measured rather than guessed.
+
+**The static files are a separate problem.** They are not served from a URL. The files live on
+`traffickarma.iiitd.edu.in:9010`, which is unreachable from outside their network (probed: refused
+on port 80 and 9010). The only route is a POST to `https://otd.delhi.gov.in/data/static/` behind a
+form requiring a name, an email, a commercial/non-commercial declaration and a terms checkbox.
+`pipeline/fetch_gtfs.py` implements it and takes those as required arguments — it refuses to run on
+placeholders, because submitting `test@example.com` to a government portal is worse than not
+downloading the data. Four datasets are offered: `stops`, `routes`, `trips`, `stop_times`. Note
+what is **not**: no `shapes.txt`, so GTFS gives no route geometry, and no `calendar.txt`.
+
+## Two changes the real feed forced
+
+**Live ≠ has buses in it.** `reconcileBuses` superseded the replay layer on `state === "live"`
+alone. Against the real empty feed that removed every bus from the scene and replaced them with
+nothing. Replay is now superseded only when there is something to supersede it with, and the feed
+chip distinguishes *no buses anywhere in the feed* from *none inside this 16 km² box*.
+
+**The decoder read six fields, which is enough for a dot on a map.** Position is the least
+interesting thing in this feed. It now reads twelve, and `pipeline/record_vehicles.py` counts which
+of them Delhi actually populates, because GTFS-Realtime makes nearly everything optional and "the
+spec supports occupancy" is worth nothing to a user. `license_plate` is deliberately not read.
+
+## Why this matters more than smoother markers
+
+Three lines currently in the UI, all of them honest and all of them admissions:
+
+- *"Corridor colour is estimated from a declared time-of-day heuristic, not observed speeds."*
+- *"From an assumed 6.0 min combined headway across routes 73, 604."*
+- *"Wait-time proxy — half the headway. A proxy, not a measurement."*
+
+The exposure product rests on that third line: waiting is 51% of the bus dose, computed from an
+assumed wait. Each of these becomes *observed* with fields this feed carries — `speed` for the
+first, `current_status` + `stop_id` + `timestamp` for the second and third. That is the value here:
+not a nicer bus marker, but converting the app's central numbers from estimated to observed.
+
+A recorded day also unlocks something the scope lock otherwise forbids. Live data can never be
+*required* — the demo must work with every provider disabled. But a recording is **bundled**, and
+`replay` is already a declared mode in the provenance vocabulary that this project has never been
+able to use honestly. Recording turns the bus layer from `simulated` to `replay` with a real
+`source_time`, with no live dependency at all.

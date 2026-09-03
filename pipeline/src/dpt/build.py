@@ -2,7 +2,7 @@
 """OSM extract -> versioned runtime data under web/public/data/@v1/.
 Deterministic: same input, same transform_version, same bytes out."""
 from __future__ import annotations
-import json, collections, math, sys, pathlib
+import json, collections, math, os, sys, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 from shapely.geometry import Polygon, LineString, Point
 from shapely.ops import unary_union, linemerge
@@ -611,6 +611,22 @@ def main():
     print("weather + scenario model…"); weather()
 
     total = sum(a["bytes"] for a in manifest_assets.values())
+    # Keyed adapters are enabled by the ENVIRONMENT, never by the committed config. Each entry maps
+    # the adapter name to the variable whose presence turns it on.
+    KEYED_ADAPTERS = {"otd_vehicle_positions": "OTD_API_KEY"}
+    enabled_adapters = [k for k, v in C.get("live_adapters", {}).items()
+                        if v is True and not k.startswith("_")]
+    env_adapters = []
+    for name, var in KEYED_ADAPTERS.items():
+        if name in enabled_adapters:
+            continue                                  # already on in config; nothing to add
+        if os.environ.get(var):
+            enabled_adapters.append(name)
+            env_adapters.append({"adapter": name, "variable": var})
+    if env_adapters:
+        print("  live adapters enabled from the environment: "
+              + ", ".join(e["adapter"] for e in env_adapters))
+
     man = {
         "dataset_version": "v1",
         "transform_version": C["transform_version"],
@@ -629,12 +645,18 @@ def main():
                         "Bus routes from OpenStreetMap route relations, operator Delhi Transport Corporation",
                         "Weather baseline authored for this prototype"],
         "health": {
-            "live_adapters": [k for k, v in C.get("live_adapters", {}).items()
-                              if v is True and not k.startswith("_")],
+            "live_adapters": enabled_adapters,
+            "live_adapters_from_env": env_adapters,
             "note": "No live provider is REQUIRED. Every layer in this manifest is bundled and the "
                     "guided demo completes with all adapters disabled. Anything listed here is "
                     "additive: the app only contacts a provider named in this list, so a build "
                     "without a key never fires a request that cannot succeed.",
+            "env_note": "Adapters needing a credential stay FALSE in the committed config, because "
+                        "a clone without the key would fire requests that can only fail. They are "
+                        "enabled per build from the environment instead: this build found the "
+                        "variables listed in live_adapters_from_env. The committed scope lock is "
+                        "therefore the same for everyone, and what a given deployment actually "
+                        "contacts is a property of that deployment.",
         },
     }
     write_json("manifest.json", man, minify=False)

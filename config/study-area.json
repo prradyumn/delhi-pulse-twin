@@ -306,6 +306,6 @@
     "open_meteo_air_quality": true,
     "open_meteo_weather": true,
     "otd_vehicle_positions": false,
-    "_otd_note": "Set true only on a deployment where OTD_API_KEY is configured and web/api/vehicles.ts is deployed as a function. See docs/08-LIVE-DATA.md."
+    "_otd_note": "Stays false here on purpose, and does NOT need changing when you have a key. Keyed adapters are enabled per build from the environment: `make data` turns this on when OTD_API_KEY is present, and records it in manifest.health.live_adapters_from_env. That keeps the committed scope lock identical for every clone, while what a given deployment contacts is a property of that deployment. See docs/08-LIVE-DATA.md."
   }
 }

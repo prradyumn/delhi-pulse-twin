@@ -804,10 +804,23 @@ async function boot() {
   mast.setFeed("fallback", "pinned snapshot",
     "No live provider contacted yet. Air quality is the pinned snapshot in weather/baseline.json.");
 
-  /** Real buses supersede replay: showing both would put invented vehicles next to real ones on
-   *  the same street, which is the one thing this product must not do. */
+  /**
+   * Real buses supersede replay: showing both would put invented vehicles next to real ones on the
+   * same street, which is the one thing this product must not do.
+   *
+   * But "the feed is live" and "the feed has buses in it" are different facts, and conflating them
+   * emptied the streets. Tested against the real OTD feed at 23:55 IST: a valid, 2-second-old
+   * GTFS-Realtime response with a correct header and **zero vehicle entities** — DTC buses are off
+   * the road at that hour, and the feed says so honestly. Superseding the replay on `state === live`
+   * alone therefore removed every bus from the scene and replaced them with nothing.
+   *
+   * So replay is superseded only when there is actually something to supersede it WITH. When the
+   * feed is live but reports nothing inside the study box, replay keeps running and the feed chip
+   * says exactly that, rather than leaving the user to wonder where the buses went.
+   */
   function reconcileBuses(state: string, count: number) {
-    const live = state === "live" || state === "stale";
+    const connected = state === "live" || state === "stale";
+    const live = connected && count > 0;
     buses.setVisible(!live && (store.get().layers.buses ?? true));
     liveBuses.setVisible(live);
     const rep = registry.reports.get("livebuses");
@@ -827,9 +840,24 @@ async function boot() {
     const f = await liveBuses.refresh();
     reconcileBuses(f.state, liveBuses.liveCount());
     if (f.state === "live" || f.state === "stale") {
-      mast.setFeed(f.state, `${liveBuses.liveCount()} live buses`,
-        `${f.provider} · feed ${Math.round(f.ageSeconds ?? 0)} s old · `
-        + `${f.inBox} of ${f.vehicles.length} vehicles inside the study box`);
+      const n = liveBuses.liveCount();
+      const age = Math.round(f.ageSeconds ?? 0);
+      if (n > 0) {
+        mast.setFeed(f.state, `${n} live buses`,
+          `${f.provider} · feed ${age} s old · `
+          + `${f.inBox} of ${f.vehicles.length} vehicles inside the study box`);
+      } else {
+        // connected and honest about being empty. Two different empties, and the chip names which.
+        mast.setFeed("live-empty",
+          f.vehicles.length === 0 ? "live feed · no buses reporting" : "live feed · none in box",
+          `${f.provider} · feed ${age} s old · `
+          + `${f.vehicles.length} vehicles in the whole feed, ${f.inBox} inside the study box. `
+          + (f.vehicles.length === 0
+              ? "The feed is connected and reporting no vehicles at all, which is what it does "
+                + "outside service hours. "
+              : "Buses are running elsewhere in Delhi but none are inside this 16 km² box right now. ")
+          + "What you see on the streets is the deterministic replay layer, labelled as such.");
+      }
     }
   }
   reconcileBuses(liveBuses.feed?.state ?? "unconfigured", liveBuses.liveCount());

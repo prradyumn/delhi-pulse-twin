@@ -7,3 +7,10 @@ __pycache__/
 web/public/data/
 blender/_intermediate/
 spike/_raw/
+
+# Secrets. The OTD key is a server-side credential: it must never reach the client bundle or a
+# commit. Added before the first env file existed, deliberately.
+.env
+.env.*
+!.env.example
+secrets/

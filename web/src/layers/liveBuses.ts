@@ -82,6 +82,8 @@ export class LiveBusLayer implements Layer {
       ? await fetchLiveBuses()
       : { state: "unconfigured" as const, vehicles: [], feedTime: null, ageSeconds: null,
           inBox: 0, provider: "Delhi Open Transit Data — GTFS-Realtime VehiclePositions",
+          coverage: { speed: 0, bearing: 0, stopStatus: 0, stopId: 0,
+                      occupancy: 0, congestion: 0, routeId: 0, startTime: 0 },
           error: "This build does not list otd_vehicle_positions in manifest.health.live_adapters, so no request was made." };
     this.feed = f;
     this.place(f.vehicles);
@@ -97,6 +99,16 @@ export class LiveBusLayer implements Layer {
     };
   }
 
+  /**
+   * What THIS feed actually carries, counted from the response rather than read off the spec.
+   *
+   * GTFS-Realtime makes almost everything optional, so "the spec supports occupancy" is worth
+   * nothing to a user; "84% of vehicles in this response reported occupancy" is worth something.
+   * The distinction matters here because several planned features — observed headway from arrival
+   * events, occupancy, the operator's own congestion assessment — each depend on a field the
+   * operator may simply not populate, and the honest thing is to report which are present before
+   * building a number on top of them.
+   */
   provenance(f: LiveBusFeed): Provenance {
     const limitations: string[] = [];
     if (f.state === "unconfigured") {
@@ -109,9 +121,15 @@ export class LiveBusLayer implements Layer {
         f.state === "stale"
           ? `Feed is ${Math.round((f.ageSeconds ?? 0))} s old and is reported stale, not live.`
           : `Live vehicle positions, feed timestamp ${f.feedTime ? new Date(f.feedTime * 1000).toISOString() : "unknown"}.`,
-        `${f.vehicles.length} vehicles in the feed; ${f.inBox} inside the study box. Only those inside can be placed.`,
+        f.vehicles.length === 0
+          ? "The feed is connected and reporting ZERO vehicles. That is a real answer, not a "
+            + "failure: outside service hours the operator publishes an empty feed. Verified "
+            + "against the live endpoint at 23:55 IST, which returned a valid 2-second-old header "
+            + "with no entities. The bus replay layer keeps running and stays labelled as replay."
+          : `${f.vehicles.length} vehicles in the feed; ${f.inBox} inside the study box. Only those inside can be placed.`,
         "Positions are the operator's own reported GPS. Accuracy, update interval and coverage are the operator's, not this app's.",
-        "A vehicle absent from the feed is not evidence that no bus is running — it may simply not be reporting.");
+        "A vehicle absent from the feed is not evidence that no bus is running — it may simply not be reporting.",
+        fieldCoverageNote(f));
     }
     return {
       provider: "Delhi Open Transit Data (OTD), Government of NCT of Delhi",
@@ -159,6 +177,8 @@ export class LiveBusLayer implements Layer {
       ? await fetchLiveBuses()
       : { state: "unconfigured" as const, vehicles: [], feedTime: null, ageSeconds: null,
           inBox: 0, provider: "Delhi Open Transit Data — GTFS-Realtime VehiclePositions",
+          coverage: { speed: 0, bearing: 0, stopStatus: 0, stopId: 0,
+                      occupancy: 0, congestion: 0, routeId: 0, startTime: 0 },
           error: "This build does not list otd_vehicle_positions in manifest.health.live_adapters, so no request was made." };
     this.feed = f;
     this.place(f.vehicles);
@@ -169,4 +189,35 @@ export class LiveBusLayer implements Layer {
   liveCount() { return this.inst?.count ?? 0; }
   setVisible(v: boolean) { this.group.visible = v; }
   dispose() { this.inst?.geometry.dispose(); }
+}
+
+
+/** Free function so the provenance builder and the data-status panel can share one wording. */
+export function fieldCoverageNote(f: LiveBusFeed): string {
+  const n = f.vehicles.length;
+  if (!n) {
+    return "Field coverage cannot be assessed from an empty feed. The optional GTFS-Realtime "
+         + "fields this app can use — speed, stop status, stop id, occupancy, congestion level — "
+         + "are each reported only if the operator populates them, and that is measured from a "
+         + "real response rather than assumed.";
+  }
+  const pct = (k: number) => `${Math.round((k / n) * 100)}%`;
+  const c = f.coverage;
+  const have: string[] = [];
+  const missing: string[] = [];
+  const put = (label: string, k: number) => (k > 0 ? have : missing).push(
+    k > 0 ? `${label} ${pct(k)}` : label);
+  put("route id", c.routeId);
+  put("speed", c.speed);
+  put("bearing", c.bearing);
+  put("stop status", c.stopStatus);
+  put("stop id", c.stopId);
+  put("occupancy", c.occupancy);
+  put("congestion level", c.congestion);
+  put("scheduled start", c.startTime);
+  const parts = [`Measured field coverage over ${n} vehicles in this response: ${have.join(", ") || "none"}.`];
+  if (missing.length) {
+    parts.push(`Not populated by this feed: ${missing.join(", ")} — so nothing here is derived from them.`);
+  }
+  return parts.join(" ");
 }

@@ -323,13 +323,31 @@ if mf:
     if any("air" in a for a in adapters):
         check(bool(wx and wx.get("air_baseline")),
               "a live air-quality adapter is enabled but there is no pinned air baseline to fall back to")
-    # anything needing a key must stay off in the committed config, or a keyless build fires a
-    # request that can only fail — which is a console error for every user
-    keyed = [a for a in adapters if a.startswith("otd_")]
-    check(not keyed,
-          f"adapters requiring a key are enabled in the committed config: {keyed}. Enable them only "
-          f"on a deployment that actually has the key.")
-    print(f"  live adapters: {adapters or 'none'} (all with bundled fallbacks)")
+    # Anything needing a key must stay off in the COMMITTED CONFIG, or a clone without the key
+    # fires requests that can only fail — a console error for every user. The generated manifest
+    # may still enable one, but only when the build environment supplied the credential, and it
+    # has to name the variable it found. So the rule is checked against the config file, and the
+    # manifest is required to justify any difference.
+    cfgp = pathlib.Path("config/study-area.json")
+    if cfgp.exists():
+        committed = json.loads(cfgp.read_text()).get("live_adapters", {})
+        keyed_committed = [k for k, v in committed.items() if k.startswith("otd_") and v is True]
+        check(not keyed_committed,
+              f"adapters requiring a key are enabled in the committed config: {keyed_committed}. "
+              f"Leave them false — `make data` enables them from the environment instead.")
+    from_env = mf["health"].get("live_adapters_from_env") or []
+    env_named = {e.get("adapter") for e in from_env if isinstance(e, dict)}
+    for a in adapters:
+        if not a.startswith("otd_"):
+            continue
+        check(a in env_named,
+              f"manifest enables {a}, which needs a credential, but does not record the environment "
+              f"variable that turned it on")
+    for e in from_env:
+        check(isinstance(e, dict) and e.get("variable"),
+              f"live_adapters_from_env entry names no variable: {e!r}")
+    extra = f" (+{sorted(env_named)} from the environment)" if env_named else ""
+    print(f"  live adapters: {adapters or 'none'} (all with bundled fallbacks){extra}")
     check(bool(mf["attribution"]), "manifest: no attribution list")
     check(any("OpenStreetMap" in a for a in mf["attribution"]),
           "manifest: ODbL attribution for OpenStreetMap is required")

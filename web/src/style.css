@@ -355,6 +355,12 @@ h3.sub:first-child { margin-top: 0; padding-top: 0; border-top: none; }
 .feed .led { width: 7px; height: 7px; border-radius: 50%; background: var(--text-3); }
 .feed[data-state="live"] .led { background: #5fce8a; box-shadow: 0 0 6px rgba(95, 206, 138, 0.7); }
 .feed[data-state="stale"] .led { background: var(--estimated); }
+/* Connected, and honestly reporting nothing. Not green — nothing live is on screen — and not
+   the warning colour either, because nothing is wrong. */
+.feed[data-state="live-empty"] .led {
+  background: #5fce8a; box-shadow: none; opacity: 0.45;
+  outline: 1px solid rgba(95, 206, 138, 0.55); outline-offset: 1px;
+}
 .feed[data-state="fallback"] .led { background: var(--estimated); }
 .feed[data-state="unavailable"] .led { background: var(--warn); }
 

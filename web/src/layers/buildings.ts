@@ -70,6 +70,13 @@ export class BuildingsLayer implements Layer {
     // Two families rather than one smear: roughly a third of the stock reads cooler and greyer
     // (concrete, glass-fronted offices), the rest warmer (plaster and sandstone). Real streets
     // are mixed, and a single hue is the tell that massing was generated.
+    // In reveal mode the only thing that may vary is brightness. The warm/cool families exist to
+    // make the ordinary view look like a real street; letting them run while the user is asking
+    // "which of these heights did you guess?" would blur the one distinction that has to be exact.
+    if (this.reveal) {
+      out.setHSL(hsl.h, hsl.s, Math.min(hsl.l * (0.92 + j * 0.16), 0.86));
+      return out;
+    }
     const cool = k < 0.34;
     const hue = cool ? hsl.h + 0.055 + (j - 0.5) * 0.02 : hsl.h + (j - 0.5) * 0.03;
     const sat = cool ? hsl.s * (0.34 + j * 0.26) : hsl.s * (0.80 + j * 0.45);

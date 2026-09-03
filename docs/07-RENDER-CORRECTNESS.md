@@ -21,12 +21,29 @@ when plotted with x right and z up — that is, with a **negative shoelace area*
     (b−a)×(c−a) = (0,0,1)×(1,0,0) = (0,1,0)                  → up ✓
 
 OSM rings arrive in **either** winding, so `orient()` in
-[`web/src/layers/geom.ts`](../web/src/layers/geom.ts) normalises every ring to negative signed area
-before triangulation. `THREE.ShapeUtils.triangulateShape` (earcut) preserves the input winding, so
-once the ring is oriented, **roofs face up and walls face outward for free** — no per-face reasoning
-needed anywhere downstream.
+[`web/src/layers/geom.ts`](../web/src/layers/geom.ts) normalises every ring to negative signed area.
+That fixes the hand-built **wall quads**.
 
-> **When you add a layer:** pass rings through `orient()` first. Never assume source winding.
+### It does not fix triangulated faces — and assuming it did cost a whole render pass
+
+`THREE.ShapeUtils.triangulateShape` is earcut, and earcut **does not preserve the input winding**.
+It normalises internally and always emits triangles facing −Y in this plane. Measured against
+three r169 rather than assumed:
+
+    CCW input (shoelace +1)  ->  both triangles face -Y
+    CW  input (shoelace -1)  ->  both triangles face -Y
+
+So the triangle order is reversed once, inside `fanIndices`, for every consumer. Before that fix
+**every ground polygon, water area, plaza and building roof pointed at the floor.** The scene still
+looked plausible, because buildings render their walls — so the symptom was "the parks are missing",
+which sends you hunting through the pipeline for data that was there all along.
+
+The first version of this document confidently stated the opposite, and the render was the thing
+that corrected it.
+
+> **When you add a layer:** rings through `orient()` for anything you extrude by hand; anything
+> triangulated goes through `fanIndices`, never `ShapeUtils` directly. And check a render — a
+> back-facing surface throws no error and logs nothing.
 
 ## Rule 2 — Never hand-author a normal
 
@@ -117,3 +134,63 @@ None of this has been executed — see the blocker note in [`../README.md`](../R
 come from reading the code and working the vector algebra by hand, which catches sign and ordering
 errors well and catches nothing about API drift, bundler behaviour or actual frame time. Expect a
 further pass once `make check` can run.
+
+
+---
+
+# Part two: the visual pass
+
+Materials and lighting only — no geometry, data, metric or copy changes. Measured after: **60 fps,
+14 draw calls, 80,663 triangles, 0.71 MB gzip.**
+
+## Shadows were switched off on an assumption, not a measurement
+
+The original comment read *"3,203 buildings; shadows are not worth the frame time"*. The scene is
+76k triangles in 13 draw calls, so one directional shadow map costs almost nothing here, and it is
+the single biggest realism gain available — without contact shadows a city reads as a tabletop
+model. 2048 over the whole 4 km box gives 2.5 m per shadow texel, which is technically shadows and
+visually nothing; **4096 over a box tightened to ±2166 m** gives about 1 m, which is the scale of
+the thing casting them.
+
+## No textures, by design — so the detail is procedural
+
+The data register forbids redistributing landmark imagery, and a texture atlas for 3,203 buildings
+would blow the transfer budget the whole pipeline was tuned around. So
+[`facade.ts`](../web/src/layers/facade.ts) generates storey lines, window bays, a darker ground-floor
+plinth and gravel roof tone in the shader from world position. Zero bytes, zero draw calls.
+
+Two rules it follows:
+
+- **It modulates `diffuseColor`, never replaces it.** Everything the vertex colours encode still
+  shows through: the observed/estimated reveal, corridor traffic state, selection highlight. A
+  shader that overwrote the colour would have silently disabled the honesty features.
+- **It fades with distance.** A 1-metre window rhythm across a 4 km box is a moiré generator, so
+  the pattern dissolves between 900 m and 2600 m.
+
+## Where the visual pass had to stop short of the honesty features
+
+Buildings get a deterministic hash-based tone spread, split into a cooler concrete family and a
+warmer plaster/sandstone one, because a single hue is the tell that massing was generated. But when
+**Reveal estimated heights** is on, only brightness varies and hue is pinned. The user is asking
+"which of these heights did you guess?" — blurring sage against amber to make the street prettier
+would trade the one distinction that has to be exact for decoration.
+
+## Other changes
+
+| Change | Why |
+|---|---|
+| Sky dome with horizon gradient, sun glow and a haze band | A flat background colour is what makes a 3D scene look like a screenshot of one. One draw call. |
+| Horizon hue moved off 0.14 | 0.14 is yellow-green and turned the whole sky olive. Delhi's haze is a warm neutral, so the horizon is barely saturated and the zenith carries the blue. |
+| Kerb casing under every road | A wider, darker ribbon beneath each carriageway. The cheapest thing that stops a road network reading as coloured tape on a plane. |
+| Asphalt darkens with road class | Hierarchy reads without labels. |
+| Low-frequency noise on ground cover | 489 flat polygons in four colours read as vector art. A lawn is not one colour. |
+| Dim opposite-side fill light | North faces were flat black rather than shaped. |
+
+## QA render script bugs worth remembering
+
+Both produced a **flat grey frame with no error of any kind**:
+
+- **Blender's default camera clips at 100 m.** This scene is kilometres across. Every early QA sheet
+  was empty because the geometry sat beyond the far plane.
+- **Hand-rolled look-at Euler angles.** A Blender camera looks down its local −Z, and a sign error
+  aims it at nothing. Now `direction.to_track_quat("-Z", "Y")`, which is Blender's own.

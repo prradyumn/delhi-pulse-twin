@@ -56,6 +56,10 @@ def studio(engine=A["engine"], res_x=RES, res_y=int(RES * 0.68)):
 def frame_camera(sc, target, radius, elev=math.radians(34), az=math.radians(-40)):
     cam_data = bpy.data.cameras.new("qa_cam")
     cam_data.lens = 42
+    # A Blender camera clips at 100 m by default. This scene is kilometres across, so every
+    # earlier render came back as a flat grey frame with no warning of any kind.
+    cam_data.clip_start = 0.5
+    cam_data.clip_end = radius * 4 + 12000
     cam = bpy.data.objects.new("qa_cam", cam_data)
     bpy.context.collection.objects.link(cam)
     cx, cy, cz = target

@@ -357,3 +357,29 @@ h3.sub:first-child { margin-top: 0; padding-top: 0; border-top: none; }
 .feed[data-state="stale"] .led { background: var(--estimated); }
 .feed[data-state="fallback"] .led { background: var(--estimated); }
 .feed[data-state="unavailable"] .led { background: var(--warn); }
+
+/* ---------------------------------------------------------------- street level */
+#walkhint {
+  bottom: 96px; left: 50%; transform: translateX(-50%); width: min(430px, calc(100vw - 24px));
+}
+#walkhint strong { font-size: 13px; }
+#walkhint .note { font-size: 12px; margin: 5px 0 0; }
+
+/* ---------------------------------------------------------------- reach panel */
+/* Sits under the exposure panel's slot on the right, and is tall because the assumptions matter
+   as much as the finding: an isochrone that does not say what it charged you for is a decoration. */
+#reach { top: 66px; right: 12px; width: 372px; max-height: calc(100vh - 190px); overflow-y: auto; }
+@media (max-width: 1240px) { #reach { width: 330px; } }
+
+.rlegend {
+  display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 8px 0 4px;
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--text-3);
+}
+.rl { display: inline-flex; align-items: center; gap: 5px; }
+.rl i { width: 13px; height: 8px; border-radius: 1px; display: inline-block; }
+
+.swatch {
+  width: 9px; height: 9px; border-radius: 1px; display: inline-block;
+  margin-right: 6px; vertical-align: baseline;
+}

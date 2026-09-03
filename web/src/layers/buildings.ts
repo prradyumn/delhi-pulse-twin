@@ -2,7 +2,7 @@ import * as THREE from "three";
 import type { Layer, LayerReport } from "./registry";
 import { extrudeFootprints, repaint, bucketByTile, ringCentre, type XZ } from "./geom";
 import { PALETTE } from "./palette";
-import { applyFacadeDetail } from "./facade";
+import { applyFacadeDetail, applyFacadeTextures, atlasCellFor, type FacadeMaps } from "./facade";
 import * as load from "../geo/load";
 import type { Building } from "../geo/types";
 
@@ -19,6 +19,7 @@ export class BuildingsLayer implements Layer {
   constructor(
     private extent: { x: [number, number]; z: [number, number] },
     private grid: [number, number],
+    private facade: FacadeMaps | null = null,
   ) {}
 
   async build(): Promise<LayerReport> {
@@ -31,10 +32,21 @@ export class BuildingsLayer implements Layer {
     this.heightRuleVersion = res.data.height_rule_version;
     this.estimatedCount = this.buildings.filter((b) => b.m === 1).length;
 
-    // One material, shared: per-tile meshes cost draw calls, not shader programs.
-    const material = applyFacadeDetail(new THREE.MeshStandardMaterial({
-      vertexColors: true, roughness: 0.72, metalness: 0, flatShading: true,
-    }));
+    // One material, shared across every tile: per-tile meshes cost draw calls, not shader
+    // programs. The building class travels as a vertex attribute precisely so this stays ONE
+    // material — a material per class would have multiplied the draw calls just reclaimed.
+    //
+    // flatShading is dropped when textures are on: it discards the interpolated normal the
+    // normal map needs, so the window recesses would not light.
+    let material = new THREE.MeshStandardMaterial({
+      vertexColors: true, roughness: 0.72, metalness: 0,
+      flatShading: this.facade === null,
+    });
+    material = applyFacadeDetail(material,
+      // with real texture detail the procedural window pattern becomes double-printing, so it
+      // drops back to just the storey banding and the ground-floor plinth
+      this.facade ? { strength: 0.28 } : {});
+    if (this.facade) material = applyFacadeTextures(material, this.facade);
 
     const buckets = bucketByTile(
       this.buildings, (b) => ringCentre(b.r as XZ[]), this.extent, this.grid);
@@ -44,7 +56,12 @@ export class BuildingsLayer implements Layer {
       const globalIndex = new Map(bucket.items.map((b, i) => [i, this.buildings.indexOf(b)]));
       const built = extrudeFootprints(
         bucket.items as { r: XZ[]; h: number; m: 0 | 1 }[],
-        { colorFor: (f, i) => this.colorOf(f.m, f.h, globalIndex.get(i) ?? i) },
+        {
+          colorFor: (f, i) => this.colorOf(f.m, f.h, globalIndex.get(i) ?? i),
+          classOf: (_f, i) => atlasCellFor(bucket.items[i]?.c ?? "yes"),
+          // a per-building phase offset, or every window grid on the street lines up
+          phaseOf: (_f, i) => BuildingsLayer.jitter((globalIndex.get(i) ?? i) * 7 + 3),
+        },
       );
       const mesh = new THREE.Mesh(built.geometry, material);
       mesh.castShadow = true;

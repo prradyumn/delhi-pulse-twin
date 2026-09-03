@@ -1,16 +1,21 @@
 {
   "buildings": {
-    "count": 3203,
+    "count": 3196,
     "modes": {
-      "observed": 267,
-      "estimated": 2936
+      "observed": 261,
+      "estimated": 2935
     },
     "dropped_outside_box": 102,
+    "suppressed_under_landmarks": {
+      "rashtrapati-bhavan": 1,
+      "india-gate": 1,
+      "new-parliament-house": 5
+    },
     "top_bases": {
       "rule:class=yes": 2701,
       "osm:building:levels": 242,
       "rule:area<50": 131,
-      "osm:height": 25,
+      "osm:height": 19,
       "rule:class=house": 17,
       "rule:class=roof": 13
     }

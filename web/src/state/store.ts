@@ -45,6 +45,8 @@ export interface AppState {
   trains: number;
   /** live vehicles placed from the OTD feed; 0 when unconfigured */
   liveBuses: number;
+  /** true while the street-level camera has control */
+  walking: boolean;
   walkers: number;
 }
 
@@ -54,7 +56,8 @@ export const initialState: AppState = {
   layers: { ground: true, water: true, streetscape: true, roads: true, corridors: true,
             buildings: true, buildingparts: true, roofdetail: true, landmarks: true,
             trees: true, rail: true, transit: true, traffic: true, buses: true,
-            metro: true, pedestrians: true, livebuses: true },
+            metro: true, pedestrians: true, livebuses: true, furniture: true,
+            reach: false, routes: false },
   revealEstimated: false,
   selectedId: null,
   activeCorridor: null,
@@ -71,6 +74,7 @@ export const initialState: AppState = {
   busesOnRoad: 0,
   trains: 0,
   liveBuses: 0,
+  walking: false,
   walkers: 0,
 };
 

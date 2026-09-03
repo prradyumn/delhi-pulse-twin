@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import type { Layer, LayerReport } from "./registry";
+import { AltitudeGate, type Layer, type LayerReport } from "./registry";
 import { mergeBoxes, type XZ } from "./geom";
 import * as load from "../geo/load";
 import type { Provenance } from "../geo/types";
@@ -40,7 +40,17 @@ function hash01(i: number, salt = 0): number {
  */
 export class PedestrianLayer implements Layer {
   id = "pedestrians"; label = "People on paths";
+  /** A 1.7 m walker subtends well under a pixel from 1.4 km. The gate sits just past the default
+   *  900 m camera, so the hero view keeps its crowds — the masthead claims 2,200 people walking and
+   *  the view it opens on had better show them — and the wider views drop them.
+   *
+   *  Unlike the rooftop and furniture gates this one is NOT justified by a clean measurement: by
+   *  the time I got here the machine was drifting 2x within a session and reporting negative costs
+   *  for removing geometry. The geometric argument stands on its own — sub-pixel instances are the
+   *  worst case for a rasteriser — but the saving is unquantified, and saying so is better than
+   *  quoting a number from a noisy run. */
   group = new THREE.Group();
+  private gate = new AltitudeGate(this.group, 950);
   private walks: Walk[] = [];
   private slots: { w: number; phase: number }[] = [];
   private inst?: THREE.InstancedMesh;
@@ -171,6 +181,8 @@ export class PedestrianLayer implements Layer {
   }
 
   walkerCount() { return this.live; }
-  setVisible(v: boolean) { this.group.visible = v; }
+  setCameraHeight(y: number) { this.gate.setCameraHeight(y); }
+  setVisible(v: boolean) { this.gate.setVisible(v); }
+  get visible() { return this.gate.visible; }
   dispose() { this.inst?.geometry.dispose(); }
 }

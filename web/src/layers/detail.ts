@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import type { Layer, LayerReport } from "./registry";
+import { AltitudeGate, type Layer, type LayerReport } from "./registry";
 import { wallStrips, insetRing, ringPoint, extrudeFootprints, ribbons, type XZ } from "./geom";
 import { applyFacadeDetail, applyBakedAO } from "./facade";
 import * as load from "../geo/load";
@@ -27,6 +27,10 @@ export class RoofDetailLayer implements Layer {
   group = new THREE.Group();
   private meshes: THREE.Mesh[] = [];
   private tanks?: THREE.InstancedMesh;
+  /** This was the single most expensive layer in the wide view — 10.6 ms for 129,474 triangles.
+   *  But at the default 900 m camera a 1.8 m tank is still two or three pixels and the roofscape
+   *  reads as texture, so the gate sits beyond that view rather than on top of it. */
+  private gate = new AltitudeGate(this.group, 1200);
 
   constructor(private buildings: Building[]) {}
 
@@ -128,7 +132,9 @@ export class RoofDetailLayer implements Layer {
              drawCalls: dc, triangles: tris };
   }
 
-  setVisible(v: boolean) { this.group.visible = v; }
+  setCameraHeight(y: number) { this.gate.setCameraHeight(y); }
+  setVisible(v: boolean) { this.gate.setVisible(v); }
+  get visible() { return this.gate.visible; }
   dispose() { this.meshes.forEach((m) => m.geometry.dispose()); this.tanks?.geometry.dispose(); }
 }
 
@@ -145,6 +151,8 @@ export class StreetscapeLayer implements Layer {
   id = "streetscape"; label = "Paths & walls";
   constructor(private aoMap: THREE.Texture | null = null, private aoOrtho = 4096) {}
   group = new THREE.Group();
+  /** kept so the walking graph can be built from the same geometry that is drawn */
+  footways: { p: XZ[]; k: string }[] = [];
   private meshes: THREE.Mesh[] = [];
 
   async build(): Promise<LayerReport> {
@@ -154,6 +162,7 @@ export class StreetscapeLayer implements Layer {
     if (!res.ok) return { ...base, status: "unavailable", error: res.error };
 
     const { footways, walls } = res.data.features;
+    this.footways = footways;
     let tris = 0, dc = 0;
 
     if (footways.length) {

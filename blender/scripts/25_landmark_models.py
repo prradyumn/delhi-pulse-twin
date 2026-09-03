@@ -67,8 +67,14 @@ def ring_extent(ring):
     return max(xs) - min(xs), max(ys) - min(ys)
 
 
-def footprint_solid(name, ring, height, base=0.0, solid=False):
-    """`solid=True` caps the floor, which any boolean target must have — see prism_mesh."""
+def footprint_solid(name, ring, height, base=0.0, solid=True):
+    """Closed by default.
+
+    A boolean target must have a floor or the EXACT solver returns the cutter's shape. But there is
+    a second reason to close everything: a closed mesh has a well-defined signed volume, which is
+    what `dptblend.orient_outward` uses to guarantee the normals face out. An open prism has no
+    such test, so it can only be checked by eye. The floor of a monument sitting on the ground is
+    never visible; the handful of triangles is worth the invariant."""
     ob, _nv, _nt = D.prism_mesh(name, [{"r": [[x, -y] for x, y in ring], "h": height}],
                                 cap_bottom=solid)
     if base:
@@ -79,33 +85,70 @@ def footprint_solid(name, ring, height, base=0.0, solid=False):
 
 
 # ---------------------------------------------------------------- per-landmark builders
+def _band(name, ring, height, base, scale):
+    """A moulding course: the footprint scaled about its own centre. Landmark GLBs are exported
+    centred on the landmark, so scaling the ring is scaling about the building's axis."""
+    return footprint_solid(name, [(x * scale, y * scale) for x, y in ring], height, base=base)
+
+
 def build_india_gate(ring, h, lod=0):
-    """A triumphal arch: solid pylon with the arch opening cut through it, cornice, attic, bowl."""
+    """A triumphal arch, articulated.
+
+    The previous version of this was 506 triangles — the smallest model in the set, for the object
+    at the end of Kartavya Path that every camera path points at. Six prisms and a dome read as a
+    lump of stone with a hole in it from anywhere closer than 400 m.
+
+    What was missing was not polygons for their own sake, it was the horizontal articulation that
+    makes masonry read as masonry: a stepped approach, a plinth with its own base moulding, a
+    string course at the arch springing, a cornice that actually projects and therefore casts a
+    shadow line across the facade, a recessed inscription band, and pilasters framing the panels
+    on all four faces. Every one of those is a real feature of the monument, and each is a plane
+    the sun can catch at a different angle, which is what the eye reads as depth.
+
+    Built additively. The arch opening still needs a boolean, and that one is kept — a triumphal
+    arch without the opening is not a triumphal arch — but nothing else here does, because two
+    separate non-manifold boolean failures on this exact model already cost an afternoon and
+    survived two rounds of 'fixes' by silently returning the cutter's shape.
+    """
     d = DIMENSIONS["india-gate"]
     h = d["height_m"]
+    dl = LOD_DETAIL[lod]
+    fine = lod == 0
     w, dep = ring_extent(ring)
     parts = []
 
-    plinth = footprint_solid("ig_plinth", ring, 3.2)
-    parts.append(plinth)
+    # ---- approach steps, three courses spreading beyond the footprint
+    if lod <= 1:
+        for i, (sc, hh) in enumerate(((1.34, 0.45), (1.24, 0.45), (1.14, 0.45))):
+            parts.append(_band(f"ig_step{i}", ring, hh, 0.45 * i, sc))
+    step_top = 1.35 if lod <= 1 else 0.0
 
-    # main pylon, slightly inset from the plinth
-    # capped: this is the boolean target, and an open mesh makes the EXACT solver return the
-    # cutter's shape instead of the difference
-    pylon = footprint_solid("ig_pylon", [(x * 0.88, y * 0.88) for x, y in ring], h * 0.72,
-                            base=3.2, solid=True)
+    # ---- plinth, with a chamfered base moulding and a top drip
+    parts.append(_band("ig_plinth_base", ring, 0.7, step_top, 1.06))
+    plinth_h = 3.2
+    parts.append(_band("ig_plinth", ring, plinth_h, step_top + 0.7, 1.0))
+    parts.append(_band("ig_plinth_cap", ring, 0.55, step_top + 0.7 + plinth_h, 1.05))
+    base_z = step_top + 0.7 + plinth_h + 0.55
 
-    # cut the arch: a box with a half-cylinder cap, running through the long axis
+    # ---- main pylon. Capped: this is the boolean target, and an open mesh makes the EXACT solver
+    # return the cutter's shape rather than the difference.
+    #
+    # 0.50 of the height, not 0.62. At 0.62 the attic above the cornice came out 4.6 m tall on a
+    # 42 m monument and the whole top read as a stack of slabs. On the real arch the inscribed
+    # attic is a substantial mass — roughly a fifth of the height — and that mass is what stops
+    # the silhouette looking like a chimney with a lid.
+    shaft_h = h * 0.50
+    pylon_ring = [(x * 0.88, y * 0.88) for x, y in ring]
+    pylon = footprint_solid("ig_pylon", pylon_ring, shaft_h, base=base_z, solid=True)
+
     span = d["arch_span_m"]
-    spring = h * 0.34                      # height at which the arch begins to curve
-    # Two sequential subtractions rather than one joined cutter: joining two solids into a single
-    # mesh gives interpenetrating shells, and each operand here is a proper closed solid on its own.
-    cutter_box = D.box("ig_cut_box", span, dep * 2.0, spring, at=(0, 0, 3.2 + spring / 2))
+    spring = shaft_h * 0.52                # height at which the arch begins to curve
+    cutter_box = D.box("ig_cut_box", span, dep * 2.0, spring, at=(0, 0, base_z + spring / 2))
     D.boolean_difference(pylon, cutter_box)
 
-    cutter_arch = D.cylinder("ig_cut_arch", span / 2, dep * 2.0, segs=24, base_z=0)
+    cutter_arch = D.cylinder("ig_cut_arch", span / 2, dep * 2.0, segs=28 if fine else 18, base_z=0)
     cutter_arch.rotation_euler = (math.pi / 2, 0, 0)
-    cutter_arch.location = (0, dep, 3.2 + spring)
+    cutter_arch.location = (0, dep, base_z + spring)
     bpy.context.view_layer.objects.active = cutter_arch
     cutter_arch.select_set(True)
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=False)
@@ -113,15 +156,77 @@ def build_india_gate(ring, h, lod=0):
     D.boolean_difference(pylon, cutter_arch)
     parts.append(pylon)
 
-    # cornice, attic and the flame bowl on top
-    top = 3.2 + h * 0.72
-    parts.append(footprint_solid("ig_cornice", [(x * 0.96, y * 0.96) for x, y in ring], 2.4, base=top))
-    parts.append(footprint_solid("ig_attic", [(x * 0.80, y * 0.80) for x, y in ring],
-                                 h - top - 2.4 - 3.0, base=top + 2.4))
-    dl = LOD_DETAIL[lod]
-    parts.append(D.dome("ig_bowl", min(w, dep) * 0.30, 3.0,
-                        segs=max(dl["dome_segs"] - 8, 8), rings=max(dl["dome_rings"] - 4, 3),
-                        base_z=h - 3.0, squash_top=0.85))
+    # ---- pilasters framing the panels either side of the opening, on all four faces.
+    # The ring is very nearly a rectangle, so its extent is the right frame to hang these on.
+    #
+    # Collected in their own list and lifted together. The first version of this reached back into
+    # `parts` by a fixed slice to do the lift, mis-counted, and translated the plinth and the pylon
+    # up with the pilasters — the kind of arithmetic that produces a model which passes every
+    # budget gate and is wrong.
+    if fine:
+        px, py = w * 0.88 / 2, dep * 0.88 / 2
+        pil_w, pil_d, pil_h = 1.5, 0.5, shaft_h - 1.2
+        # bite into the pylon by 0.15 m. Sitting exactly on its face makes the two surfaces
+        # coplanar, and the render showed the z-fighting as a bright seam up the facade.
+        bite = 0.15
+        pilasters = []
+        # the two narrow faces, four pilasters each
+        for i, sx in enumerate((-1, 1)):
+            for j, off in enumerate((-0.93, -0.58, 0.58, 0.93)):
+                pilasters.append(D.box(f"ig_pil_x{i}{j}", pil_d, pil_w, pil_h,
+                                       at=(sx * (px + pil_d / 2 - bite), off * py, 0)))
+        # the two broad faces, flanking the arch opening
+        for i, sy in enumerate((-1, 1)):
+            for j, off in enumerate((-0.88, -0.56, 0.56, 0.88)):
+                pilasters.append(D.box(f"ig_pil_y{i}{j}", pil_w, pil_d, pil_h,
+                                       at=(off * px, sy * (py + pil_d / 2 - bite), 0)))
+        for ob in pilasters:
+            ob.location.z = base_z + pil_h / 2 + 0.6
+            bpy.context.view_layer.objects.active = ob
+            bpy.ops.object.transform_apply(location=True, rotation=False, scale=False)
+        parts.extend(pilasters)
+
+    # ---- string course at the springing, which is where the real monument breaks the face.
+    # Emphatically NOT a continuous band: at 0.93 of the footprint it runs straight through the
+    # arch void, and the render showed a stone beam hanging across the opening. It exists only
+    # where there is masonry to carry it — the two piers and the two narrow faces.
+    if lod <= 1:
+        sx_half, sy_half = w * 0.88 / 2, dep * 0.88 / 2
+        pier = (sx_half - span / 2) / 2 + span / 2      # centre of each pier, on the broad face
+        pier_w = sx_half - span / 2
+        for i, sgn in enumerate((-1, 1)):
+            for j, sy in enumerate((-1, 1)):
+                b = D.box(f"ig_string_p{i}{j}", pier_w, 0.55, 0.5,
+                          at=(sgn * pier, sy * (sy_half + 0.1), base_z + spring - 0.25))
+                parts.append(b)
+            b = D.box(f"ig_string_e{i}", 0.55, dep * 0.88, 0.5,
+                      at=(sgn * (sx_half + 0.1), 0, base_z + spring - 0.25))
+            parts.append(b)
+
+    # ---- cornice: three courses of increasing then decreasing projection, so it throws a
+    # genuine shadow line instead of being a single step
+    top = base_z + shaft_h
+    parts.append(_band("ig_cornice_a", ring, 0.6, top, 0.93))
+    parts.append(_band("ig_cornice_b", ring, 1.1, top + 0.6, 1.00))
+    parts.append(_band("ig_cornice_c", ring, 0.7, top + 1.7, 0.95))
+    attic_z = top + 2.4
+
+    # ---- attic, with the inscription band recessed between two mouldings
+    attic_h = h - attic_z - 4.2
+    parts.append(_band("ig_attic_lo", ring, attic_h * 0.18, attic_z, 0.86))
+    parts.append(_band("ig_attic_band", ring, attic_h * 0.58, attic_z + attic_h * 0.18, 0.81))
+    parts.append(_band("ig_attic_hi", ring, attic_h * 0.24,
+                       attic_z + attic_h * 0.76, 0.86))
+    crown = attic_z + attic_h
+
+    # ---- the shallow bowl on its own stepped base. Bigger than it was: at 0.28 of the short
+    # side it disappeared behind the attic's own cap from any ground-level angle, which is the
+    # only angle anyone sees this from.
+    parts.append(_band("ig_bowl_base", ring, 0.9, crown, 0.66))
+    parts.append(_band("ig_bowl_cap", ring, 0.5, crown + 0.9, 0.58))
+    parts.append(D.dome("ig_bowl", min(w, dep) * 0.34, 2.8,
+                        segs=max(dl["dome_segs"] - 6, 10), rings=max(dl["dome_rings"] - 3, 4),
+                        base_z=crown + 1.4, squash_top=0.78))
     return D.join_all(parts, "india-gate"), STONE
 
 

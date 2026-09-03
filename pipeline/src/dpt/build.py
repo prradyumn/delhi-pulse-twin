@@ -33,9 +33,62 @@ def poly_of(el):
 
 
 # ---------------------------------------------------------------- buildings
+def landmark_polys(modelled_only=True):
+    """The hero-landmark polygons, resolved from the same raw file `landmarks()` uses.
+
+    Exists because of a bug that only a render revealed. India Gate's arch is ALSO mapped in OSM as
+    a separate building, `way/1078065894` at 40 m, distinct from the monument way the landmark
+    config names. So excluding landmark footprints from the buildings layer by OSM id missed it,
+    and the buildings layer extruded a 40 m prism with the office-facade texture on it directly
+    over the authored model — the icon at the end of Kartavya Path rendered as a windowed tower.
+    Rashtrapati Bhavan and the New Parliament had the same overlap, three duplicates in one case.
+
+    So the exclusion is spatial, not by id. `modelled_only` keeps the `kind=open` landmarks out of
+    it: Jantar Mantar's enclosure contains the Samrat Yantra, which is a real masonry instrument
+    mapped as a building and must keep rendering.
+    """
+    src = pathlib.Path("spike/_raw/osm_landmarks.json")
+    if not src.exists():
+        return []
+    meta = {lm["osm"]: lm for lm in C["landmarks"]["required"] + C["landmarks"]["optional"]}
+    out = []
+    for el in json.loads(src.read_text())["elements"]:
+        lm = meta.get(f"{el['type']}/{el['id']}")
+        if not lm:
+            continue
+        if modelled_only and lm.get("kind", "massing") == "open":
+            continue
+        rings = []
+        if el.get("geometry"):
+            rings.append(P.ring(el["geometry"]))
+        for mem in el.get("members", []):
+            if mem.get("type") == "way" and mem.get("geometry") and mem.get("role") in ("outer", "", None):
+                rings.append(P.ring(mem["geometry"]))
+        polys = []
+        for r in rings:
+            if len(r) < 4:
+                continue
+            try:
+                pp = Polygon(r)
+                if not pp.is_valid:
+                    pp = pp.buffer(0)
+                if pp.geom_type == "Polygon" and pp.area > 4:
+                    polys.append(pp)
+            except Exception:
+                continue
+        if polys:
+            out.append((lm["id"], max(polys, key=lambda q: q.area)))
+    return out
+
+
 def buildings():
     feats = []; modes = collections.Counter(); bases = collections.Counter()
     dropped = 0
+    # footprints an authored landmark model already covers, so the two never render on top of
+    # each other. Buffered inward slightly: a building sharing a wall with the landmark ring
+    # should not be swallowed by a rounding error on the boundary.
+    lm_polys = landmark_polys(modelled_only=True)
+    suppressed = collections.Counter()
     for el in osm("buildings"):
         p = poly_of(el)
         if p is None:
@@ -50,6 +103,10 @@ def buildings():
             if p.is_empty or p.geom_type != "Polygon":
                 dropped += 1
                 continue
+        hit = next((lid for lid, lp in lm_polys if lp.contains(p.centroid)), None)
+        if hit:
+            suppressed[hit] += 1
+            continue
         t = el.get("tags", {})
         h, mode, basis = resolve_height(t, p.area, RULE)
         modes[mode] += 1; bases[basis] += 1
@@ -68,8 +125,12 @@ def buildings():
         })
     report["buildings"] = {"count": len(feats), "modes": dict(modes),
                            "dropped_outside_box": dropped,
+                           "suppressed_under_landmarks": dict(suppressed),
                            "top_bases": dict(bases.most_common(6))}
     print(f"  {len(feats):,} kept, {dropped:,} dropped as outside the locked box")
+    if suppressed:
+        print(f"  {sum(suppressed.values())} suppressed under authored landmark models: "
+              + ", ".join(f"{k}x{v}" for k, v in suppressed.items()))
     manifest_assets["buildings"] = write_json("buildings.json", {
         "kind": "buildings", "count": len(feats),
         "schema": "r=footprint ring [x,z] metres local; h=height m; m=0 observed 1 estimated",
@@ -78,6 +139,7 @@ def buildings():
             limitations=[
                 f"{modes['estimated']} of {len(feats)} heights ({100*modes['estimated']/max(len(feats),1):.1f}%) are estimated by height rule v{RULE['version']}, not observed.",
                 "Footprints simplified at 0.5 m tolerance.",
+                f"{sum(suppressed.values())} footprint(s) inside an authored hero-landmark model are excluded from this layer, because OSM maps some monuments twice — India Gate's arch is also way/1078065894, a 40 m building. Without the exclusion the two render through each other.",
                 "Courtyard holes in footprints are not modelled in V1."]),
         "features": feats})
     return feats
@@ -443,7 +505,7 @@ def landmarks():
             dataset="OSM footprints for the verified hero landmarks",
             limitations=[
                 "Footprints are observed OSM geometry. Heights come from OSM height tags where present and are otherwise estimated.",
-                "Until the Phase 4 modelling sprint, kind=massing landmarks render as blocks extruded from the real footprint — correctly placed and scaled, deliberately not detailed.",
+                "kind=massing landmarks now carry parametric models (see landmarks/index.json for the per-landmark source). A landmark whose model fails to load falls back to a block extruded from the real footprint, and the layer reports which.",
                 "kind=open landmarks (Rajiv Chowk Central Park, Jantar Mantar) are open ground in OSM, not buildings. They render flat with a label: extruding the enclosure would misrepresent the site.",
                 "India Gate's 42 m height is a published monument dimension, not an OSM tag, and is reported as estimated.",
             ]),

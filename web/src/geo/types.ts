@@ -1,4 +1,6 @@
 /** Data-mode is a type, not a caption. Nothing analytical renders without a Provenance. */
+import type { ExposureModel } from "../scenario/exposure";
+
 export type DataMode = "observed" | "estimated" | "simulated" | "replay";
 
 export interface Provenance {
@@ -67,6 +69,9 @@ export interface Corridor extends CorridorMeta {
 
 export interface ScenarioModel {
   version: string;
+  /** the exposure heuristics, versioned alongside the traffic ones so there is exactly one
+   *  declared kerbside figure in the project rather than one per consumer */
+  exposure_model?: ExposureModel;
   free_flow_kmh: Record<string, number>;
   diurnal_congestion: { _note: string; profile: number[] };
   corridor_base: Record<string, number>;

@@ -76,10 +76,17 @@ export interface Built {
  */
 export function extrudeFootprints(
   feats: { r: XZ[]; h: number; m: 0 | 1 }[],
-  opts: { colorFor: (f: { h: number; m: 0 | 1 }, i: number) => THREE.Color },
+  opts: {
+    colorFor: (f: { h: number; m: 0 | 1 }, i: number) => THREE.Color;
+    /** atlas cell 0-3 per feature; written as a vertex attribute so one material serves them all */
+    classOf?: (f: { h: number; m: 0 | 1 }, i: number) => number;
+    /** deterministic per-feature offset, so neighbours do not line their window grids up */
+    phaseOf?: (f: { h: number; m: 0 | 1 }, i: number) => number;
+  },
 ): Built {
   const pos: number[] = [], col: number[] = [], idx: number[] = [];
   const vfeat: number[] = [];
+  const cls: number[] = [], phase: number[] = [];
   const c = new THREE.Color();
 
   feats.forEach((f, fi) => {
@@ -90,6 +97,8 @@ export function extrudeFootprints(
     const roof = fanIndices(ring);
     if (!roof.length) return;
     c.copy(opts.colorFor(f, fi));
+    const fClass = opts.classOf ? opts.classOf(f, fi) : 0;
+    const fPhase = opts.phaseOf ? opts.phaseOf(f, fi) : 0;
 
     // --- walls: one quad per edge. With the ring oriented, (v0,v1,v2)/(v0,v2,v3) faces outward.
     for (let i = 0; i < n; i++) {
@@ -105,6 +114,7 @@ export function extrudeFootprints(
         const shade = py === 0 ? 0.78 : 1.0;
         col.push(c.r * shade, c.g * shade, c.b * shade);
         vfeat.push(fi);
+        cls.push(fClass); phase.push(fPhase);
       }
       idx.push(base, base + 1, base + 2, base, base + 2, base + 3);
     }
@@ -115,12 +125,15 @@ export function extrudeFootprints(
       pos.push(x, h, z);
       col.push(Math.min(c.r * 1.06, 1), Math.min(c.g * 1.06, 1), Math.min(c.b * 1.05, 1));
       vfeat.push(fi);
+      cls.push(fClass); phase.push(fPhase);
     }
     for (const t of roof) idx.push(rbase + t[0], rbase + t[1], rbase + t[2]);
   });
 
-  return { geometry: finish(pos, col, idx), vertexFeature: new Uint32Array(vfeat),
-           triangles: idx.length / 3 };
+  const g = finish(pos, col, idx);
+  if (opts.classOf) g.setAttribute("aClass", new THREE.Float32BufferAttribute(cls, 1));
+  if (opts.phaseOf) g.setAttribute("aPhase", new THREE.Float32BufferAttribute(phase, 1));
+  return { geometry: g, vertexFeature: new Uint32Array(vfeat), triangles: idx.length / 3 };
 }
 
 /**

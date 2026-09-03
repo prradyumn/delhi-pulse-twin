@@ -4,6 +4,7 @@ import "./style.css";
 import { probe } from "./core/capability";
 import { Stage } from "./core/stage";
 import { startLoop } from "./core/loop";
+import { WalkMode } from "./core/walkMode";
 import { LayerRegistry, type LayerReport } from "./layers/registry";
 import { GroundLayer } from "./layers/ground";
 import { WaterLayer } from "./layers/water";
@@ -18,12 +19,19 @@ import { TrafficLayer } from "./layers/traffic";
 import { MetroLayer } from "./layers/metro";
 import { PedestrianLayer } from "./layers/pedestrians";
 import { RoofDetailLayer, StreetscapeLayer, BuildingPartsLayer } from "./layers/detail";
+import { FurnitureLayer } from "./layers/furniture";
+import { ReachLayer } from "./layers/reach";
+import { RouteLayer } from "./layers/routes";
+import { buildWalkGraph } from "./analysis/network";
+import { reachContext, computeReach, routeBetween,
+         type ReachMode, type ReachContext, type ReachResult } from "./analysis/reach";
+import { reachPanel } from "./ui/reachPanel";
+import type { FacadeMaps } from "./layers/facade";
 import { BusLayer } from "./layers/buses";
 import { placePicker, type Place } from "./ui/places";
 import { exposureLab, type ExposureState } from "./ui/exposureLab";
 import { fetchLive, bandFromRain, type AirReading } from "./data/adapters/openMeteo";
 import { LiveBusLayer } from "./layers/liveBuses";
-import type { ExposureModel } from "./scenario/exposure";
 import * as load from "./geo/load";
 import { store, type RainBand } from "./state/store";
 import { corridorMetrics, type CorridorMetrics } from "./scenario/engine";
@@ -37,8 +45,13 @@ import type { Manifest, ScenarioModel, WeatherData } from "./geo/types";
 const LAYER_ORDER = [
   "ground", "water", "streetscape", "roads", "corridors",
   "buildings", "buildingparts", "roofdetail", "landmarks",
-  "trees", "rail", "transit", "traffic", "buses", "livebuses", "metro", "pedestrians",
+  "trees", "furniture", "rail", "transit", "traffic", "buses", "livebuses",
+  "metro", "pedestrians", "reach", "routes",
 ];
+
+/** The reach overlay is driven by its own panel — it needs a starting point before it means
+ *  anything — so it is reported in Data status but not offered as a bare on/off in the rail. */
+const RAIL_ORDER = LAYER_ORDER.filter((id) => id !== "reach" && id !== "routes");
 
 function fatal(title: string, detail: string) {
   document.body.append(el("div", { class: "fallback" },
@@ -90,11 +103,35 @@ async function boot() {
     cityAO = null;
   }
 
+  // The generated facade atlas. Same contract as the AO bake: if it is missing the buildings
+  // simply keep their procedural pattern, which is a visual downgrade and not a failure.
+  const loader = new THREE.TextureLoader();
+  async function tex(path: string, data: boolean) {
+    const t = await loader.loadAsync(`${load.DATA}/${path}`);
+    t.colorSpace = data ? THREE.NoColorSpace : THREE.SRGBColorSpace;
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.minFilter = THREE.LinearMipmapLinearFilter;
+    t.generateMipmaps = true;
+    t.anisotropy = Math.min(8, stage.renderer.capabilities.getMaxAnisotropy());
+    return t;
+  }
+  let facadeMaps: FacadeMaps | null = null;
+  try {
+    const [alb, nrm, rgh] = await Promise.all([
+      tex("bake/facade-albedo.png", false),
+      tex("bake/facade-normal.png", true),
+      tex("bake/facade-rough.png", true),
+    ]);
+    facadeMaps = { albedo: alb, normal: nrm, roughness: rgh, cells: 4 };
+  } catch {
+    facadeMaps = null;
+  }
+
   const registry = new LayerRegistry(root);
   const ground = new GroundLayer(EXTENT, GRID, cityAO, ORTHO);
   const water = new WaterLayer(stage.environment());
   const roads = new RoadsLayer(cityAO, ORTHO);
-  const buildings = new BuildingsLayer(EXTENT, GRID);
+  const buildings = new BuildingsLayer(EXTENT, GRID, facadeMaps);
   const rail = new RailLayer();
   const transit = new TransitLayer();
   const corridors = new CorridorLayer();
@@ -117,7 +154,10 @@ async function boot() {
   const traffic = new TrafficLayer(corridors.corridors);
   const roofDetail = new RoofDetailLayer(buildings.buildings);
   const liveBuses = new LiveBusLayer(m);
-  for (const l of [roofDetail, traffic, buses, liveBuses]) {
+  const furniture = new FurnitureLayer(roads.roads, transit.stops, EXTENT, GRID);
+  const reachLayer = new ReachLayer(EXTENT, 30);
+  const routeLayer = new RouteLayer();
+  for (const l of [roofDetail, furniture, traffic, buses, liveBuses, reachLayer, routeLayer]) {
     registry.add(l);
     try {
       registry.reports.set(l.id, await l.build());
@@ -225,7 +265,7 @@ async function boot() {
 
   // ---------------------------------------------------------------- UI
   const mast = masthead(m);
-  const rail0 = layerRail(LAYER_ORDER,
+  const rail0 = layerRail(RAIL_ORDER,
     (id, on) => { registry.setVisible(id, on); store.set({ layers: { ...store.get().layers, [id]: on } }); rail0.refresh(); },
     (on) => { buildings.setReveal(on); store.set({ revealEstimated: on }); rail0.refresh(); });
   const leg = legend(metro.lines);
@@ -263,7 +303,7 @@ async function boot() {
 
   const exposure = exposureLab(
     corridors.corridors,
-    (model as unknown as { exposure_model?: ExposureModel })?.exposure_model ?? null,
+    model?.exposure_model ?? null,
     (id) => { store.set({ activeCorridor: id }); recompute(); flyToCorridor(id); });
   mast.airBtn.addEventListener("click", () => {
     exposure.toggle();
@@ -288,11 +328,211 @@ async function boot() {
   const picker = placePicker(placesRes.ok ? placesRes.data.features : [], (pl) => {
     // frame from the south-east at a height proportional to the framing distance, so a district
     // reads as a district and a monument fills the view
-    flyTo([pl.x + pl.dist * 0.55, pl.dist * 0.62, pl.z + pl.dist], [pl.x, 0, pl.z]);
+    if (walk.active) {
+      // already at street level: put the walker at the place rather than yanking them upstairs
+      stage.camera.position.set(pl.x, walk.eyeHeight, pl.z + 40);
+    } else {
+      flyTo([pl.x + pl.dist * 0.55, pl.dist * 0.62, pl.z + pl.dist], [pl.x, 0, pl.z]);
+    }
     picker.hide();
   });
   document.body.append(picker.node);
   mast.placesBtn.addEventListener("click", () => picker.toggle());
+
+  // ---------------------------------------------------------------- reach on foot
+  //
+  // The walking graph is assembled from geometry the scene has already loaded — 684 road ways and
+  // 926 footway ways — so this costs one pass over arrays in memory and no new download. Built
+  // lazily on first use: most sessions never open the panel, and there is no reason to make them
+  // pay for it during startup.
+  /** the most recent air reading, live or pinned. The route comparison needs it as much as the
+   *  exposure panel does, and they must never disagree about which number they used. */
+  let latestAir: AirReading | null = null;
+  let reachCtx: ReachContext | null = null;
+  let reachOrigin: { x: number; z: number } | null = null;
+  let lastReach: ReachResult | null = null;
+  let lastRoute: ReturnType<typeof routeBetween> | null = null;
+  const originPin = new THREE.Group();
+  {
+    const pinMat = new THREE.MeshBasicMaterial({ color: 0xffd166, toneMapped: false });
+    const glow = new THREE.MeshBasicMaterial({
+      color: 0xffd166, transparent: true, opacity: 0.55, side: THREE.DoubleSide, toneMapped: false,
+      depthWrite: false,
+    });
+    // two rings at the scale of the 5-minute band, so the origin is findable from 2 km up as well
+    // as from the pavement
+    for (const [ri, ro, mat] of [[7, 10, pinMat], [26, 30, glow]] as [number, number, THREE.Material][]) {
+      const g = new THREE.RingGeometry(ri, ro, 56);
+      g.rotateX(-Math.PI / 2);
+      const mesh = new THREE.Mesh(g, mat);
+      mesh.position.y = 0.14;
+      originPin.add(mesh);
+    }
+    const stemGeo = new THREE.CylinderGeometry(0.7, 0.7, 90, 8);
+    stemGeo.translate(0, 45, 0);
+    originPin.add(new THREE.Mesh(stemGeo, glow));
+    const capGeo = new THREE.SphereGeometry(3.2, 16, 12);
+    capGeo.translate(0, 92, 0);
+    originPin.add(new THREE.Mesh(capGeo, pinMat));
+    originPin.visible = false;
+    originPin.renderOrder = 4;
+    root.add(originPin);
+  }
+
+  function ensureReachCtx(): ReachContext | null {
+    if (reachCtx) return reachCtx;
+    if (!roads.roads.length) return null;
+    const t0 = performance.now();
+    const g = buildWalkGraph(roads.roads, streetscape.footways, {
+      // taken from the versioned exposure model rather than invented here, so there is exactly one
+      // declared kerbside figure in the project
+      peakEnrichment: model?.exposure_model?.roadside_enrichment?.in_traffic ?? 1.20,
+    });
+    // metro station points only: the two mainline halts are not what "walk to the metro" means
+    const stations = rail.stations.filter((st) => st.sub);
+    reachCtx = reachContext(
+      g, EXTENT,
+      placesRes.ok ? placesRes.data.features : [],
+      stations, transit.stops,
+    );
+    reachRail.setGraph(g);
+    console.info(`[reach] graph ${g.stats.nodes} nodes / ${g.stats.edges} edges in `
+                 + `${(performance.now() - t0).toFixed(0)} ms, `
+                 + `largest component ${g.stats.largestComponentPct.toFixed(1)}%`);
+    return reachCtx;
+  }
+
+  let routeFrom: { x: number; z: number } | null = null;
+  const destPin = originPin.clone();
+  destPin.visible = false;
+  destPin.traverse((o) => {
+    const mesh = o as THREE.Mesh;
+    if (mesh.material) {
+      mesh.material = (mesh.material as THREE.Material).clone();
+      (mesh.material as THREE.MeshBasicMaterial).color = new THREE.Color(0x5fce8a);
+    }
+  });
+  root.add(destPin);
+
+  function runRoute(to: { x: number; z: number }) {
+    const ctx = ensureReachCtx();
+    if (!ctx || !routeFrom) return;
+    const vent = model?.exposure_model?.ventilation_m3_per_min?.walking ?? 0.026;
+    const res = routeBetween(ctx, routeFrom, to, {
+      pm2_5: latestAir?.pm2_5 ?? null, ventilation: vent,
+    });
+    if ("error" in res) {
+      // same trap as the reach field: a stale success left in place makes a failure read as one
+      lastRoute = null;
+      routeLayer.clear();
+      reachRail.setRoutePair(res);
+      return;
+    }
+    routeLayer.setRoutes([
+      { route: res.cleanest, kind: "dose" },
+      { route: res.fastest, kind: "time" },
+    ]);
+    lastRoute = res;
+    reachRail.setRoutePair(res);
+  }
+
+  function runReach(mode: ReachMode) {
+    if (mode === "route") {
+      // a different question with a different interaction: clear the field and ask for two clicks
+      reachLayer.setVisible(false);
+      routeLayer.clear();
+      routeFrom = null;
+      originPin.visible = false; destPin.visible = false;
+      reachRail.setRoutePrompt("start");
+      return;
+    }
+    routeLayer.clear();
+    destPin.visible = false;
+    const ctx = ensureReachCtx();
+    if (!ctx) {
+      reachRail.setResult({ error: "The road layer did not load, so no walking network can be built." });
+      return;
+    }
+    const t0 = performance.now();
+    const res = computeReach(ctx, mode, reachOrigin);
+    if ("error" in res) {
+      // clearing this matters: leaving the previous result in place makes a failed query look
+      // like a successful one to anything reading the test surface
+      lastReach = null;
+      reachLayer.setVisible(false);
+      reachRail.setResult(res);
+      return;
+    }
+    lastReach = res;
+    reachLayer.setField(res.raster, res.compare);
+    reachLayer.setVisible(true);
+    store.set({ layers: { ...store.get().layers, reach: true } });
+    reachRail.setResult(res);
+    console.info(`[reach] ${mode} in ${(performance.now() - t0).toFixed(0)} ms`);
+  }
+
+  const reachRail = reachPanel(
+    (mode) => runReach(mode),
+    () => {
+      reachOrigin = null; routeFrom = null;
+      originPin.visible = false; destPin.visible = false;
+      reachLayer.setVisible(false); routeLayer.clear();
+    },
+    (v) => reachLayer.setOpacity(v),
+  );
+  document.body.append(reachRail.node);
+  mast.reachBtn.addEventListener("click", () => {
+    reachRail.toggle();
+    mast.reachBtn.classList.toggle("on", reachRail.isOpen());
+    if (!reachRail.isOpen()) {
+      reachLayer.setVisible(false);
+      routeLayer.setVisible(false);
+      originPin.visible = false; destPin.visible = false;
+    } else {
+      routeLayer.setVisible(true);
+      if (reachRail.mode === "route") reachRail.setRoutePrompt(routeFrom ? "destination" : "start");
+      else if (reachOrigin || reachRail.mode === "metro" || reachRail.mode === "busstop") {
+        runReach(reachRail.mode);
+      }
+    }
+  });
+
+  /** true when the click was consumed as a reach origin rather than as a selection */
+  function reachClick(r: THREE.Ray): boolean {
+    if (!reachRail.isOpen()) return false;
+    const mode = reachRail.mode;
+    if (mode !== "walk" && mode !== "stepfree" && mode !== "route") return false;
+    // intersect the ground plane directly: picking against a mesh would miss the lawns, and
+    // clicking a rooftop should still mean "the ground under that roof"
+    const hit = new THREE.Vector3();
+    if (!r.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), hit)) return false;
+    if (hit.x < EXTENT.x[0] || hit.x > EXTENT.x[1] || hit.z < EXTENT.z[0] || hit.z > EXTENT.z[1]) {
+      return false;
+    }
+    const at = { x: hit.x, z: hit.z };
+
+    if (mode === "route") {
+      if (!routeFrom) {
+        routeFrom = at;
+        originPin.position.set(at.x, 0, at.z); originPin.visible = true;
+        destPin.visible = false;
+        routeLayer.clear();
+        reachRail.setRoutePrompt("destination");
+      } else {
+        destPin.position.set(at.x, 0, at.z); destPin.visible = true;
+        requestAnimationFrame(() => runRoute(at));
+      }
+      return true;
+    }
+
+    reachOrigin = at;
+    originPin.position.set(at.x, 0, at.z);
+    originPin.visible = true;
+    reachRail.setBusy(true);
+    // one frame of "computing", so a 40 ms Dijkstra does not look like a dropped click
+    requestAnimationFrame(() => runReach(mode));
+    return true;
+  }
 
   // ---------------------------------------------------------------- camera moves
   let flight: { from: THREE.Vector3; to: THREE.Vector3; tFrom: THREE.Vector3; tTo: THREE.Vector3; t: number } | null = null;
@@ -316,6 +556,28 @@ async function boot() {
     flyTo([mid[0] + 380, 330, mid[1] + 640], [mid[0], 0, mid[1]]);
   }
 
+  // ---------------------------------------------------------------- street level
+  const walkHint = el("div", { class: "panel hidden", id: "walkhint" },
+    el("div", { class: "pbody" },
+      el("strong", { text: "Street level" }),
+      el("p", { class: "note",
+        text: "Drag to look, W A S D or the arrow keys to walk, Shift to hurry. Esc to come back up." }),
+      el("p", { class: "note", style: "margin:0",
+        text: "Eye height 1.7 m. This is the scale the facades, kerbs, rooftop tanks and walkers were built for — and the scale the exposure figures describe." })));
+  document.body.append(walkHint);
+
+  const walk = new WalkMode(stage.camera, stage.controls, canvas, EXTENT, (on) => {
+    walkHint.classList.toggle("hidden", !on);
+    store.set({ walking: on });
+    // A pedestrian sees far less than a helicopter, so the fog can close in — which also buys
+    // back the fill rate the near detail wants.
+    (stage.scene.fog as THREE.Fog).near = on ? 120 : 3060;
+    (stage.scene.fog as THREE.Fog).far = on ? 1400 : 11000;
+    // an isochrone reads as a map from above and as paint on the pavement from eye height
+    reachLayer.setMapMode(!on);
+  });
+  mast.walkBtn.addEventListener("click", () => walk.toggle());
+
   // ---------------------------------------------------------------- picking
   const ray = new THREE.Raycaster();
   const ndc = new THREE.Vector2();
@@ -327,6 +589,9 @@ async function boot() {
     const r = canvas.getBoundingClientRect();
     ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(ndc, stage.camera);
+
+    // the reach panel claims the click while it is open and asking for a starting point
+    if (reachClick(ray.ray)) return;
 
     const targets: THREE.Object3D[] = [];
     const push = (o?: THREE.Object3D | null) => { if (o && o.visible && o.parent?.visible) targets.push(o); };
@@ -454,6 +719,9 @@ async function boot() {
     }
     if (e.key === "Escape") { det.hide(); buildings.highlight(null); }
     if (e.key === "r" || e.key === "R") flyTo([1500, 1400, 2000], [0, 0, 0]);
+    if ((e.key === "g" || e.key === "G") && !(e.target instanceof HTMLInputElement)) {
+      e.preventDefault(); walk.toggle();
+    }
     if ((e.key === "a" || e.key === "A") && !(e.target instanceof HTMLInputElement)) {
       e.preventDefault();
       exposure.toggle();
@@ -478,13 +746,20 @@ async function boot() {
         acc = 0;
       }
     }
-    if (flight) {
+    walk.update(dt);
+    if (flight && !walk.active) {
       flight.t = Math.min(flight.t + dt / 900, 1);
       const e = 1 - Math.pow(1 - flight.t, 3);
       stage.camera.position.lerpVectors(flight.from, flight.to, e);
       stage.controls.target.lerpVectors(flight.tFrom, flight.tTo, e);
       if (flight.t >= 1) flight = null;
     }
+    // sub-pixel detail is the most expensive geometry in the scene per pixel it contributes;
+    // both of these declare the height below which they are worth drawing
+    const camY = stage.camera.position.y;
+    furniture.setCameraHeight(camY);
+    roofDetail.setCameraHeight(camY);
+    pedestrians.setCameraHeight(camY);
     buses.update(s.timeMin);
     traffic.update(s.timeMin * 60);
     metro.update(s.timeMin);
@@ -524,6 +799,7 @@ async function boot() {
     snapshotNote: "The live Open-Meteo reading has not arrived, so this is the pinned figure from "
                   + "2026-09-03. Every number derived from it is as old as it is.",
   };
+  latestAir = snapshotAir;
   exposure.setAir(snapshotState);
   mast.setFeed("fallback", "pinned snapshot",
     "No live provider contacted yet. Air quality is the pinned snapshot in weather/baseline.json.");
@@ -565,6 +841,7 @@ async function boot() {
   async function pollLive() {
     const bundle = await fetchLive();
     if (bundle.air) {
+      latestAir = bundle.air;
       exposure.setAir({
         air: bundle.air, forecast: bundle.forecast, fromSnapshot: false, snapshotNote: "",
       });
@@ -578,6 +855,7 @@ async function boot() {
       });
     } else {
       // stay on the snapshot and say so, rather than showing nothing
+      latestAir = snapshotAir;
       exposure.setAir(snapshotState);
       mast.setFeed("unavailable", "live feed down",
         `Open-Meteo unavailable: ${bundle.errors.join("; ") || "unknown"}. `
@@ -643,6 +921,60 @@ async function boot() {
     renderScale: () => stage.post.scale,
     /** submitted after culling, vs declared — the gap is the culling */
     submitted: () => stage.submitted(),
+    /** street furniture, whose whole point is that it is NOT drawn from altitude */
+    furnitureState: () => ({
+      visible: furniture.group.visible,
+      cameraY: Math.round(stage.camera.position.y),
+      gateM: FurnitureLayer.VISIBLE_BELOW_M,
+      counts: furniture.breakdown(),
+    }),
+    /** the reach field, addressable without a synthetic pointer event */
+    reach: {
+      set(x: number, z: number, mode: ReachMode = "walk") {
+        reachOrigin = { x, z };
+        originPin.position.set(x, 0, z);
+        originPin.visible = true;
+        reachRail.show();
+        runReach(mode);
+        return true;
+      },
+      run(mode: ReachMode) { reachRail.show(); runReach(mode); },
+      graph: () => ensureReachCtx()?.graph.stats ?? null,
+      servedKm2: () => ensureReachCtx()?.servedKm2 ?? null,
+      route(ax: number, az: number, bx: number, bz: number) {
+        reachRail.setMode("route");
+        reachRail.show();
+        routeFrom = { x: ax, z: az };
+        originPin.position.set(ax, 0, az); originPin.visible = true;
+        destPin.position.set(bx, 0, bz); destPin.visible = true;
+        runRoute({ x: bx, z: bz });
+        // a failed query returns the error, not null: `null?.error` is undefined, and a caller
+        // testing for a failure would read that as a success
+        if (!lastRoute) return { error: "no route" };
+        return !("error" in lastRoute) ? {
+          identical: lastRoute.identical,
+          extraMinutes: lastRoute.extraMinutes,
+          doseSavedFrac: lastRoute.doseSavedFrac,
+          fastest: { minutes: lastRoute.fastest.minutes, metres: lastRoute.fastest.metres,
+                     doseMinutes: lastRoute.fastest.doseMinutes,
+                     meanEnrich: lastRoute.fastest.meanEnrich, points: lastRoute.fastest.path.length },
+          cleanest: { minutes: lastRoute.cleanest.minutes, metres: lastRoute.cleanest.metres,
+                      doseMinutes: lastRoute.cleanest.doseMinutes,
+                      meanEnrich: lastRoute.cleanest.meanEnrich, points: lastRoute.cleanest.path.length },
+          ug: lastRoute.ug,
+        } : lastRoute;
+      },
+      last: () => (lastReach ? {
+        mode: lastReach.mode,
+        areasKm2: lastReach.areasKm2,
+        compareAreasKm2: lastReach.compareAreasKm2,
+        servedKm2: lastReach.servedKm2,
+        detour: lastReach.detour,
+        reached: lastReach.reached,
+        stepLossPct: lastReach.stepLossPct,
+      } : null),
+      visible: () => reachLayer.visible,
+    },
     pixelLoad: () => stage.pixelLoad(),
     ready: true,
   };

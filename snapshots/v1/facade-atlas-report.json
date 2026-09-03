@@ -1,0 +1,25 @@
+{
+  "generated_at": "2026-09-03T21:51:27",
+  "blender": "5.2.0 LTS",
+  "seconds": 3.7,
+  "atlas": {
+    "size_x": 1024,
+    "size_y": 256,
+    "cell": 256,
+    "layout": "4x1 strip",
+    "uv": "u = (cls + fract(bay)) / 4 ; v = fract(storey). A strip has no vertical cell boundary, so the atlas cannot be sampled upside down."
+  },
+  "cells": {
+    "0": "commercial / office \u2014 glazing bands, mullions",
+    "1": "government / civic \u2014 sandstone ashlar, deep-set windows",
+    "2": "residential \u2014 plaster, punched windows, sill staining",
+    "3": "retail / mixed \u2014 shopfront base, plaster above"
+  },
+  "files": {
+    "facade-albedo": 1141917,
+    "facade-normal": 18274,
+    "facade-rough": 198055
+  },
+  "total_bytes": 1358246,
+  "provenance": "Entirely generated. No photographic source was used, because the data register forbids redistributing imagery this project does not hold rights to (D12). The cells are keyed to OSM building classes, so the texture carries information as well as detail."
+}

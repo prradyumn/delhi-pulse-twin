@@ -262,6 +262,51 @@ else:
         by_src[e["source"]] = by_src.get(e["source"], 0) + 1
     print(f"  landmarks: {by_src}")
 
+# ------------------------------------------------- no building inside an authored landmark
+#
+# The bug this exists to catch was invisible in every number and obvious in one render: India
+# Gate's arch is separately mapped in OSM as `way/1078065894`, a 40 m building distinct from the
+# monument way the landmark config names. The buildings layer extruded it, with the office-facade
+# texture, exactly on top of the authored model. Excluding by OSM id could never have caught it.
+_lm = load("landmarks.json")
+_bl = load("buildings.json")
+if _lm and _bl:
+    def _inside(pt, ring):
+        # ray casting; the rings here are simple polygons straight out of shapely
+        x, z = pt
+        inside = False
+        n = len(ring)
+        for i in range(n):
+            ax, az = ring[i]
+            bx, bz = ring[(i + 1) % n]
+            if (az > z) != (bz > z):
+                t = (z - az) / (bz - az)
+                if x < ax + t * (bx - ax):
+                    inside = not inside
+        return inside
+
+    modelled = [f for f in _lm["features"] if f["kind"] != "open"]
+    overlaps = []
+    for b in _bl["features"]:
+        ring = b["r"]
+        cx = sum(p[0] for p in ring) / len(ring)
+        cz = sum(p[1] for p in ring) / len(ring)
+        for lm in modelled:
+            if _inside((cx, cz), lm["ring"]):
+                overlaps.append(f"{b['id']} (h={b['h']}) inside {lm['id']}")
+                break
+    check(not overlaps,
+          f"{len(overlaps)} building footprint(s) sit inside an authored landmark and will render "
+          f"through it: {overlaps[:4]}")
+    # and the suppression must actually have run rather than the overlap merely not existing
+    rep = json.loads((pathlib.Path("snapshots/v1/build-report.json")).read_text()) \
+        if pathlib.Path("snapshots/v1/build-report.json").exists() else {}
+    sup = (rep.get("buildings") or {}).get("suppressed_under_landmarks")
+    if sup is not None:
+        check(sum(sup.values()) > 0,
+              "no buildings were suppressed under landmarks — the spatial exclusion is not running")
+        print(f"  landmark overlap: {sum(sup.values())} building(s) suppressed {sup}")
+
 # ---------------------------------------------------------------- manifest
 mf = load("manifest.json")
 if mf:

@@ -250,10 +250,47 @@ def boolean_difference(target, cutter):
     return target
 
 
+def orient_outward(obj):
+    """Force a closed mesh's normals to face out, deterministically.
+
+    Added after the fourth normals bug in this project. India Gate rendered near-black on its lit
+    faces while the steps beside it — same material, same joined mesh — rendered correctly: the
+    EXACT boolean solver had left the pylon's shell inverted, and nothing in the chain ever checked.
+    The earlier three were hand-authored wall normals opposite to their winding, earcut emitting
+    -Y regardless of input winding, and ribbon triangles wound to face the floor. Every one of
+    them rendered without an error and was caught by looking at a picture.
+
+    So this is not `normals_make_consistent` alone, which only makes a mesh agree with itself and
+    can happily agree on inward. The signed volume of a closed mesh is positive exactly when its
+    normals face out, so it is measured and flipped if wrong — no ray casting, no heuristic.
+
+    Returns True if the mesh had to be flipped, so callers can report it.
+    """
+    me = obj.data
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    vol = bm.calc_volume(signed=True)
+    flipped = False
+    if vol < 0:
+        bmesh.ops.reverse_faces(bm, faces=bm.faces[:])
+        flipped = True
+    bm.to_mesh(me)
+    bm.free()
+    me.update()
+    return flipped
+
+
 def join_all(objs, name):
     objs = [o for o in objs if o is not None]
     if not objs:
         return None
+    # per object, BEFORE the join: on a joined mesh of many interpenetrating shells there is no
+    # single well-defined outside, so the volume test has to run while each shell is still its own
+    flipped = [o.name for o in objs if orient_outward(o)]
+    if flipped:
+        print(f"    normals flipped outward on {len(flipped)}: {', '.join(flipped[:6])}"
+              + (" ..." if len(flipped) > 6 else ""))
     for o in bpy.context.selected_objects:
         o.select_set(False)
     for o in objs:

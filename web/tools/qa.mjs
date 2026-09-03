@@ -179,15 +179,44 @@ check(perf.totals.triangles <= TRI_MAX, `${perf.totals.triangles} triangles over
 await shot("01-default-view");
 
 // ---- GPU budget, at a parked camera so the frustum is not changing under the measurement
-const benchWide = JSON.parse(await evalJs(`(async () => JSON.stringify(
-  await window.__twin.bench({ pos:[1500,1400,2000], target:[0,0,0], frames: 30 })))()`));
-const benchClose = JSON.parse(await evalJs(`(async () => JSON.stringify(
-  await window.__twin.bench({ pos:[1055,330,-19], target:[1055,0,-619], frames: 30 })))()`));
+//
+// Each camera is measured TWICE and the lower median is used. This is not cherry-picking, it is
+// the only defensible estimator here: thermal throttling, another process on the GPU and a second
+// browser window can each only ADD time to a frame, never remove it, so of two samples of the
+// same work the smaller is the better estimate of what the build costs.
+//
+// It matters because this harness produced 12.9 ms and 25.2 ms for the SAME commit at the same
+// camera an hour apart, and 23.3 ms then 41.3 ms for another build in consecutive passes. A gate
+// that reads one sample turns a hot laptop into a code review comment. The spread is printed so
+// an unstable machine is visible rather than silently deciding the result.
+async function benchTwice(pos, target, frames = 30) {
+  const runs = [];
+  for (let i = 0; i < 2; i++) {
+    runs.push(JSON.parse(await evalJs(`(async () => JSON.stringify(
+      await window.__twin.bench({ pos:[${pos}], target:[${target}], frames: ${frames} })))()`)));
+  }
+  const ok = runs.filter((r) => r.gpuMedianMs !== null);
+  if (!ok.length) return { ...runs[0], gpuSpreadPct: null };
+  const best = ok.reduce((a, b) => (b.gpuMedianMs < a.gpuMedianMs ? b : a));
+  const worst = ok.reduce((a, b) => (b.gpuMedianMs > a.gpuMedianMs ? b : a));
+  return { ...best,
+           gpuSpreadPct: best.gpuMedianMs > 0
+             ? ((worst.gpuMedianMs - best.gpuMedianMs) / best.gpuMedianMs) * 100 : 0 };
+}
+
+const benchWide = await benchTwice("1500,1400,2000", "0,0,0");
+const benchClose = await benchTwice("1055,330,-19", "1055,0,-619");
 for (const [label, r] of [["wide", benchWide], ["close", benchClose]]) {
   const g = r.gpuMedianMs;
   if (g === null) { notes.push(`GPU timer produced no samples for the ${label} view`); continue; }
-  console.log(`  gpu ${label.padEnd(9)} ${g.toFixed(2)} ms median over ${r.gpuSamples} frames · ${r.submitted.calls} calls · ${r.submitted.triangles.toLocaleString()} tris`);
-  check(g < GPU_MS_MAX, `${label} view GPU ${g.toFixed(2)} ms exceeds the ${GPU_MS_MAX} ms budget`);
+  const spread = r.gpuSpreadPct === null ? "" : ` · repeat spread ${r.gpuSpreadPct.toFixed(0)}%`;
+  console.log(`  gpu ${label.padEnd(9)} ${g.toFixed(2)} ms best of 2 over ${r.gpuSamples} frames · ${r.submitted.calls} calls · ${r.submitted.triangles.toLocaleString()} tris${spread}`);
+  if (r.gpuSpreadPct !== null && r.gpuSpreadPct > 25) {
+    notes.push(`${label} view repeated at ${r.gpuSpreadPct.toFixed(0)}% spread — this machine is `
+               + `contended or throttling, so treat the absolute GPU figure as an upper bound`);
+  }
+  check(g < GPU_MS_MAX, `${label} view GPU ${g.toFixed(2)} ms (best of 2, repeat spread `
+        + `${r.gpuSpreadPct === null ? "?" : r.gpuSpreadPct.toFixed(0)}%) exceeds the ${GPU_MS_MAX} ms budget`);
   check(r.disjoint === 0 || r.gpuSamples > 10,
         `${label} view: ${r.disjoint} disjoint GPU queries and only ${r.gpuSamples} good samples`);
 }
@@ -208,6 +237,25 @@ if (benchLow.gpuMedianMs !== null && benchClose.gpuMedianMs !== null) {
         `low quality (${benchLow.gpuMedianMs.toFixed(2)} ms) is not meaningfully cheaper than `
         + `default (${benchClose.gpuMedianMs.toFixed(2)} ms) — the tiers must differ in something real`);
 }
+
+// ---- street furniture must be gated on altitude, or it costs 3-4 ms for sub-pixel geometry
+const furn = JSON.parse(await evalJs(`(async () => {
+  const t = window.__twin;
+  await t.bench({ pos:[0,2400,2600], target:[0,0,0], frames: 6 });
+  const high = t.furnitureState();
+  await t.bench({ pos:[240,120,-1000], target:[0,0,-1200], frames: 6 });
+  const low = t.furnitureState();
+  return JSON.stringify({ high, low });
+})()`));
+check(furn.high.visible === false,
+      `street furniture is still drawn from ${furn.high.cameraY} m, above its ${furn.high.gateM} m gate`);
+check(furn.low.visible === true,
+      `street furniture is missing at ${furn.low.cameraY} m, below its ${furn.low.gateM} m gate`);
+const fc = furn.low.counts;
+check((fc.lamps ?? 0) > 1500 && (fc.shelters ?? 0) === 166,
+      `furniture counts look wrong: ${JSON.stringify(fc)}`);
+console.log(`  furniture     ${fc.lamps} lamps, ${fc.shelters} shelters, ${fc.signals} signals · `
+            + `off above ${furn.high.gateM} m`);
 
 // ================================================================ 2. no console errors
 check(consoleErrors.length === 0,
@@ -256,6 +304,123 @@ if (speed) {
   check(scen < base, `mean speed did not fall under heavy rain: ${base} -> ${scen}`);
   console.log(`  heavy rain    mean speed ${base} -> ${scen} km/h`);
 }
+
+// ================================================================ 4b. reach on foot
+//
+// The reach field is the first thing in this app that computes a graph at runtime, so the checks
+// are about the graph being sound rather than about pixels: a fragmented graph still renders
+// something, and that something is wrong. The 45%-connected version rendered perfectly.
+await load();
+const reach = JSON.parse(await evalJs(`(async () => {
+  const B = t => [...document.querySelectorAll('button')].find(b=>b.textContent.trim()===t);
+  B('Explore freely')?.click(); await new Promise(r=>setTimeout(r,900));
+  const t = window.__twin;
+  const g = t.reach.graph();
+  t.reach.set(-60, -900, 'walk');
+  await new Promise(r=>setTimeout(r,700));
+  const walk = t.reach.last();
+  t.reach.run('stepfree');
+  await new Promise(r=>setTimeout(r,700));
+  const free = t.reach.last();
+  t.reach.run('metro');
+  await new Promise(r=>setTimeout(r,700));
+  const metro = t.reach.last();
+  return JSON.stringify({ g, walk, free, metro, served: t.reach.servedKm2(),
+                          visible: t.reach.visible(),
+                          panel: document.getElementById('reach')?.innerText || '' });
+})()`));
+
+check(!!reach.g && reach.g.nodes > 3000,
+      `walking graph too small: ${reach.g?.nodes} nodes`);
+// the fragmentation bug this exact number caught: 45% connected renders fine and answers wrongly
+check(reach.g.largestComponentPct > 80,
+      `walking graph is fragmented: only ${reach.g.largestComponentPct?.toFixed(1)}% of nodes in the largest component`);
+check(reach.g.stepEdges > 50 && reach.g.stepEdges < 400,
+      `expected the ~110 stepped ways to survive into the graph, got ${reach.g.stepEdges} edges`);
+check(reach.visible === true, "reach overlay did not become visible after a query");
+
+// bands must be cumulative and strictly growing, or the raster is being written wrong
+const A = reach.walk?.areasKm2 ?? [];
+check(A.length === 5, `expected 5 reach bands, got ${A.length}`);
+for (let i = 1; i < A.length; i++) {
+  check(A[i] > A[i - 1], `reach band ${i} (${A[i]?.toFixed(2)} km²) is not larger than band ${i - 1}`);
+}
+check(A[4] < reach.served + 1e-6,
+      `25-minute area ${A[4]?.toFixed(2)} km² exceeds the ${reach.served?.toFixed(2)} km² the network can serve at all`);
+
+// removing the stepped ways can only ever take reach away
+const F = reach.free?.compareAreasKm2 ?? [];
+check(F.length === 5, "step-free comparison produced no bands");
+for (let i = 0; i < F.length; i++) {
+  check(F[i] <= A[i] + 1e-6,
+        `step-free reach at band ${i} (${F[i]?.toFixed(3)}) exceeds the unrestricted reach (${A[i]?.toFixed(3)}) — impossible`);
+}
+
+// a detour ratio below 1 would mean walking beat a straight line
+check(reach.walk.detour.median >= 1,
+      `detour ratio ${reach.walk.detour.median} is below 1, which is geometrically impossible`);
+check(reach.walk.detour.p90 >= reach.walk.detour.median, "p90 detour is below the median");
+
+// the origin-free field must cover more ground than any single origin can
+check((reach.metro?.areasKm2?.[4] ?? 0) > A[4],
+      "the nearest-metro field covers less ground than one walking origin, which cannot be right");
+
+check(/ASSUMPTIONS/i.test(reach.panel), "the reach panel showed a result with no assumptions");
+check(/connected component/i.test(reach.panel),
+      "the reach panel did not disclose graph fragmentation");
+console.log(`  reach         ${reach.g.nodes} nodes, ${reach.g.largestComponentPct.toFixed(1)}% connected · `
+            + `15-min ${A[2].toFixed(2)} km² of ${reach.served.toFixed(1)} km² served · `
+            + `step-free costs ${reach.free.stepLossPct.toFixed(1)}%`);
+await shot("04b-reach");
+
+// ================================================================ 4c. route comparison
+//
+// The invariants that matter are the ones a plausible-looking wrong answer would violate: the
+// lowest-dose route can never inhale more than the quickest one, and the quickest can never take
+// longer. Both were briefly false while road edges were charged zero distance to their own traffic.
+const rt = JSON.parse(await evalJs(`(async () => {
+  const B = t => [...document.querySelectorAll('button')].find(b=>b.textContent.trim()===t);
+  B('Explore freely')?.click(); await new Promise(r=>setTimeout(r,900));
+  const t = window.__twin;
+  const one = t.reach.route(-60, -900, 700, -500);
+  await new Promise(r=>setTimeout(r,250));
+  // read the panel while the good result is still up: the deliberate failure below replaces it
+  const panel = document.getElementById('reach')?.innerText || '';
+  // a destination well outside the box must fail, and must not leave the last answer standing
+  const bad = t.reach.route(-60, -900, 60000, 60000);
+  await new Promise(r=>setTimeout(r,150));
+  const afterBad = document.getElementById('reach')?.innerText || '';
+  return JSON.stringify({ one, bad, panel, afterBad });
+})()`));
+
+check(!!rt.one && !rt.one.error, `route query failed: ${rt.one?.error ?? "no result"}`);
+if (rt.one && !rt.one.error) {
+  const { fastest, cleanest } = rt.one;
+  check(fastest.minutes > 0 && fastest.points > 1, "quickest route has no length");
+  check(cleanest.minutes >= fastest.minutes - 1e-6,
+        `the quickest route (${fastest.minutes}) is slower than the lowest-dose one (${cleanest.minutes})`);
+  check(cleanest.doseMinutes <= fastest.doseMinutes + 1e-6,
+        `the lowest-dose route inhales more (${cleanest.doseMinutes}) than the quickest (${fastest.doseMinutes})`);
+  check(fastest.meanEnrich >= 1 && fastest.meanEnrich <= 1.25,
+        `kerbside enrichment ${fastest.meanEnrich} is outside the model's 1.00-1.20 range`);
+  // the road-centreline bug pinned every route to the peak; a mean at the ceiling means it is back
+  check(fastest.meanEnrich < 1.199,
+        `mean enrichment ${fastest.meanEnrich} is at the model ceiling — road edges are being charged zero distance to their own traffic again`);
+  console.log(`  route         ${fastest.minutes.toFixed(1)} min quickest vs ${cleanest.minutes.toFixed(1)} min lowest-dose · `
+              + `enrichment x${fastest.meanEnrich.toFixed(3)} -> x${cleanest.meanEnrich.toFixed(3)} · `
+              + `saving ${(rt.one.doseSavedFrac * 100).toFixed(1)}%`);
+}
+check(!!rt.bad?.error, "a destination outside the mapped network returned a route instead of an error");
+check(/no mapped way|140 m/i.test(rt.afterBad),
+      "the panel did not say why the out-of-network destination failed");
+check(!/Two ways to walk it/.test(rt.afterBad),
+      "a failed route query left the previous result on screen");
+check(/not the lever/i.test(rt.panel),
+      "the route panel did not state the measured ceiling on route choice");
+check(/2\.2%/.test(rt.panel), "the route panel did not quote the measured 2.2% ceiling");
+await shot("04c-route");
+
+
 
 // ================================================================ 5. no predictive wording
 const wording = await evalJs(`(() => {

@@ -271,3 +271,131 @@ export function applyBakedAO(
   mat.customProgramCacheKey = () => `${key ? key() : "std"}|cityao-${strength}`;
   return mat;
 }
+
+/** OSM `building=*` -> atlas cell. This is the point of the atlas: the texture is keyed to real
+ *  data, so a glass office and a sandstone ministry look different because they *are* different,
+ *  not because variety looks nice. */
+export function atlasCellFor(buildingClass: string): number {
+  switch (buildingClass) {
+    case "commercial": case "office": case "industrial": case "warehouse":
+      return 0;
+    case "government": case "public": case "civic": case "civil": case "college":
+    case "university": case "school": case "hospital": case "museum": case "train_station":
+    case "temple": case "mosque": case "church": case "cathedral": case "shrine":
+      return 1;
+    case "retail": case "supermarket": case "shop": case "kiosk": case "mall":
+      return 3;
+    default:
+      // `building=yes` is 84% of this box, so the default has to be the ordinary case:
+      // plaster with punched windows, which is what most of Lutyens' Delhi actually is
+      return 2;
+  }
+}
+
+export interface FacadeMaps {
+  albedo: THREE.Texture;
+  normal: THREE.Texture;
+  roughness: THREE.Texture;
+  /** number of cells across the strip */
+  cells: number;
+}
+
+/**
+ * Textured facades from the generated strip atlas.
+ *
+ * Replaces the procedural window pattern with real material: window recesses that light correctly
+ * via the normal map, glass that is smooth where plaster is coarse via the roughness map, and
+ * staining below the sills. The class comes from a vertex attribute, so **one material and one
+ * draw call still covers every building** — the alternative, a material per class, would have
+ * multiplied the draw calls this project just spent a day reducing.
+ *
+ * UVs are world-space: u from whichever horizontal axis the wall faces, v from height. So the
+ * texture is tied to real metres — a storey is a storey — rather than to an arbitrary unwrap.
+ */
+export function applyFacadeTextures(
+  mat: THREE.MeshStandardMaterial,
+  maps: FacadeMaps,
+  opts: { storeyM?: number; bayM?: number } = {},
+) {
+  const storey = opts.storeyM ?? 3.5;
+  const bay = opts.bayM ?? 4.2;
+  const prev = mat.onBeforeCompile;
+  // three only generates the tangent/normal plumbing if the material declares a normal map
+  mat.normalMap = maps.normal;
+  mat.normalScale = new THREE.Vector2(1.1, 1.1);
+
+  mat.onBeforeCompile = (shader, renderer) => {
+    prev?.call(mat, shader, renderer);
+    shader.uniforms.uFacAlbedo = { value: maps.albedo };
+    shader.uniforms.uFacRough = { value: maps.roughness };
+    shader.uniforms.uFacNormal = { value: maps.normal };
+    shader.uniforms.uFacCells = { value: maps.cells };
+    shader.uniforms.uFacStorey = { value: storey };
+    shader.uniforms.uFacBay = { value: bay };
+
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>",
+        `#include <common>
+         attribute float aClass;
+         attribute float aPhase;
+         varying float vClass;
+         varying float vPhase;`)
+      .replace("#include <begin_vertex>",
+        `#include <begin_vertex>
+         vClass = aClass;
+         vPhase = aPhase;`);
+
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>",
+        `#include <common>
+         uniform sampler2D uFacAlbedo;
+         uniform sampler2D uFacRough;
+         uniform sampler2D uFacNormal;
+         uniform float uFacCells;
+         uniform float uFacStorey;
+         uniform float uFacBay;
+         varying float vClass;
+         varying float vPhase;
+
+         // Atlas UV for a strip: the class picks a cell, the fractional part walks within it.
+         // Clamped a texel inside the cell so bilinear filtering cannot bleed the neighbour in.
+         vec2 dptAtlasUv(float cellIx, vec2 local) {
+           float inv = 1.0 / uFacCells;
+           float pad = 0.5 * inv / 256.0;
+           float u = (cellIx + clamp(fract(local.x), pad, 1.0 - pad)) * inv;
+           return vec2(u, clamp(fract(local.y), 0.0, 1.0));
+         }`)
+      .replace("#include <color_fragment>",
+        `#include <color_fragment>
+         {
+           float upF = abs(vFacadeNrm.y);
+           float wallF = 1.0 - smoothstep(0.35, 0.75, upF);
+           if (wallF > 0.01) {
+             float axis = abs(vFacadeNrm.x) > abs(vFacadeNrm.z) ? vFacadePos.z : vFacadePos.x;
+             vec2 local = vec2(axis / uFacBay + vPhase, vFacadePos.y / uFacStorey);
+             vec2 auv = dptAtlasUv(vClass, local);
+             vec3 tex = texture2D(uFacAlbedo, auv).rgb;
+             // modulate rather than replace: the vertex colour still carries the reveal state,
+             // the selection highlight and the per-building tone
+             float dist = length(vFacadePos - cameraPosition);
+             float amt = wallF * (1.0 - smoothstep(1100.0, 2800.0, dist));
+             diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * tex * 1.55, amt);
+           }
+         }`)
+      .replace("#include <roughnessmap_fragment>",
+        `#include <roughnessmap_fragment>
+         {
+           float upR = abs(vFacadeNrm.y);
+           float wallR = 1.0 - smoothstep(0.35, 0.75, upR);
+           if (wallR > 0.01) {
+             float axisR = abs(vFacadeNrm.x) > abs(vFacadeNrm.z) ? vFacadePos.z : vFacadePos.x;
+             vec2 lr = vec2(axisR / uFacBay + vPhase, vFacadePos.y / uFacStorey);
+             float rr = texture2D(uFacRough, dptAtlasUv(vClass, lr)).r;
+             roughnessFactor = mix(roughnessFactor, rr, wallR);
+           }
+         }`);
+  };
+  const key = mat.customProgramCacheKey?.bind(mat);
+  mat.customProgramCacheKey = () => `${key ? key() : "std"}|factex`;
+  return mat;
+}

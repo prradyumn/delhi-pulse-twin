@@ -15,6 +15,8 @@ export function masthead(m: Manifest) {
   const feed = el("span", { class: "chip feed", "data-state": "idle" },
     el("i", { class: "led" }), el("span", { class: "feed-label", text: "no live feed" }));
   const airBtn = el("button", { class: "chip", text: "Air & exposure" });
+  const walkBtn = el("button", { class: "chip", text: "Street level" });
+  const reachBtn = el("button", { class: "chip", text: "Reach" });
   const statusBtn = el("button", { class: "chip", text: "Data status" });
   const placesBtn = el("button", { class: "chip", text: "Places" });
   const storyBtn = el("button", { class: "btn", text: "Guided story" });
@@ -25,7 +27,7 @@ export function masthead(m: Manifest) {
       el("span", { text: `${m.study_area.id} · ${m.dataset_version} · transform ${m.transform_version}` })),
     el("div", { class: "spacer" }),
     clock, moving, fps,
-    feed, airBtn, placesBtn, statusBtn, storyBtn);
+    feed, walkBtn, reachBtn, airBtn, placesBtn, statusBtn, storyBtn);
 
   const render = () => {
     const s = store.get();
@@ -63,7 +65,7 @@ export function masthead(m: Manifest) {
     const l = feed.querySelector(".feed-label");
     if (l) l.textContent = label;
   }
-  return { node, statusBtn, placesBtn, storyBtn, airBtn, setFeed };
+  return { node, statusBtn, placesBtn, storyBtn, airBtn, walkBtn, reachBtn, setFeed };
 }
 
 /* ------------------------------------------------------------------ layer rail */

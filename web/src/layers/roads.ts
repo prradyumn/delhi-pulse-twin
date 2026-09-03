@@ -39,7 +39,7 @@ export class RoadsLayer implements Layer {
     let kerbMat = new THREE.MeshStandardMaterial({
       vertexColors: true, roughness: 0.95, metalness: 0,
     });
-    if (this.aoMap) kerbMat = applyBakedAO(kerbMat, this.aoMap, this.aoOrtho, 0.8);
+    if (this.aoMap) kerbMat = applyBakedAO(kerbMat, this.aoMap, this.aoOrtho, 0.65);
     const kerb = new THREE.Mesh(casing.geometry, kerbMat);
     kerb.receiveShadow = true;
     kerb.name = "road_casing";
@@ -55,7 +55,7 @@ export class RoadsLayer implements Layer {
     this.vfeat = built.vertexFeature;
     let roadMat = applyStreetLighting(
       new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0 }));
-    if (this.aoMap) roadMat = applyBakedAO(roadMat, this.aoMap, this.aoOrtho, 0.8);
+    if (this.aoMap) roadMat = applyBakedAO(roadMat, this.aoMap, this.aoOrtho, 0.55);
     this.mesh = new THREE.Mesh(built.geometry, roadMat);
     this.mesh.receiveShadow = true;
     this.mesh.name = "roads";

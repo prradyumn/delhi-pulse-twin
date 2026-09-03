@@ -60,3 +60,50 @@ export class LayerRegistry {
     return { drawCalls: dc, triangles: tri, bytes };
   }
 }
+
+
+/**
+ * Detail that is only worth drawing from near the ground.
+ *
+ * MEASURED, back to back inside one browser session at a parked wide camera: rooftop detail cost
+ * 10.6 ms of GPU time for 129,474 triangles, and street furniture 4.4 ms for 139,380 — against
+ * 2.6 ms for 520,800 triangles of trees. The ratio is the whole point. Thousands of objects one or
+ * two pixels tall are the worst case a rasteriser has: each triangle wastes most of its 2x2 quad,
+ * each instance still pays full vertex and shader cost, and none of it resolves into anything a
+ * viewer can see.
+ *
+ * So these layers declare the height below which they are worth drawing, and the frame loop tells
+ * them where the camera is. The gate is on camera *height* rather than distance because this is an
+ * orbit camera over a flat 4 km box, so height is the scale.
+ *
+ * It is a LOD decision, not a data one: nothing is dropped from a report, a count or a provenance
+ * record, and every layer stays listed with its real feature count.
+ *
+ * **The thresholds are set relative to the default camera, which sits at 900 m.** That view is the
+ * first thing anyone sees and it has to look its best, so every gate that reads at that scale must
+ * be open there. The first version put the rooftop gate at exactly 900 m and silently stripped the
+ * roofscape out of the hero view — the saving was real and the trade was wrong. The ladder now is:
+ *
+ *   street furniture   < 420 m    lamp posts and shelters: street-level only
+ *   people on paths    < 950 m    open at the default view, closed beyond it
+ *   rooftop detail     < 1200 m   parapets and tanks still read as texture at 900 m
+ *
+ * The wide budget camera sits at 1400 m, further out than the default, so it drops all three.
+ */
+export class AltitudeGate {
+  private wanted = true;
+  private inRange = true;
+
+  constructor(private group: THREE.Group, readonly visibleBelowM: number) {}
+
+  setCameraHeight(y: number) {
+    const near = y < this.visibleBelowM;
+    if (near === this.inRange) return false;
+    this.inRange = near;
+    this.group.visible = this.wanted && near;
+    return true;
+  }
+
+  setVisible(v: boolean) { this.wanted = v; this.group.visible = v && this.inRange; }
+  get visible() { return this.group.visible; }
+}

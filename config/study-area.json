@@ -288,10 +288,16 @@
     "_measured": {
       "device": "Apple M1 / 8 GB, ANGLE Metal, 1600x913 at dpr 1",
       "date": "2026-09-03",
-      "wide_view_gpu_ms": 10.8,
-      "close_view_gpu_ms": 9.6,
+      "wide_view_gpu_ms": 19.4,
+      "close_view_gpu_ms": 12.3,
+      "street_level_gpu_ms": 2.6,
       "shadow_map_share_before_fix_pct": 73,
-      "screen_space_ao_gpu_ms": 33.2
+      "screen_space_ao_gpu_ms": 33.2,
+      "_history": {
+        "wide_view_gpu_ms_before_lod_gates": 33.1,
+        "note": "The wide view was 10.8 ms earlier on 2026-09-03, before the reach, routes and street furniture layers. It then read 33.1 ms, and altitude gates on rooftop detail, street furniture and pedestrians brought it to 19.4 ms with a 1% repeat spread. It is still OVER the 16.7 ms budget and the gate is red."
+      },
+      "_instability_warning": "This device drifts by up to 2x within a single session under sustained load: the SAME commit measured 12.9 ms and then 21-25 ms at the same camera an hour apart, and one build read 23.3 then 41.3 ms in consecutive passes. A single sample is not evidence. tools/qa.mjs therefore measures each camera twice and takes the LOWER median - contention and throttling can only add time to a frame, never remove it - and prints the repeat spread so an unstable machine is visible. Note that a small spread does NOT prove the machine is healthy: a sustained-throttled GPU is stably slow. Every absolute figure here wants re-measuring on a cool device."
     }
   },
   "primary_benchmark_device": "Apple M1, 8 GB, macOS 26.5, Chrome \u2014 integrated GPU, matches the PRD 'ordinary laptop' target",

@@ -237,6 +237,31 @@ if ss:
     check(len(fw) > 500, f"streetscape: only {len(fw)} footways — pedestrians need paths to walk")
     check(all(len(f["p"]) >= 2 for f in fw), "streetscape: a footway with fewer than 2 points")
 
+# landmark index: the honesty state of every landmark asset must be explicit
+li = OUT / "landmarks" / "index.json"
+if not li.exists():
+    failures.append("landmarks/index.json missing — run `make assets`")
+else:
+    idx = json.loads(li.read_text())["landmarks"]
+    VALID_SOURCE = {"blend", "parametric", "placeholder", "open_ground"}
+    lmf = {f["id"]: f for f in (load("landmarks.json") or {"features": []})["features"]}
+    for lid, e in idx.items():
+        check(e["source"] in VALID_SOURCE,
+              f"landmark {lid}: source {e['source']!r} is not a declared honesty state")
+        if e["source"] == "open_ground":
+            check(e["lods"] == [], f"landmark {lid}: open ground must ship no model")
+            check(lmf.get(lid, {}).get("kind") == "open",
+                  f"landmark {lid}: index says open_ground but landmarks.json does not")
+        else:
+            check(sorted(e["lods"]) == [0, 1, 2], f"landmark {lid}: LODs {e['lods']}, expected 0,1,2")
+    # every buildable landmark must be accounted for, or the UI silently omits one
+    buildable = {i for i, f in lmf.items() if f.get("kind") != "open"}
+    check(buildable <= set(idx), f"landmark index is missing {sorted(buildable - set(idx))}")
+    by_src = {}
+    for e in idx.values():
+        by_src[e["source"]] = by_src.get(e["source"], 0) + 1
+    print(f"  landmarks: {by_src}")
+
 # ---------------------------------------------------------------- manifest
 mf = load("manifest.json")
 if mf:

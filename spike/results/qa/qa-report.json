@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-09-03T17:46:49",
+  "generated_at": "2026-09-03T20:34:32",
   "blender": "5.2.0 LTS",
   "engine": "BLENDER_EEVEE",
-  "seconds": 16.6,
+  "seconds": 18.8,
   "out_dir": "/Users/pradyumnawasthi/delhi-pulse-twin/spike/results/qa",
   "sheets": [
     {
@@ -10,12 +10,16 @@
       "id": "india-gate",
       "lod": 0,
       "status": "ok",
-      "png_bytes": 499475,
-      "faces": 34,
+      "views": [
+        "3q",
+        "_front"
+      ],
+      "png_bytes": 401178,
+      "faces": 506,
       "bbox_m": [
         18.2,
         27.5,
-        42.0
+        41.5
       ],
       "footprint_area_m2": 478,
       "declared_height_m": 42.0
@@ -25,12 +29,15 @@
       "id": "india-gate",
       "lod": 1,
       "status": "ok",
-      "png_bytes": 499475,
-      "faces": 34,
+      "views": [
+        "3q"
+      ],
+      "png_bytes": 405516,
+      "faces": 165,
       "bbox_m": [
         18.2,
         27.5,
-        42.0
+        41.5
       ],
       "footprint_area_m2": 478,
       "declared_height_m": 42.0
@@ -40,12 +47,15 @@
       "id": "india-gate",
       "lod": 2,
       "status": "ok",
-      "png_bytes": 499475,
-      "faces": 34,
+      "views": [
+        "3q"
+      ],
+      "png_bytes": 410601,
+      "faces": 84,
       "bbox_m": [
         18.2,
         27.5,
-        42.0
+        41.5
       ],
       "footprint_area_m2": 478,
       "declared_height_m": 42.0
@@ -55,12 +65,16 @@
       "id": "rashtrapati-bhavan",
       "lod": 0,
       "status": "ok",
-      "png_bytes": 510063,
-      "faces": 73,
+      "views": [
+        "3q",
+        "_front"
+      ],
+      "png_bytes": 397547,
+      "faces": 2336,
       "bbox_m": [
-        177.1,
-        200.1,
-        20.0
+        179.8,
+        203.1,
+        63.4
       ],
       "footprint_area_m2": 18510,
       "declared_height_m": 20.0
@@ -70,12 +84,15 @@
       "id": "rashtrapati-bhavan",
       "lod": 1,
       "status": "ok",
-      "png_bytes": 510063,
-      "faces": 73,
+      "views": [
+        "3q"
+      ],
+      "png_bytes": 409196,
+      "faces": 508,
       "bbox_m": [
-        177.1,
-        200.1,
-        20.0
+        179.8,
+        203.1,
+        63.4
       ],
       "footprint_area_m2": 18510,
       "declared_height_m": 20.0
@@ -85,12 +102,15 @@
       "id": "rashtrapati-bhavan",
       "lod": 2,
       "status": "ok",
-      "png_bytes": 510063,
-      "faces": 73,
+      "views": [
+        "3q"
+      ],
+      "png_bytes": 409584,
+      "faces": 132,
       "bbox_m": [
-        177.1,
-        200.1,
-        20.0
+        179.8,
+        200.5,
+        63.2
       ],
       "footprint_area_m2": 18510,
       "declared_height_m": 20.0
@@ -100,12 +120,16 @@
       "id": "north-block",
       "lod": 0,
       "status": "ok",
-      "png_bytes": 502315,
-      "faces": 280,
+      "views": [
+        "3q",
+        "_front"
+      ],
+      "png_bytes": 392693,
+      "faces": 2332,
       "bbox_m": [
-        355.3,
-        149.9,
-        30.0
+        362.4,
+        152.9,
+        67.5
       ],
       "footprint_area_m2": 32652,
       "declared_height_m": 30.0
@@ -115,12 +139,15 @@
       "id": "north-block",
       "lod": 1,
       "status": "ok",
-      "png_bytes": 502176,
-      "faces": 125,
+      "views": [
+        "3q"
+      ],
+      "png_bytes": 399038,
+      "faces": 643,
       "bbox_m": [
-        355.3,
-        150.0,
-        30.0
+        362.4,
+        153.1,
+        67.5
       ],
       "footprint_area_m2": 32652,
       "declared_height_m": 30.0
@@ -130,12 +157,15 @@
       "id": "north-block",
       "lod": 2,
       "status": "ok",
-      "png_bytes": 505658,
-      "faces": 33,
+      "views": [
+        "3q"
+      ],
+      "png_bytes": 400642,
+      "faces": 235,
       "bbox_m": [
-        351.0,
-        136.7,
-        30.0
+        362.4,
+        152.5,
+        67.3
       ],
       "footprint_area_m2": 32652,
       "declared_height_m": 30.0
@@ -145,12 +175,16 @@
       "id": "south-block",
       "lod": 0,
       "status": "ok",
-      "png_bytes": 503271,
-      "faces": 322,
+      "views": [
+        "3q",
+        "_front"
+      ],
+      "png_bytes": 392729,
+      "faces": 2416,
       "bbox_m": [
-        364.8,
-        152.0,
-        30.0
+        372.1,
+        155.1,
+        67.9
       ],
       "footprint_area_m2": 32969,
       "declared_height_m": 30.0
@@ -160,12 +194,15 @@
       "id": "south-block",
       "lod": 1,
       "status": "ok",
-      "png_bytes": 503599,
-      "faces": 143,
+      "views": [
+        "3q"
+      ],
+      "png_bytes": 399780,
+      "faces": 689,
       "bbox_m": [
-        364.4,
-        148.8,
-        30.0
+        372.1,
+        155.1,
+        67.9
       ],
       "footprint_area_m2": 32969,
       "declared_height_m": 30.0
@@ -175,12 +212,15 @@
       "id": "south-block",
       "lod": 2,
       "status": "ok",
-      "png_bytes": 505540,
-      "faces": 38,
+      "views": [
+        "3q"
+      ],
+      "png_bytes": 400099,
+      "faces": 260,
       "bbox_m": [
-        355.5,
-        140.7,
-        30.0
+        372.1,
+        155.1,
+        67.8
       ],
       "footprint_area_m2": 32969,
       "declared_height_m": 30.0
@@ -190,12 +230,16 @@
       "id": "old-parliament-house",
       "lod": 0,
       "status": "ok",
-      "png_bytes": 507504,
-      "faces": 148,
+      "views": [
+        "3q",
+        "_front"
+      ],
+      "png_bytes": 409659,
+      "faces": 3824,
       "bbox_m": [
-        188.6,
-        179.0,
-        21.0
+        190.4,
+        180.8,
+        55.4
       ],
       "footprint_area_m2": 24553,
       "declared_height_m": 21.0
@@ -205,12 +249,15 @@
       "id": "old-parliament-house",
       "lod": 1,
       "status": "ok",
-      "png_bytes": 506418,
-      "faces": 66,
+      "views": [
+        "3q"
+      ],
+      "png_bytes": 408371,
+      "faces": 831,
       "bbox_m": [
-        185.9,
-        178.6,
-        21.0
+        190.4,
+        180.8,
+        55.4
       ],
       "footprint_area_m2": 24553,
       "declared_height_m": 21.0
@@ -220,12 +267,15 @@
       "id": "old-parliament-house",
       "lod": 2,
       "status": "ok",
-      "png_bytes": 497863,
-      "faces": 17,
+      "views": [
+        "3q"
+      ],
+      "png_bytes": 408628,
+      "faces": 235,
       "bbox_m": [
+        190.4,
         180.1,
-        167.6,
-        21.0
+        55.4
       ],
       "footprint_area_m2": 24553,
       "declared_height_m": 21.0
@@ -235,12 +285,16 @@
       "id": "new-parliament-house",
       "lod": 0,
       "status": "ok",
-      "png_bytes": 507562,
-      "faces": 103,
+      "views": [
+        "3q",
+        "_front"
+      ],
+      "png_bytes": 395177,
+      "faces": 353,
       "bbox_m": [
-        181.5,
+        181.4,
         191.6,
-        39.6
+        45.6
       ],
       "footprint_area_m2": 22202,
       "declared_height_m": 39.6
@@ -250,12 +304,15 @@
       "id": "new-parliament-house",
       "lod": 1,
       "status": "ok",
-      "png_bytes": 507562,
-      "faces": 103,
+      "views": [
+        "3q"
+      ],
+      "png_bytes": 409940,
+      "faces": 189,
       "bbox_m": [
         181.5,
-        191.6,
-        39.6
+        191.1,
+        45.6
       ],
       "footprint_area_m2": 22202,
       "declared_height_m": 39.6
@@ -265,12 +322,15 @@
       "id": "new-parliament-house",
       "lod": 2,
       "status": "ok",
-      "png_bytes": 507562,
-      "faces": 103,
+      "views": [
+        "3q"
+      ],
+      "png_bytes": 411418,
+      "faces": 101,
       "bbox_m": [
-        181.5,
-        191.6,
-        39.6
+        178.9,
+        189.6,
+        45.6
       ],
       "footprint_area_m2": 22202,
       "declared_height_m": 39.6
@@ -279,7 +339,7 @@
       "check": "city",
       "view": "overview_ne",
       "status": "ok",
-      "png_bytes": 540966,
+      "png_bytes": 432583,
       "verts": 44864,
       "tris": 60890
     },
@@ -287,7 +347,7 @@
       "check": "city",
       "view": "overview_top",
       "status": "ok",
-      "png_bytes": 561267,
+      "png_bytes": 442538,
       "verts": 44864,
       "tris": 60890
     }

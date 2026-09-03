@@ -359,3 +359,63 @@ the Airport Express Line, which runs almost straight through the box and legitim
 5 points. Vertex count was never the property worth asserting; **length** is, and that check was
 already there. I committed with it red, which should not have happened: the gate exists to be run
 before the commit, not after.
+
+---
+
+# Part five: the landmark sprint, done as scripts
+
+The plan called for a headed Blender + blender-mcp session to hand-model the landmarks. ADR-002 also
+required every headed session to exit to a committed `.blend` **plus a deterministic export
+script**, because interactive edits are not replayable.
+
+For monuments whose form is this regular — a triumphal arch, a circular colonnade, a block under a
+central dome — **the script is the better artefact**. It is reproducible, it re-runs when a footprint
+changes, and it is reviewable as a diff. So `25_landmark_models.py` builds all six parametrically
+from each landmark's real OSM footprint and height, and MCP was not needed.
+
+| Landmark | Faces (LOD0) | Form |
+|---|---|---|
+| India Gate | 218 | arch cut through the pylon, cornice, attic, flame bowl |
+| Old Parliament House | 1,636 | 144-column colonnade, entablature, drum, dome, lantern |
+| Rashtrapati Bhavan | 1,031 | mass, colonnade, drum, dome |
+| North / South Block | 985 / 1,013 | long mass, colonnade, central dome |
+| New Parliament House | 121 | the real triangular footprint, stepped back |
+
+## What they claim, and what they do not
+
+These are **stylised reconstructions of characteristic form**, not surveys. No measured drawings,
+photogrammetry or elevation data were used, and the ornament of the real buildings is not attempted.
+The only dimensions not from OSM are India Gate's 42 m height and 9.1 m arch span, both published
+figures, both recorded in the script with their basis.
+
+`landmarks/index.json` now carries a `source` per landmark — `blend`, `parametric`, `placeholder` or
+`open_ground` — and the app reports which of the three it got, because a hand-modelled landmark, a
+scripted reconstruction and a bare extruded footprint are three different claims. A new invariant
+fails the build if any landmark's source is not one of those four, or if a buildable landmark is
+missing from the index entirely.
+
+## Two non-manifold booleans, and why the arch stayed a block
+
+The India Gate arch failed twice, silently, and the failure mode is worth recording: **Blender's
+EXACT boolean solver returns nonsense on non-manifold operands rather than erroring.** Both times
+the result took the *cutter's* bounding box instead of the difference.
+
+- **The target was open.** `prism_mesh` deliberately omits the floor face — a deliberate saving,
+  since nothing sees the underside of a building, and it halves the ngon count. But an open mesh has
+  no interior, so there is nothing to subtract from. `prism_mesh` now takes `cap_bottom`, off by
+  default, and anything destined for a boolean passes it.
+- **The cutter was open too.** `cylinder()` capped only the top. One missing face at the far end of
+  the arch cutter was enough.
+
+Fixed, plus the two cutters are now applied as sequential subtractions rather than joined into one
+mesh, since joining two solids gives interpenetrating shells.
+
+> **When you boolean in this codebase:** both operands must be closed. Check the result's bounding
+> box against the target's — if it matches the *cutter*, the solver bailed.
+
+## And the QA render that could not have shown it
+
+A 3/4 view is the wrong shot for an arch: it hides the opening that makes India Gate India Gate. The
+QA script now renders a **front elevation** for every LOD0 alongside the 3/4, and frames on the
+object's real bounding-box centre — targeting a fraction of the height had been cropping the top off
+every tall landmark, including the flame bowl.

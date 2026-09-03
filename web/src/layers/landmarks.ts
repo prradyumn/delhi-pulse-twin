@@ -11,7 +11,9 @@ import type { Payload, Provenance } from "../geo/types";
 interface LandmarkIndex {
   generated_at: string;
   landmarks: Record<string, {
-    source: "blend" | "placeholder" | "open_ground";
+    /** blend = hand-modelled; parametric = scripted reconstruction of characteristic form;
+     *  placeholder = plain massing extruded from the footprint; open_ground = not a building */
+    source: "blend" | "parametric" | "placeholder" | "open_ground";
     lods: number[]; height_m: number | null; required: boolean;
   }>;
 }
@@ -28,14 +30,16 @@ export interface LandmarkFeature {
 /**
  * Progressive enhancement, in the honest direction. Every landmark renders immediately as a
  * massing block extruded from its verified OSM footprint — correct position, correct scale,
- * deliberately undetailed. Where the Phase 4 modelling sprint has produced an authored GLB, it
- * replaces the block. A missing GLB is a normal state, not an error.
+ * deliberately undetailed. Where the Phase 4 sprint has produced a model — parametric or
+ * hand-authored — it replaces the block, and the layer reports which of the three it got. A
+ * missing GLB is a normal state, not an error.
  */
 export class LandmarkLayer implements Layer {
   id = "landmarks"; label = "Landmarks";
   group = new THREE.Group();
   features: LandmarkFeature[] = [];
   authored: string[] = [];
+  parametric: string[] = [];
   private loadedGlb: string[] = [];
   private massing?: THREE.Mesh;
   private plazas?: THREE.Mesh;
@@ -83,6 +87,7 @@ export class LandmarkLayer implements Layer {
     for (const { f, obj } of loaded) { this.group.add(obj); this.loadedGlb.push(f.id); }
     // A GLB that loaded is not a modelled landmark. Only the exporter knows which is which.
     this.authored = this.loadedGlb.filter((id) => index[id]?.source === "blend");
+    this.parametric = this.loadedGlb.filter((id) => index[id]?.source === "parametric");
 
     let tris = 0, dc = loaded.length;
     const remaining = this.features.filter((f) => !this.loadedGlb.includes(f.id));
@@ -122,9 +127,16 @@ export class LandmarkLayer implements Layer {
       tris += built.triangles; dc++;
     }
 
-    // Everything not authored is a placeholder, whether it arrived as a GLB or as runtime massing.
+    // Three distinct honesty states, and the difference between them is a different claim: a
+    // hand-modelled landmark, a scripted reconstruction of characteristic form, and a bare
+    // extruded footprint are not the same thing. Anything that is neither authored nor parametric
+    // is still a plain block, however it arrived.
+    const named = (ids: string[]) =>
+      this.features.filter((f) => ids.includes(f.id)).map((f) => f.name);
     const placeholders = this.features
-      .filter((f) => f.kind !== "open" && !this.authored.includes(f.id))
+      .filter((f) => f.kind !== "open"
+                     && !this.authored.includes(f.id)
+                     && !this.parametric.includes(f.id))
       .map((f) => f.name);
     return {
       ...base, status: "ready", features: this.features.length,
@@ -132,10 +144,16 @@ export class LandmarkLayer implements Layer {
       provenance: this.prov
         ? { ...this.prov, limitations: [
             ...this.prov.limitations,
+            this.parametric.length
+              ? `${this.parametric.length} landmark(s) are PARAMETRIC reconstructions — the characteristic form (arch, colonnade, dome) built on the real OSM footprint and height. Recognisable silhouettes, not surveys: no measured drawings or photogrammetry were used, and the ornament of the real buildings is not attempted. ${named(this.parametric).join(", ")}.`
+              : "",
             placeholders.length
-              ? `${placeholders.length} landmark(s) still render as untextured massing blocks pending the modelling sprint: ${placeholders.join(", ")}.`
-              : "All landmarks use authored models.",
-          ] }
+              ? `${placeholders.length} landmark(s) render as untextured massing extruded from the real footprint — correctly placed and scaled, but not modelled: ${placeholders.join(", ")}.`
+              : "",
+            this.authored.length
+              ? `${this.authored.length} landmark(s) use hand-modelled geometry: ${named(this.authored).join(", ")}.`
+              : "",
+          ].filter(Boolean) }
         : null,
     };
   }

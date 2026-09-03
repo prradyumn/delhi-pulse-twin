@@ -40,6 +40,12 @@ test:
 # Blender's remaining job after the Spike-0 bake-off: hero landmarks only.
 # Ordinary buildings are extruded at runtime — see docs/06-SPIKE-0-BAKEOFF.md.
 assets:
+	$(HEADLESS) blender/scripts/25_landmark_models.py -- \
+	  --config config/study-area.json --out web/public/data/@v1/landmarks
+
+# Kept as the fallback: plain massing extruded from each footprint, no parametric form. Useful if
+# a builder in 25_ regresses and you need correctly-placed blocks back in one command.
+assets-massing:
 	$(HEADLESS) blender/scripts/20_landmark_export.py -- \
 	  --config config/study-area.json --out web/public/data/@v1/landmarks
 

@@ -113,13 +113,24 @@ if os.path.exists(A["landmarks"]):
             pad.data.materials.append(D.flat_material("mat_footprint", (0.85, 0.35, 0.2)))
             pad.location.z = -0.2
 
-            dims = [max((max(v.co[i] for v in m.data.vertices) -
-                         min(v.co[i] for v in m.data.vertices)) for m in meshes) for i in range(3)]
+            lo = [min(min(v.co[i] for v in m.data.vertices) for m in meshes) for i in range(3)]
+            hi = [max(max(v.co[i] for v in m.data.vertices) for m in meshes) for i in range(3)]
+            dims = [hi[i] - lo[i] for i in range(3)]
+            centre = ((lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, (lo[2] + hi[2]) / 2)
             span = max(max(dims), 12.0)
-            frame_camera(sc, (0, 0, span * 0.25), span * 2.4)
-            size = shoot(os.path.join(OUT, f"landmark_{f['id']}_lod{lod}.png"))
             tris = sum(len(m.data.polygons) for m in meshes)
+
+            # Two views, because a 3/4 shot is the wrong picture for an arch: it hides the very
+            # opening that makes India Gate India Gate. Frame on the real bbox centre — targeting
+            # a fraction of the height cropped the top off every tall landmark.
+            views = [("", math.radians(-40), math.radians(30), span * 2.5)]
+            if lod == 0:
+                views.append(("_front", 0.0, math.radians(8), span * 2.2))
+            for suffix, az, elev, dist in views:
+                frame_camera(sc, centre, dist, elev=elev, az=az)
+                size = shoot(os.path.join(OUT, f"landmark_{f['id']}_lod{lod}{suffix}.png"))
             results.append({"check": "landmark", "id": f["id"], "lod": lod, "status": "ok",
+                            "views": [v[0] or "3q" for v in views],
                             "png_bytes": size, "faces": tris,
                             "bbox_m": [round(d, 1) for d in dims],
                             "footprint_area_m2": f["area_m2"],

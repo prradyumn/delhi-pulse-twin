@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-03T17:44:19",
+  "generated_at": "2026-09-03T18:12:00",
   "blender": "5.2.0 LTS",
-  "seconds": 0.7,
+  "seconds": 1.0,
   "axis_roundtrip_ok": true,
   "axis_dims": {
     "X": 18.2,
@@ -26,8 +26,8 @@
       "id": "india-gate",
       "lod": 0,
       "source": "placeholder",
-      "bytes": 1500,
-      "kb": 1.5,
+      "bytes": 2756,
+      "kb": 2.7,
       "budget_kb": 400,
       "over_budget": false,
       "placed_at": [
@@ -41,8 +41,8 @@
       "id": "india-gate",
       "lod": 1,
       "source": "placeholder",
-      "bytes": 1500,
-      "kb": 1.5,
+      "bytes": 2756,
+      "kb": 2.7,
       "budget_kb": 120,
       "over_budget": false,
       "placed_at": [
@@ -56,8 +56,8 @@
       "id": "india-gate",
       "lod": 2,
       "source": "placeholder",
-      "bytes": 1500,
-      "kb": 1.5,
+      "bytes": 2756,
+      "kb": 2.7,
       "budget_kb": 30,
       "over_budget": false,
       "placed_at": [
@@ -71,8 +71,8 @@
       "id": "rashtrapati-bhavan",
       "lod": 0,
       "source": "placeholder",
-      "bytes": 1856,
-      "kb": 1.8,
+      "bytes": 4588,
+      "kb": 4.5,
       "budget_kb": 400,
       "over_budget": false,
       "placed_at": [
@@ -86,8 +86,8 @@
       "id": "rashtrapati-bhavan",
       "lod": 1,
       "source": "placeholder",
-      "bytes": 1856,
-      "kb": 1.8,
+      "bytes": 4588,
+      "kb": 4.5,
       "budget_kb": 120,
       "over_budget": false,
       "placed_at": [
@@ -101,8 +101,8 @@
       "id": "rashtrapati-bhavan",
       "lod": 2,
       "source": "placeholder",
-      "bytes": 1856,
-      "kb": 1.8,
+      "bytes": 4588,
+      "kb": 4.5,
       "budget_kb": 30,
       "over_budget": false,
       "placed_at": [
@@ -116,38 +116,38 @@
       "id": "north-block",
       "lod": 0,
       "source": "placeholder",
-      "bytes": 3072,
+      "bytes": 14092,
+      "kb": 13.8,
+      "budget_kb": 400,
+      "over_budget": false,
+      "placed_at": [
+        -1155.37,
+        778.34
+      ],
+      "height_m": 30.0,
+      "required": false
+    },
+    {
+      "id": "north-block",
+      "lod": 1,
+      "source": "placeholder",
+      "bytes": 7472,
+      "kb": 7.3,
+      "budget_kb": 120,
+      "over_budget": false,
+      "placed_at": [
+        -1155.37,
+        778.34
+      ],
+      "height_m": 30.0,
+      "required": false
+    },
+    {
+      "id": "north-block",
+      "lod": 2,
+      "source": "placeholder",
+      "bytes": 3076,
       "kb": 3.0,
-      "budget_kb": 400,
-      "over_budget": false,
-      "placed_at": [
-        -1155.37,
-        778.34
-      ],
-      "height_m": 30.0,
-      "required": false
-    },
-    {
-      "id": "north-block",
-      "lod": 1,
-      "source": "placeholder",
-      "bytes": 2396,
-      "kb": 2.3,
-      "budget_kb": 120,
-      "over_budget": false,
-      "placed_at": [
-        -1155.37,
-        778.34
-      ],
-      "height_m": 30.0,
-      "required": false
-    },
-    {
-      "id": "north-block",
-      "lod": 2,
-      "source": "placeholder",
-      "bytes": 1676,
-      "kb": 1.6,
       "budget_kb": 30,
       "over_budget": false,
       "placed_at": [
@@ -161,8 +161,8 @@
       "id": "south-block",
       "lod": 0,
       "source": "placeholder",
-      "bytes": 3336,
-      "kb": 3.3,
+      "bytes": 16028,
+      "kb": 15.7,
       "budget_kb": 400,
       "over_budget": false,
       "placed_at": [
@@ -176,8 +176,8 @@
       "id": "south-block",
       "lod": 1,
       "source": "placeholder",
-      "bytes": 2424,
-      "kb": 2.4,
+      "bytes": 8084,
+      "kb": 7.9,
       "budget_kb": 120,
       "over_budget": false,
       "placed_at": [
@@ -191,8 +191,8 @@
       "id": "south-block",
       "lod": 2,
       "source": "placeholder",
-      "bytes": 1732,
-      "kb": 1.7,
+      "bytes": 3320,
+      "kb": 3.2,
       "budget_kb": 30,
       "over_budget": false,
       "placed_at": [
@@ -206,8 +206,8 @@
       "id": "old-parliament-house",
       "lod": 0,
       "source": "placeholder",
-      "bytes": 2444,
-      "kb": 2.4,
+      "bytes": 8040,
+      "kb": 7.9,
       "budget_kb": 400,
       "over_budget": false,
       "placed_at": [
@@ -221,8 +221,8 @@
       "id": "old-parliament-house",
       "lod": 1,
       "source": "placeholder",
-      "bytes": 2012,
-      "kb": 2.0,
+      "bytes": 4712,
+      "kb": 4.6,
       "budget_kb": 120,
       "over_budget": false,
       "placed_at": [
@@ -236,8 +236,8 @@
       "id": "old-parliament-house",
       "lod": 2,
       "source": "placeholder",
-      "bytes": 1524,
-      "kb": 1.5,
+      "bytes": 2232,
+      "kb": 2.2,
       "budget_kb": 30,
       "over_budget": false,
       "placed_at": [
@@ -251,8 +251,8 @@
       "id": "new-parliament-house",
       "lod": 0,
       "source": "placeholder",
-      "bytes": 2112,
-      "kb": 2.1,
+      "bytes": 5976,
+      "kb": 5.8,
       "budget_kb": 400,
       "over_budget": false,
       "placed_at": [
@@ -266,8 +266,8 @@
       "id": "new-parliament-house",
       "lod": 1,
       "source": "placeholder",
-      "bytes": 2112,
-      "kb": 2.1,
+      "bytes": 5976,
+      "kb": 5.8,
       "budget_kb": 120,
       "over_budget": false,
       "placed_at": [
@@ -281,8 +281,8 @@
       "id": "new-parliament-house",
       "lod": 2,
       "source": "placeholder",
-      "bytes": 2112,
-      "kb": 2.1,
+      "bytes": 5976,
+      "kb": 5.8,
       "budget_kb": 30,
       "over_budget": false,
       "placed_at": [

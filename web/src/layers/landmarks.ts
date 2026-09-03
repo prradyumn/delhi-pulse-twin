@@ -6,6 +6,16 @@ import { applyFacadeDetail } from "./facade";
 import * as load from "../geo/load";
 import type { Payload, Provenance } from "../geo/types";
 
+/** Written by blender/scripts/20_landmark_export.py. `source` is the honesty-critical field:
+ *  a GLB loading successfully says nothing about whether anyone modelled it. */
+interface LandmarkIndex {
+  generated_at: string;
+  landmarks: Record<string, {
+    source: "blend" | "placeholder" | "open_ground";
+    lods: number[]; height_m: number | null; required: boolean;
+  }>;
+}
+
 export interface LandmarkFeature {
   id: string; osm: string; name: string; required: boolean;
   ring: XZ[]; centroid: [number, number]; area_m2: number;
@@ -26,6 +36,7 @@ export class LandmarkLayer implements Layer {
   group = new THREE.Group();
   features: LandmarkFeature[] = [];
   authored: string[] = [];
+  private loadedGlb: string[] = [];
   private massing?: THREE.Mesh;
   private plazas?: THREE.Mesh;
   private prov: Provenance | null = null;
@@ -41,12 +52,21 @@ export class LandmarkLayer implements Layer {
     if (!this.features.length) return { ...base, status: "empty", provenance: this.prov, bytes: res.bytes };
 
     // Authored GLBs first; anything without one falls through to massing.
+    //
+    // No HEAD probe: some static servers (Vite's own preview among them) answer HEAD with a 404
+    // for files they will happily GET, which meant no GLB ever loaded. And `kind: open` landmarks
+    // are skipped outright — there is no model to look for, and probing logged two 404s per load
+    // that read like failures when they are the designed behaviour.
+    const idxRes = await load.grab<LandmarkIndex>("landmarks/index.json");
+    const index = idxRes.ok ? idxRes.data.landmarks : {};
+
     const loader = new GLTFLoader();
     const pending = this.features.map(async (f) => {
+      if (f.kind === "open") return null;
+      const entry = index[f.id];
+      if (entry && !entry.lods.includes(0)) return null;
       const url = `${load.DATA}/landmarks/${f.id}_lod0.glb`;
       try {
-        const head = await fetch(url, { method: "HEAD" });
-        if (!head.ok) return null;
         const gltf = await loader.loadAsync(url);
         gltf.scene.position.set(f.centroid[0], 0, f.centroid[1]);
         gltf.scene.name = `landmark_${f.id}`;
@@ -60,10 +80,12 @@ export class LandmarkLayer implements Layer {
       }
     });
     const loaded = (await Promise.all(pending)).filter((x): x is { f: LandmarkFeature; obj: THREE.Group } => x !== null);
-    for (const { f, obj } of loaded) { this.group.add(obj); this.authored.push(f.id); }
+    for (const { f, obj } of loaded) { this.group.add(obj); this.loadedGlb.push(f.id); }
+    // A GLB that loaded is not a modelled landmark. Only the exporter knows which is which.
+    this.authored = this.loadedGlb.filter((id) => index[id]?.source === "blend");
 
     let tris = 0, dc = loaded.length;
-    const remaining = this.features.filter((f) => !this.authored.includes(f.id));
+    const remaining = this.features.filter((f) => !this.loadedGlb.includes(f.id));
 
     // Only kind=massing may be extruded. Rajiv Chowk Central Park is 41,408 m² of open ground and
     // Jantar Mantar's footprint is its walled enclosure, not the instruments — extruding either
@@ -100,7 +122,10 @@ export class LandmarkLayer implements Layer {
       tris += built.triangles; dc++;
     }
 
-    const placeholders = blocks.map((f) => f.name);
+    // Everything not authored is a placeholder, whether it arrived as a GLB or as runtime massing.
+    const placeholders = this.features
+      .filter((f) => f.kind !== "open" && !this.authored.includes(f.id))
+      .map((f) => f.name);
     return {
       ...base, status: "ready", features: this.features.length,
       bytes: res.bytes, ms: res.ms, drawCalls: dc, triangles: tris,

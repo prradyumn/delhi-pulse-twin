@@ -89,7 +89,13 @@ for f in feats:
                 mod.ratio = ratio
 
         path = os.path.join(A["out"], f"{lid}_lod{lod}.glb")
-        size = D.export_glb(path, draco=True, quant_pos=13)
+        # No Draco here. These files are ~1.5 KB, so compression saves nothing measurable, and
+        # requiring KHR_draco_mesh_compression means the runtime needs a DRACOLoader plus its
+        # decoder assets — a dependency for zero gain. Worse, without it every load throws and
+        # the layer silently falls back to massing, which is a failure that looks like a design.
+        # The buildings bake (docs/06-SPIKE-0-BAKEOFF.md) is where Draco earned its 12x, and that
+        # path is no longer shipped.
+        size = D.export_glb(path, draco=False)
         kb = size / 1024
         over = kb > kb_limit
         if over:
@@ -119,6 +125,20 @@ report = {
 }
 os.makedirs(os.path.dirname(A["report"]), exist_ok=True)
 json.dump(report, open(A["report"], "w"), indent=2)
+
+# An index the runtime reads, so the layer knows what exists and — critically — whether each GLB is
+# an authored model or a placeholder massing block. Without this the app cannot tell the difference
+# and would describe stand-ins as finished work, which is exactly the claim this project must not make.
+index = {}
+for r in results:
+    e = index.setdefault(r["id"], {"source": r["source"], "lods": [], "height_m": r["height_m"],
+                                   "required": r["required"]})
+    e["lods"].append(r["lod"])
+for lid in skipped_open:
+    index[lid] = {"source": "open_ground", "lods": [], "height_m": None, "required": False}
+json.dump({"generated_at": report["generated_at"], "landmarks": index},
+          open(os.path.join(A["out"], "index.json"), "w"), indent=2)
+print(f"  wrote {os.path.join(A['out'], 'index.json')}")
 
 print(f"\n  {len(results)} assets, {len(report['placeholders'])} still placeholders, "
       f"{len(report['authored'])} authored, {len(skipped_open)} open ground skipped, "

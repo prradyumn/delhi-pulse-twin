@@ -54,15 +54,10 @@ schedule decision deferred to the Phase 1 gate.
     make dev        # web app dev server
     make check      # data + typecheck + build + budget gate
 
-Landmarks need one extra fetch first, because India Gate is tagged `historic=monument` rather than
-`building` and the relation-backed footprints need stitching:
+`make data` also fetches the landmark footprints, which need their own query: India Gate is tagged
+`historic=monument` rather than `building`, and the relation-backed footprints need stitching.
 
-    python3 pipeline/fetch_landmarks.py && make data && make assets
-
-## Before the first run
-
-Landmarks need one fetch, because India Gate is tagged `historic=monument` rather than `building`
-and the relation-backed footprints need stitching. `make data` does it for you:
+From nothing to a running city:
 
     make setup && make data && make assets && make check && make dev
 

@@ -1,0 +1,295 @@
+{
+  "generated_at": "2026-09-03T17:45:26",
+  "blender": "5.2.0 LTS",
+  "engine": "BLENDER_EEVEE",
+  "seconds": 14.4,
+  "out_dir": "/Users/pradyumnawasthi/delhi-pulse-twin/spike/results/qa",
+  "sheets": [
+    {
+      "check": "landmark",
+      "id": "india-gate",
+      "lod": 0,
+      "status": "ok",
+      "png_bytes": 448147,
+      "faces": 34,
+      "bbox_m": [
+        18.2,
+        27.5,
+        42.0
+      ],
+      "footprint_area_m2": 478,
+      "declared_height_m": 42.0
+    },
+    {
+      "check": "landmark",
+      "id": "india-gate",
+      "lod": 1,
+      "status": "ok",
+      "png_bytes": 448147,
+      "faces": 34,
+      "bbox_m": [
+        18.2,
+        27.5,
+        42.0
+      ],
+      "footprint_area_m2": 478,
+      "declared_height_m": 42.0
+    },
+    {
+      "check": "landmark",
+      "id": "india-gate",
+      "lod": 2,
+      "status": "ok",
+      "png_bytes": 448147,
+      "faces": 34,
+      "bbox_m": [
+        18.2,
+        27.5,
+        42.0
+      ],
+      "footprint_area_m2": 478,
+      "declared_height_m": 42.0
+    },
+    {
+      "check": "landmark",
+      "id": "rashtrapati-bhavan",
+      "lod": 0,
+      "status": "ok",
+      "png_bytes": 456593,
+      "faces": 73,
+      "bbox_m": [
+        177.1,
+        200.1,
+        20.0
+      ],
+      "footprint_area_m2": 18510,
+      "declared_height_m": 20.0
+    },
+    {
+      "check": "landmark",
+      "id": "rashtrapati-bhavan",
+      "lod": 1,
+      "status": "ok",
+      "png_bytes": 456593,
+      "faces": 73,
+      "bbox_m": [
+        177.1,
+        200.1,
+        20.0
+      ],
+      "footprint_area_m2": 18510,
+      "declared_height_m": 20.0
+    },
+    {
+      "check": "landmark",
+      "id": "rashtrapati-bhavan",
+      "lod": 2,
+      "status": "ok",
+      "png_bytes": 456593,
+      "faces": 73,
+      "bbox_m": [
+        177.1,
+        200.1,
+        20.0
+      ],
+      "footprint_area_m2": 18510,
+      "declared_height_m": 20.0
+    },
+    {
+      "check": "landmark",
+      "id": "north-block",
+      "lod": 0,
+      "status": "ok",
+      "png_bytes": 449364,
+      "faces": 280,
+      "bbox_m": [
+        355.3,
+        149.9,
+        30.0
+      ],
+      "footprint_area_m2": 32652,
+      "declared_height_m": 30.0
+    },
+    {
+      "check": "landmark",
+      "id": "north-block",
+      "lod": 1,
+      "status": "ok",
+      "png_bytes": 449895,
+      "faces": 125,
+      "bbox_m": [
+        355.3,
+        150.0,
+        30.0
+      ],
+      "footprint_area_m2": 32652,
+      "declared_height_m": 30.0
+    },
+    {
+      "check": "landmark",
+      "id": "north-block",
+      "lod": 2,
+      "status": "ok",
+      "png_bytes": 452892,
+      "faces": 33,
+      "bbox_m": [
+        351.0,
+        136.7,
+        30.0
+      ],
+      "footprint_area_m2": 32652,
+      "declared_height_m": 30.0
+    },
+    {
+      "check": "landmark",
+      "id": "south-block",
+      "lod": 0,
+      "status": "ok",
+      "png_bytes": 449962,
+      "faces": 322,
+      "bbox_m": [
+        364.8,
+        152.0,
+        30.0
+      ],
+      "footprint_area_m2": 32969,
+      "declared_height_m": 30.0
+    },
+    {
+      "check": "landmark",
+      "id": "south-block",
+      "lod": 1,
+      "status": "ok",
+      "png_bytes": 450870,
+      "faces": 143,
+      "bbox_m": [
+        364.4,
+        148.8,
+        30.0
+      ],
+      "footprint_area_m2": 32969,
+      "declared_height_m": 30.0
+    },
+    {
+      "check": "landmark",
+      "id": "south-block",
+      "lod": 2,
+      "status": "ok",
+      "png_bytes": 451966,
+      "faces": 38,
+      "bbox_m": [
+        355.5,
+        140.7,
+        30.0
+      ],
+      "footprint_area_m2": 32969,
+      "declared_height_m": 30.0
+    },
+    {
+      "check": "landmark",
+      "id": "old-parliament-house",
+      "lod": 0,
+      "status": "ok",
+      "png_bytes": 447795,
+      "faces": 148,
+      "bbox_m": [
+        188.6,
+        179.0,
+        21.0
+      ],
+      "footprint_area_m2": 24553,
+      "declared_height_m": 21.0
+    },
+    {
+      "check": "landmark",
+      "id": "old-parliament-house",
+      "lod": 1,
+      "status": "ok",
+      "png_bytes": 449334,
+      "faces": 66,
+      "bbox_m": [
+        185.9,
+        178.6,
+        21.0
+      ],
+      "footprint_area_m2": 24553,
+      "declared_height_m": 21.0
+    },
+    {
+      "check": "landmark",
+      "id": "old-parliament-house",
+      "lod": 2,
+      "status": "ok",
+      "png_bytes": 449664,
+      "faces": 17,
+      "bbox_m": [
+        180.1,
+        167.6,
+        21.0
+      ],
+      "footprint_area_m2": 24553,
+      "declared_height_m": 21.0
+    },
+    {
+      "check": "landmark",
+      "id": "new-parliament-house",
+      "lod": 0,
+      "status": "ok",
+      "png_bytes": 449175,
+      "faces": 103,
+      "bbox_m": [
+        181.5,
+        191.6,
+        39.6
+      ],
+      "footprint_area_m2": 22202,
+      "declared_height_m": 39.6
+    },
+    {
+      "check": "landmark",
+      "id": "new-parliament-house",
+      "lod": 1,
+      "status": "ok",
+      "png_bytes": 449175,
+      "faces": 103,
+      "bbox_m": [
+        181.5,
+        191.6,
+        39.6
+      ],
+      "footprint_area_m2": 22202,
+      "declared_height_m": 39.6
+    },
+    {
+      "check": "landmark",
+      "id": "new-parliament-house",
+      "lod": 2,
+      "status": "ok",
+      "png_bytes": 449175,
+      "faces": 103,
+      "bbox_m": [
+        181.5,
+        191.6,
+        39.6
+      ],
+      "footprint_area_m2": 22202,
+      "declared_height_m": 39.6
+    },
+    {
+      "check": "city",
+      "view": "overview_ne",
+      "status": "ok",
+      "png_bytes": 390724,
+      "verts": 44864,
+      "tris": 60890
+    },
+    {
+      "check": "city",
+      "view": "overview_top",
+      "status": "ok",
+      "png_bytes": 390728,
+      "verts": 44864,
+      "tris": 60890
+    }
+  ]
+}

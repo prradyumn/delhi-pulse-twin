@@ -1,0 +1,297 @@
+{
+  "generated_at": "2026-09-03T17:44:19",
+  "blender": "5.2.0 LTS",
+  "seconds": 0.7,
+  "axis_roundtrip_ok": true,
+  "axis_dims": {
+    "X": 18.2,
+    "Y": 27.5,
+    "Z": 42.0
+  },
+  "skipped_open_ground": [
+    "cp-central-park",
+    "jantar-mantar"
+  ],
+  "placeholders": [
+    "india-gate",
+    "new-parliament-house",
+    "north-block",
+    "old-parliament-house",
+    "rashtrapati-bhavan",
+    "south-block"
+  ],
+  "authored": [],
+  "assets": [
+    {
+      "id": "india-gate",
+      "lod": 0,
+      "source": "placeholder",
+      "bytes": 1500,
+      "kb": 1.5,
+      "budget_kb": 400,
+      "over_budget": false,
+      "placed_at": [
+        1142.96,
+        984.27
+      ],
+      "height_m": 42.0,
+      "required": true
+    },
+    {
+      "id": "india-gate",
+      "lod": 1,
+      "source": "placeholder",
+      "bytes": 1500,
+      "kb": 1.5,
+      "budget_kb": 120,
+      "over_budget": false,
+      "placed_at": [
+        1142.96,
+        984.27
+      ],
+      "height_m": 42.0,
+      "required": true
+    },
+    {
+      "id": "india-gate",
+      "lod": 2,
+      "source": "placeholder",
+      "bytes": 1500,
+      "kb": 1.5,
+      "budget_kb": 30,
+      "over_budget": false,
+      "placed_at": [
+        1142.96,
+        984.27
+      ],
+      "height_m": 42.0,
+      "required": true
+    },
+    {
+      "id": "rashtrapati-bhavan",
+      "lod": 0,
+      "source": "placeholder",
+      "bytes": 1856,
+      "kb": 1.8,
+      "budget_kb": 400,
+      "over_budget": false,
+      "placed_at": [
+        -1798.3,
+        867.04
+      ],
+      "height_m": 20.0,
+      "required": false
+    },
+    {
+      "id": "rashtrapati-bhavan",
+      "lod": 1,
+      "source": "placeholder",
+      "bytes": 1856,
+      "kb": 1.8,
+      "budget_kb": 120,
+      "over_budget": false,
+      "placed_at": [
+        -1798.3,
+        867.04
+      ],
+      "height_m": 20.0,
+      "required": false
+    },
+    {
+      "id": "rashtrapati-bhavan",
+      "lod": 2,
+      "source": "placeholder",
+      "bytes": 1856,
+      "kb": 1.8,
+      "budget_kb": 30,
+      "over_budget": false,
+      "placed_at": [
+        -1798.3,
+        867.04
+      ],
+      "height_m": 20.0,
+      "required": false
+    },
+    {
+      "id": "north-block",
+      "lod": 0,
+      "source": "placeholder",
+      "bytes": 3072,
+      "kb": 3.0,
+      "budget_kb": 400,
+      "over_budget": false,
+      "placed_at": [
+        -1155.37,
+        778.34
+      ],
+      "height_m": 30.0,
+      "required": false
+    },
+    {
+      "id": "north-block",
+      "lod": 1,
+      "source": "placeholder",
+      "bytes": 2396,
+      "kb": 2.3,
+      "budget_kb": 120,
+      "over_budget": false,
+      "placed_at": [
+        -1155.37,
+        778.34
+      ],
+      "height_m": 30.0,
+      "required": false
+    },
+    {
+      "id": "north-block",
+      "lod": 2,
+      "source": "placeholder",
+      "bytes": 1676,
+      "kb": 1.6,
+      "budget_kb": 30,
+      "over_budget": false,
+      "placed_at": [
+        -1155.37,
+        778.34
+      ],
+      "height_m": 30.0,
+      "required": false
+    },
+    {
+      "id": "south-block",
+      "lod": 0,
+      "source": "placeholder",
+      "bytes": 3336,
+      "kb": 3.3,
+      "budget_kb": 400,
+      "over_budget": false,
+      "placed_at": [
+        -1163.62,
+        1028.33
+      ],
+      "height_m": 30.0,
+      "required": false
+    },
+    {
+      "id": "south-block",
+      "lod": 1,
+      "source": "placeholder",
+      "bytes": 2424,
+      "kb": 2.4,
+      "budget_kb": 120,
+      "over_budget": false,
+      "placed_at": [
+        -1163.62,
+        1028.33
+      ],
+      "height_m": 30.0,
+      "required": false
+    },
+    {
+      "id": "south-block",
+      "lod": 2,
+      "source": "placeholder",
+      "bytes": 1732,
+      "kb": 1.7,
+      "budget_kb": 30,
+      "over_budget": false,
+      "placed_at": [
+        -1163.62,
+        1028.33
+      ],
+      "height_m": 30.0,
+      "required": false
+    },
+    {
+      "id": "old-parliament-house",
+      "lod": 0,
+      "source": "placeholder",
+      "bytes": 2444,
+      "kb": 2.4,
+      "budget_kb": 400,
+      "over_budget": false,
+      "placed_at": [
+        -953.22,
+        554.06
+      ],
+      "height_m": 21.0,
+      "required": true
+    },
+    {
+      "id": "old-parliament-house",
+      "lod": 1,
+      "source": "placeholder",
+      "bytes": 2012,
+      "kb": 2.0,
+      "budget_kb": 120,
+      "over_budget": false,
+      "placed_at": [
+        -953.22,
+        554.06
+      ],
+      "height_m": 21.0,
+      "required": true
+    },
+    {
+      "id": "old-parliament-house",
+      "lod": 2,
+      "source": "placeholder",
+      "bytes": 1524,
+      "kb": 1.5,
+      "budget_kb": 30,
+      "over_budget": false,
+      "placed_at": [
+        -953.22,
+        554.06
+      ],
+      "height_m": 21.0,
+      "required": true
+    },
+    {
+      "id": "new-parliament-house",
+      "lod": 0,
+      "source": "placeholder",
+      "bytes": 2112,
+      "kb": 2.1,
+      "budget_kb": 400,
+      "over_budget": false,
+      "placed_at": [
+        -769.02,
+        557.48
+      ],
+      "height_m": 39.6,
+      "required": false
+    },
+    {
+      "id": "new-parliament-house",
+      "lod": 1,
+      "source": "placeholder",
+      "bytes": 2112,
+      "kb": 2.1,
+      "budget_kb": 120,
+      "over_budget": false,
+      "placed_at": [
+        -769.02,
+        557.48
+      ],
+      "height_m": 39.6,
+      "required": false
+    },
+    {
+      "id": "new-parliament-house",
+      "lod": 2,
+      "source": "placeholder",
+      "bytes": 2112,
+      "kb": 2.1,
+      "budget_kb": 30,
+      "over_budget": false,
+      "placed_at": [
+        -769.02,
+        557.48
+      ],
+      "height_m": 39.6,
+      "required": false
+    }
+  ],
+  "failures": []
+}

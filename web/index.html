@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delhi Pulse Twin — Central Delhi mobility explorer</title>
+<meta name="description" content="A mobility and city-scenario explorer for one locked 4 x 4 km box of Central Delhi. Every layer states whether it is observed, estimated, simulated or replay.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="preload" as="fetch" href="data/@v1/manifest.json">
+<link rel="preload" as="fetch" href="data/@v1/buildings.json">
+</head>
+<body>
+<noscript>
+  <div style="max-width:34rem;margin:12vh auto;padding:0 24px;font-family:system-ui;color:#e8ecef">
+    <h1>Delhi Pulse Twin</h1>
+    <p>This is an interactive 3D view and needs JavaScript. The underlying data is plain versioned
+    JSON under <code>data/@v1/</code> — including full provenance for every layer — if you would
+    rather read the sources directly.</p>
+  </div>
+</noscript>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

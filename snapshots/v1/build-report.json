@@ -58,6 +58,10 @@
     "lines": 115,
     "stations": 11
   },
+  "landmarks": {
+    "count": 8,
+    "required_present": 3
+  },
   "transit": {
     "stops": 166,
     "routes": [

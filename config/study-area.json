@@ -122,7 +122,10 @@
           28.6129323
         ],
         "osm_height_m": null,
-        "serves": "kartavya-path"
+        "serves": "kartavya-path",
+        "kind": "massing",
+        "assumed_height_m": 42.0,
+        "note": "Published monument height (42 m). OSM carries no height tag for way/361709652."
       },
       {
         "id": "old-parliament-house",
@@ -134,7 +137,8 @@
         ],
         "osm_height_m": 21,
         "serves": "orientation west",
-        "note": "Circular colonnade. Replaces the proposed 'Sansad Bhavan', which does not exist in OSM under that name."
+        "note": "Circular colonnade. Replaces the proposed 'Sansad Bhavan', which does not exist in OSM under that name.",
+        "kind": "massing"
       },
       {
         "id": "cp-central-park",
@@ -146,7 +150,8 @@
         ],
         "osm_height_m": null,
         "serves": "both bus corridors",
-        "note": "Rajiv Chowk Central Park plus the colonnaded inner ring around it \u2014 modelled as a ring, not one building."
+        "note": "Rajiv Chowk Central Park plus the colonnaded inner ring around it \u2014 modelled as a ring, not one building. Rajiv Chowk Central Park is open ground, not a building. The colonnaded inner ring around it is separate building stock and is already in the buildings layer.",
+        "kind": "open"
       }
     ],
     "optional": [
@@ -157,7 +162,8 @@
           77.1995283,
           28.6143716
         ],
-        "osm_height_m": 20
+        "osm_height_m": 20,
+        "kind": "massing"
       },
       {
         "id": "north-block",
@@ -166,7 +172,8 @@
           77.2057833,
           28.6151215
         ],
-        "osm_height_m": 30
+        "osm_height_m": 30,
+        "kind": "massing"
       },
       {
         "id": "south-block",
@@ -175,7 +182,8 @@
           77.2056557,
           28.6129715
         ],
-        "osm_height_m": 30
+        "osm_height_m": 30,
+        "kind": "massing"
       },
       {
         "id": "new-parliament-house",
@@ -184,7 +192,8 @@
           77.2102196,
           28.6171196
         ],
-        "osm_height_m": 39.6
+        "osm_height_m": 39.6,
+        "kind": "massing"
       },
       {
         "id": "jantar-mantar",
@@ -193,9 +202,12 @@
           77.2165964,
           28.6270993
         ],
-        "osm_height_m": null
+        "osm_height_m": null,
+        "kind": "open",
+        "note": "The OSM footprint is the walled enclosure, not the masonry instruments inside it. Rendering it as a block would misrepresent the site."
       }
-    ]
+    ],
+    "kind_note": "kind=massing extrudes the verified footprint; kind=open renders as a flat plaza or lawn with a label and no massing. Heights resolve in order: OSM height tag (observed) -> assumed_height_m from a published dimension (estimated) -> none."
   },
   "measured": {
     "buildings_elements": 3445,

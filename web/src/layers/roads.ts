@@ -1,0 +1,55 @@
+import * as THREE from "three";
+import type { Layer, LayerReport } from "./registry";
+import { ribbons, repaint, type XZ } from "./geom";
+import { PALETTE } from "./palette";
+import * as load from "../geo/load";
+import type { Road } from "../geo/types";
+
+const WIDTH: Record<string, number> = {
+  motorway: 22, trunk: 20, primary: 17, secondary: 14, tertiary: 11,
+  residential: 7, unclassified: 7, service: 5,
+};
+
+export class RoadsLayer implements Layer {
+  id = "roads"; label = "Roads";
+  group = new THREE.Group();
+  roads: Road[] = [];
+  private mesh?: THREE.Mesh;
+  private vfeat: Uint32Array = new Uint32Array(0);
+
+  async build(): Promise<LayerReport> {
+    const base: LayerReport = { id: this.id, label: this.label, status: "pending",
+      provenance: null, features: 0, bytes: 0, ms: 0, drawCalls: 0, triangles: 0 };
+    const res = await load.roads();
+    if (!res.ok) return { ...base, status: "unavailable", error: res.error };
+
+    this.roads = res.data.features;
+    const built = ribbons(this.roads.map((r) => ({
+      p: r.p as XZ[],
+      width: WIDTH[r.k] ?? 8,
+      // stack by class so a primary reads over a service road at a junction
+      y: 0.02 + (WIDTH[r.k] ?? 8) * 0.002,
+      color: PALETTE.road[r.k] ?? PALETTE.road.service,
+    })));
+    this.vfeat = built.vertexFeature;
+    this.mesh = new THREE.Mesh(built.geometry, new THREE.MeshStandardMaterial({
+      vertexColors: true, roughness: 0.86, metalness: 0,
+    }));
+    this.mesh.name = "roads";
+    this.group.add(this.mesh);
+
+    return { ...base, status: "ready", provenance: res.data.provenance,
+             features: this.roads.length, bytes: res.bytes, ms: res.ms,
+             drawCalls: 1, triangles: built.triangles };
+  }
+
+  /** Roads are runtime geometry so that colour stays data. Repaint on traffic/corridor change. */
+  paint(colorFor: (r: Road, i: number) => THREE.Color | null) {
+    if (!this.mesh) return;
+    repaint(this.mesh.geometry, this.vfeat, (fi) => colorFor(this.roads[fi], fi));
+  }
+
+  roadAtVertex(v: number): Road | null { return this.roads[this.vfeat[v]] ?? null; }
+  setVisible(v: boolean) { this.group.visible = v; }
+  dispose() { this.mesh?.geometry.dispose(); }
+}

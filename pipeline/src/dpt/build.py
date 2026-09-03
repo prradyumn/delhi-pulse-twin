@@ -365,6 +365,87 @@ def transit(corr):
     return chosen
 
 
+# ---------------------------------------------------------------- landmarks
+def landmarks():
+    """Hero-landmark footprints, resolved by verified OSM id. Relations arrive as member ways, so
+    the outer ring is stitched here rather than trusting a top-level geometry key."""
+    src = pathlib.Path("spike/_raw/osm_landmarks.json")
+    meta = {lm["osm"]: lm for lm in C["landmarks"]["required"] + C["landmarks"]["optional"]}
+    required = {lm["osm"] for lm in C["landmarks"]["required"]}
+    feats = []
+    if not src.exists():
+        print("  !! spike/_raw/osm_landmarks.json missing — run: python pipeline/fetch_landmarks.py")
+    else:
+        for el in json.loads(src.read_text())["elements"]:
+            key = f"{el['type']}/{el['id']}"
+            lm = meta.get(key)
+            if not lm:
+                continue
+            t = el.get("tags", {})
+            rings = []
+            if el.get("geometry"):
+                rings.append(P.ring(el["geometry"]))
+            for mem in el.get("members", []):
+                if mem.get("type") == "way" and mem.get("geometry") and mem.get("role") in ("outer", "", None):
+                    rings.append(P.ring(mem["geometry"]))
+            polys = []
+            for r in rings:
+                if len(r) < 4:
+                    continue
+                try:
+                    pp = Polygon(r)
+                    if not pp.is_valid:
+                        pp = pp.buffer(0)
+                    if pp.geom_type == "Polygon" and pp.area > 4:
+                        polys.append(pp)
+                except Exception:
+                    continue
+            if not polys:
+                print(f"  !! {lm['id']}: no usable ring from {key}")
+                continue
+            best = max(polys, key=lambda p: p.area)
+            # height order: OSM tag (observed) -> published dimension (estimated) -> none
+            h, hmode = lm.get("osm_height_m"), "observed"
+            if h is None:
+                try:
+                    h = float(str(t.get("height", "")).replace("m", "").strip())
+                except (ValueError, TypeError):
+                    h = None
+            if h is None and lm.get("assumed_height_m"):
+                h, hmode = lm["assumed_height_m"], "estimated"
+            if h is None:
+                hmode = "estimated"
+            feats.append({
+                "id": lm["id"], "osm": key, "name": t.get("name") or lm["id"],
+                "required": key in required,
+                "ring": [[round(x, 2), round(z, 2)] for x, z in list(best.exterior.coords)[:-1]],
+                # shapely holds our (x, z) pair as (x, y); z is the second component
+                "centroid": [round(best.centroid.x, 2), round(best.centroid.y, 2)],
+                "area_m2": round(best.area),
+                "height_m": round(float(h), 1) if h is not None else None,
+                "height_mode": hmode,
+                "kind": lm.get("kind", "massing"),
+                "serves": lm.get("serves"), "note": lm.get("note"),
+            })
+            print(f"  {lm['id']:<24} {feats[-1]['kind']:<8} {round(best.area):>7} m²  "
+                  f"h={feats[-1]['height_m']} ({feats[-1]['height_mode']})  ({key})")
+
+    report["landmarks"] = {"count": len(feats),
+                           "required_present": sum(1 for f in feats if f["required"])}
+    manifest_assets["landmarks"] = write_json("landmarks.json", {
+        "kind": "landmarks", "count": len(feats),
+        "provenance": osm_prov(
+            dataset="OSM footprints for the verified hero landmarks",
+            limitations=[
+                "Footprints are observed OSM geometry. Heights come from OSM height tags where present and are otherwise estimated.",
+                "Until the Phase 4 modelling sprint, kind=massing landmarks render as blocks extruded from the real footprint — correctly placed and scaled, deliberately not detailed.",
+                "kind=open landmarks (Rajiv Chowk Central Park, Jantar Mantar) are open ground in OSM, not buildings. They render flat with a label: extruding the enclosure would misrepresent the site.",
+                "India Gate's 42 m height is a published monument dimension, not an OSM tag, and is reported as estimated.",
+            ]),
+        "features": feats}, minify=False)
+    return feats
+
+
 # ---------------------------------------------------------------- weather + scenario model
 def weather():
     manifest_assets["weather"] = write_json("weather/baseline.json", {
@@ -392,6 +473,16 @@ def weather():
         "note": "Every weight and penalty on this page is displayed next to the number it produces. Changing one is a data change plus a version bump, never a silent code edit.",
         "free_flow_kmh": {"motorway": 60, "trunk": 50, "primary": 45,
                           "secondary": 35, "tertiary": 30, "residential": 20},
+        "diurnal_congestion": {
+            "_note": "Declared heuristic, hour 0-23, congestion index 0-1. Shaped to Delhi's twin weekday peaks. NOT calibrated against observed speeds — no open Delhi speed dataset was obtainable at build time, which is why this layer is labelled estimated everywhere it appears.",
+            "profile": [0.05, 0.04, 0.04, 0.05, 0.08, 0.14, 0.24, 0.46,
+                        0.68, 0.80, 0.62, 0.52, 0.50, 0.50, 0.52, 0.56,
+                        0.62, 0.76, 0.88, 0.79, 0.55, 0.36, 0.21, 0.11]},
+        "corridor_base": {
+            "_note": "Per-corridor multiplier on the diurnal profile, reflecting the functional character Spike-0 measured rather than any observation.",
+            "baba-kharak-singh-marg": 1.05,
+            "barakhamba-road": 1.15,
+            "kartavya-path": 0.62},
         "rain_speed_multiplier": {
             "_note": "Declared heuristic. Not calibrated against observed Delhi speeds — no such open dataset was available at build time.",
             "none":       {"primary": 1.00, "secondary": 1.00, "tertiary": 1.00},
@@ -401,11 +492,13 @@ def weather():
             "very_heavy": {"primary": 0.52, "secondary": 0.45, "tertiary": 0.38}},
         "msi_weights": {"speed_penalty": 0.45, "transit_pressure": 0.30, "weather_impact": 0.25},
         "wait_proxy": "half the headway, assuming evenly spaced arrivals",
+        "transit_pressure_normalisation": "1 - (buses per hour / 12), clamped to 0-1. 12 buses/hour is treated as comfortable. A declared normalisation, not an observed crowding measure.",
         "definitions": {
-            "mobility_stress_index": "Normalised composite of speed penalty, transit service pressure and weather impact for one corridor. A product-defined indicator, not a standard measure.",
+            "mobility_stress_index": "Normalised composite of speed penalty, transit service pressure and weather impact for one corridor. A product-defined indicator, not a standard measure. Where a corridor has no transit at all, that weight is redistributed across the remaining terms and the UI says so.",
             "service_intensity": "Buses per hour = 60 / headway. Assumed headway, not scheduled or observed.",
-            "wait_time_proxy": "Half the headway. Invalid for irregular arrivals.",
+            "wait_time_proxy": "Half the headway. Invalid for irregular arrivals; labelled a proxy.",
             "travel_time_index_proxy": "Scenario travel time / baseline travel time along the corridor spine.",
+            "speed_penalty": "1 - (mean corridor speed / free-flow speed for the road class).",
         }})
 
 
@@ -416,6 +509,7 @@ def main():
     print("corridors…");  cr = corridors(rf)
     print("ground…");     ground()
     print("rail…");       rail()
+    print("landmarks…");  landmarks()
     print("transit…");    transit(cr)
     print("weather + scenario model…"); weather()
 

@@ -3,7 +3,9 @@ import { store } from "../state/store";
 import type { CorridorMetrics } from "../scenario/engine";
 import type { ExposureModel, JourneyExposure } from "../scenario/exposure";
 import { journeys, betterTimeToTravel, whoContext, pmColour } from "../scenario/exposure";
-import type { AirReading, AirForecastHour } from "../data/adapters/openMeteo";
+import type { AirReading, AirForecastHour, WeatherReading,
+              MixingHour } from "../data/adapters/openMeteo";
+import { airContext } from "../scenario/airContext";
 import type { Corridor } from "../geo/types";
 
 const n1 = (v: number) => v.toFixed(1);
@@ -11,6 +13,8 @@ const n1 = (v: number) => v.toFixed(1);
 export interface ExposureState {
   air: AirReading | null;
   forecast: AirForecastHour[];
+  weather: WeatherReading | null;
+  mixing: MixingHour[];
   /** true when `air` came from the pinned snapshot rather than the network */
   fromSnapshot: boolean;
   snapshotNote: string;
@@ -36,7 +40,8 @@ export function exposureLab(
   (node.querySelector(".phead") as HTMLElement).append(closeBtn);
   closeBtn.addEventListener("click", () => hide());
 
-  let air: ExposureState = { air: null, forecast: [], fromSnapshot: true, snapshotNote: "" };
+  let air: ExposureState = { air: null, forecast: [], weather: null, mixing: [],
+                             fromSnapshot: true, snapshotNote: "" };
   let metrics: CorridorMetrics | null = null;
 
   function doseRow(j: JourneyExposure, worst: number) {
@@ -91,6 +96,61 @@ export function exposureLab(
     if (air.fromSnapshot) {
       body.append(el("div", { class: "disabled-reason", style: "margin-top:8px" },
         el("strong", { text: "Pinned snapshot, not a live reading. " }), air.snapshotNote));
+    }
+
+    // ---- WHY. This sits immediately under the number, before any dose figure, because
+    // "71 µg/m³" is a verdict and this is the information.
+    const ctx = airContext(a, air.weather, air.mixing);
+    body.append(el("h3", { class: "sub", text: "Why the air is like this" }));
+    body.append(el("div", { class: "insight" }, el("strong", { text: ctx.headline })));
+
+    if (ctx.ventilation) {
+      const v = ctx.ventilation;
+      body.append(el("div", { class: "metric" },
+        el("span", { class: "m-l", text: "Mixing layer" }),
+        el("span", { class: "m-v", text: `${Math.round(v.blh_m)} m` })));
+      body.append(el("div", { class: "metric" },
+        el("span", { class: "m-l", text: "Ventilation index" }),
+        el("span", { class: `m-v vent-${v.band.replace(" ", "-")}`,
+                     text: `${Math.round(v.index).toLocaleString()} m²/s · ${v.band}` })));
+      body.append(el("p", { class: "dnote", text: v.plain }));
+      if (v.best && v.liftFactor && v.liftFactor > 1.3) {
+        body.append(el("p", { class: "dnote" },
+          "The deepest mixing in the next 12 hours of this forecast is ",
+          el("b", { text: `${Math.round(v.best.blh_m)} m at ${v.best.time.slice(11, 16)}` }),
+          ` — about ${v.liftFactor.toFixed(1)}× the dilution available now. Dilution, rather than `
+          + `a change in what the city emits, is what moves this number hour to hour. A forecast, `
+          + `not an observation.`));
+      }
+    } else {
+      body.append(el("p", { class: "note",
+        text: "No mixing-layer data in this reading, so the meteorological half of the explanation "
+            + "is unavailable." }));
+    }
+
+    body.append(el("div", { class: "metric" },
+      el("span", { class: "m-l", text: "Fine fraction (PM2.5/PM10)" }),
+      el("span", { class: "m-v",
+                   text: ctx.attribution.finePct === null ? "—"
+                       : `${ctx.attribution.finePct.toFixed(0)}% · ${ctx.attribution.kind}` })));
+    body.append(el("p", { class: "dnote", text: ctx.attribution.reading }));
+
+    if (ctx.windFrom) {
+      body.append(el("div", { class: "metric" },
+        el("span", { class: "m-l", text: "Air arriving from" }),
+        el("span", { class: "m-v",
+                     text: `${ctx.windFrom.name} · ${Math.round(ctx.windFrom.deg)}°` })));
+      body.append(el("p", { class: "dnote", text: ctx.windFrom.note }));
+    }
+    if (ctx.aod !== null && ctx.aodNote) {
+      body.append(el("div", { class: "metric" },
+        el("span", { class: "m-l", text: "Haze column (AOD)" }),
+        el("span", { class: "m-v", text: ctx.aod.toFixed(2) })));
+      body.append(el("p", { class: "dnote", text: ctx.aodNote }));
+    } else if (air.fromSnapshot) {
+      body.append(el("p", { class: "dnote",
+        text: "Dust, haze column and mixing depth are not in the pinned snapshot — they arrive "
+            + "only with the live feed." }));
     }
 
     body.append(el("h3", { class: "sub", text: "Other pollutants" }),
@@ -187,7 +247,8 @@ export function exposureLab(
         el("li", { text: `Kerbside enrichment: waiting ×${model.roadside_enrichment.waiting_at_stop}, footway ×${model.roadside_enrichment.walking_footway}, in traffic ×${model.roadside_enrichment.in_traffic}. Declared multipliers, not measurements at these locations.` }),
         el("li", { text: "The concentration is one modelled reading for the whole study area — not a kerbside monitor, and it cannot resolve variation inside a 4 km box." }),
         el("li", { text: "Travel and wait times come from the corridor estimate, which is itself a declared heuristic rather than observed speeds." }),
-        el("li", { text: "Not medical advice. A dose figure is a rough comparative indicator, not a personal health assessment." })));
+        el("li", { text: "Not medical advice. A dose figure is a rough comparative indicator, not a personal health assessment." }),
+        ...ctx.limitations.map((t) => el("li", { text: t }))));
   }
 
   function show() { node.classList.remove("hidden"); render(); }

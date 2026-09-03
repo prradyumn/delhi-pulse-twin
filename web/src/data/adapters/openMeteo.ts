@@ -20,6 +20,13 @@ export type FeedState = "live" | "stale" | "fallback" | "unavailable" | "idle";
 
 export interface AirReading {
   pm2_5: number; pm10: number; no2: number; so2: number; o3: number; co: number;
+  /** coarse mineral dust, separated from combustion particulate. Delhi gets both, from
+   *  completely different places, and the mix decides whether the answer is traffic or weather. */
+  dust: number | null;
+  /** column aerosol optical depth — how thick the haze is through the whole atmosphere, not just
+   *  at nose height. An independent cross-check on the surface number. */
+  aod: number | null;
+  uv_index: number | null;
   source_time: string;
   state: FeedState;
   provider: string;
@@ -27,11 +34,26 @@ export interface AirReading {
 
 export interface WeatherReading {
   temp_c: number; feels_c: number; rh_pct: number; wind_kmh: number;
+  /** degrees the wind is blowing FROM, meteorological convention */
+  wind_from_deg: number | null;
+  wind_gust_kmh: number | null;
   precip_mm: number; rain_mm: number; weather_code: number;
   source_time: string;
   state: FeedState;
   provider: string;
 }
+
+/**
+ * Mixing-layer depth, in metres, hour by hour.
+ *
+ * The most explanatory number available for Delhi's air and the one nobody puts in front of a
+ * reader. It is the depth of atmosphere the city's emissions get stirred into. Measured live from
+ * this feed: 430 m at 23:00 collapsing to 135 m by dawn, against 1,500 m or more on a sunny
+ * afternoon — a ten-fold change in dilution volume, from the same emissions. It is why the air is
+ * worst at night and after sunset, and it is why "go at a different hour" is physics rather than
+ * folklore.
+ */
+export interface MixingHour { time: string; blh_m: number }
 
 export interface AirForecastHour { time: string; pm2_5: number }
 
@@ -39,10 +61,19 @@ export interface LiveBundle {
   air: AirReading | null;
   weather: WeatherReading | null;
   forecast: AirForecastHour[];
+  mixing: MixingHour[];
   /** the study-area centre these readings apply to, and the box they are being applied to */
   appliesTo: { lat: number; lon: number; note: string };
   fetchedAt: string;
   errors: string[];
+}
+
+/** Optional numeric field: absent or null means the provider does not publish it here, which is
+ *  different from zero and must not become zero. CAMS returned null for ammonia over Delhi. */
+function num(v: unknown): number | null {
+  if (v === null || v === undefined || v === "") return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
 }
 
 const CENTRE = { lat: 28.6220, lon: 77.2180 };
@@ -53,12 +84,14 @@ const STALE_AFTER_MIN = 90;
 const AQ_URL =
   `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${CENTRE.lat}` +
   `&longitude=${CENTRE.lon}&current=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,` +
-  `sulphur_dioxide,ozone&hourly=pm2_5&forecast_days=2&timezone=Asia%2FKolkata`;
+  `sulphur_dioxide,ozone,dust,aerosol_optical_depth,uv_index` +
+  `&hourly=pm2_5&forecast_days=2&timezone=Asia%2FKolkata`;
 
 const WX_URL =
   `https://api.open-meteo.com/v1/forecast?latitude=${CENTRE.lat}&longitude=${CENTRE.lon}` +
   `&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,` +
-  `wind_speed_10m,weather_code&timezone=Asia%2FKolkata`;
+  `wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code` +
+  `&hourly=boundary_layer_height&forecast_days=2&timezone=Asia%2FKolkata`;
 
 async function getJson(url: string): Promise<unknown> {
   const ctrl = new AbortController();
@@ -85,7 +118,7 @@ function stateFor(iso: string): FeedState {
 /** Fetch both feeds. Resolves even when everything fails — the caller inspects `errors`. */
 export async function fetchLive(): Promise<LiveBundle> {
   const out: LiveBundle = {
-    air: null, weather: null, forecast: [],
+    air: null, weather: null, forecast: [], mixing: [],
     appliesTo: {
       lat: CENTRE.lat, lon: CENTRE.lon,
       note: "One reading for the entire study area. The CAMS grid is about 11 km, so all four " +
@@ -110,6 +143,9 @@ export async function fetchLive(): Promise<LiveBundle> {
         pm2_5: Number(c.pm2_5), pm10: Number(c.pm10),
         no2: Number(c.nitrogen_dioxide), so2: Number(c.sulphur_dioxide),
         o3: Number(c.ozone), co: Number(c.carbon_monoxide),
+        // these three are optional in the CAMS output for a given region: ammonia came back null
+        // for Delhi when this was wired, so every one of them is null-checked rather than cast
+        dust: num(c.dust), aod: num(c.aerosol_optical_depth), uv_index: num(c.uv_index),
         source_time: t, state: stateFor(t),
         provider: "Open-Meteo Air Quality (CAMS)",
       };
@@ -127,16 +163,27 @@ export async function fetchLive(): Promise<LiveBundle> {
 
   if (wx.status === "fulfilled") {
     try {
-      const c = (wx.value as { current: Record<string, number | string> }).current;
+      const wd = wx.value as {
+        current: Record<string, number | string>;
+        hourly?: { time: string[]; boundary_layer_height?: (number | null)[] };
+      };
+      const c = wd.current;
       const t = String(c.time);
       out.weather = {
         temp_c: Number(c.temperature_2m), feels_c: Number(c.apparent_temperature),
         rh_pct: Number(c.relative_humidity_2m), wind_kmh: Number(c.wind_speed_10m),
+        wind_from_deg: num(c.wind_direction_10m), wind_gust_kmh: num(c.wind_gusts_10m),
         precip_mm: Number(c.precipitation), rain_mm: Number(c.rain),
         weather_code: Number(c.weather_code),
         source_time: t, state: stateFor(t),
         provider: "Open-Meteo Forecast",
       };
+      const blh = wd.hourly?.boundary_layer_height;
+      if (wd.hourly && blh) {
+        out.mixing = wd.hourly.time
+          .map((tt, i) => ({ time: tt, blh_m: blh[i] ?? NaN }))
+          .filter((h) => Number.isFinite(h.blh_m));
+      }
     } catch (e) {
       out.errors.push(`weather parse: ${e instanceof Error ? e.message : String(e)}`);
     }

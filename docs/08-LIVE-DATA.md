@@ -180,3 +180,85 @@ A recorded day also unlocks something the scope lock otherwise forbids. Live dat
 `replay` is already a declared mode in the provenance vocabulary that this project has never been
 able to use honestly. Recording turns the bus layer from `simulated` to `replay` with a real
 `source_time`, with no live dependency at all.
+
+---
+
+# "Why the air is like this" — built from keyless data
+
+The app showed a PM2.5 number, put it against the WHO guideline, and turned it into an inhaled
+dose. It never answered what anyone in Delhi asks next: **why is it this bad, and what would change
+it?** Without that the number is a verdict, and the only advice available was "go at a different
+hour" with no reason attached.
+
+Three quantities answer it. All are live from Open-Meteo, **keyless**, and were verified by calling
+the endpoint rather than read off the docs.
+
+| | measured over this box, 2026-09-04 00:00 IST |
+|---|---|
+| **Mixing-layer depth** | **170 m**, from 430 m at 23:00, forecast 505 m by 09:00 |
+| **Ventilation index** (depth × wind) | **128 m²/s** — "very low" |
+| **Fine fraction** PM2.5/PM10 | **99%** → combustion, not dust |
+| Wind from | 138°, south-east |
+| Haze column (AOD) | 0.51 — thick |
+| Modelled mineral dust | 1.0 µg/m³ |
+
+**Mixing-layer depth is the find.** It is the depth of atmosphere the city's emissions get stirred
+into, and it is almost never put in front of a reader. 170 m now against 505 m by morning is a
+three-fold change in dilution volume from *identical* emissions. That is why Delhi's air is worst
+at night, and it makes "travel at a different hour" physics instead of folklore.
+
+**The ventilation index** is depth × wind speed, the conventional measure of a city's ability to
+flush itself, with breakpoints from air-quality practice. At 128 m²/s the city is barely flushing —
+whatever is emitted stays put. This is the number that separates "today is bad because of emissions"
+from "today is bad because of weather", and tonight it is emphatically weather.
+
+**The fine fraction** separates two different problems with different answers. At 99% fine, coarse
+dust is absent: this is combustion — traffic, burning, industry — not construction or desert dust.
+A low ratio would point at watering and paving instead of traffic restraint.
+
+Wind direction gets a note on what lies upwind, explicitly labelled as **geography written into the
+app, not an attribution** — a satellite fire feed is what would make the Punjab stubble-burning
+sector a measurement rather than a plausible story.
+
+## One wording correction worth recording
+
+The first version of the headline read *"The mixing layer roughly 3.0× by 09:00, which is when it
+clears."* That contains none of the phrases the no-predictive-wording gate bans, so it passed. It
+was still wrong: it asserts a future state as fact, which is exactly what that rule exists to
+prevent. Passing the regex is not the standard. It now reads *"The forecast has the mixing layer
+about 3.0× deeper by 09:00"*, and the detail line ends *"A forecast, not an observation."*
+
+## Ceiling on this feature, stated in the UI
+
+All of it is **modelled** — Copernicus CAMS and the Open-Meteo forecast at roughly 11 km. It
+explains the region, not the street, and it cannot resolve variation inside this 4 km box. The
+mixing depth is a model diagnostic, not a sounding. The fine fraction points at a source *category*
+and does not apportion one; real apportionment needs speciated chemistry that no free feed provides.
+
+## A console-error mistake, twice
+
+Enabling the adapter from the environment reintroduced the exact failure the original design note
+warned about: *"a build without a key must not fire a request that can only 404 — it logs a console
+error for every user."* The manifest now says the build is *permitted* to contact OTD, but
+permission is not capability, and the serving environment may have no function at all.
+
+First fix: have the QA harness serve `/api/vehicles` as **501 unconfigured**, matching what Vercel
+and the Vite plugin return without a key. The console-error gate went red again — Chrome logs *any*
+non-2xx as "Failed to load resource", whether or not the fetch is handled.
+
+So the contract is now **HTTP 200 with an `unconfigured` body**, in all three implementations (edge
+function, Vite plugin, QA harness). 501 is the semantically better status and it costs a console
+error for every visitor, which this project is explicitly not willing to spend on an expected
+resting state. The request succeeds; the missing capability is reported in the payload. The client
+still honours 501 and 404 for a deployment running an older proxy.
+
+## Free feeds worth adding next, ranked
+
+| feed | key | what it converts |
+|---|---|---|
+| **TomTom Traffic Flow** | free, no card | Current speed, **free-flow speed and a confidence value per road segment**. This retires the corridor heuristic — the app's most-repeated admission — without waiting for buses, and it ships a confidence figure, which suits this project. |
+| **OpenAQ v3** | free | The **CPCB ground-station network**. Turns air quality from modelled to *observed at a station*, and gives genuine variation across the box — the limitation the exposure panel currently has to state. |
+| **NASA FIRMS** | free MAP_KEY | VIIRS/MODIS active-fire detections within ~3 hours. Turns the upwind note into evidence during the October–November burning season. |
+| Open-Meteo pollen / UV | keyless | Already wired for UV. Pollen is European-only, so not useful here. |
+| OpenSky Network | keyless, rate-limited | Aircraft positions. IGI is outside the box; the Airport Express line is in it. Marginal. |
+| data.gov.in CPCB | free key | Official Indian AQI. Overlaps OpenAQ, historically less reliable uptime. |

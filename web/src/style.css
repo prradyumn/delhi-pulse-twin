@@ -389,3 +389,10 @@ h3.sub:first-child { margin-top: 0; padding-top: 0; border-top: none; }
   width: 9px; height: 9px; border-radius: 1px; display: inline-block;
   margin-right: 6px; vertical-align: baseline;
 }
+
+/* ventilation index bands: the one number that explains most of Delhi's daily air cycle */
+.vent-very-low { color: #d9534f; }
+.vent-low      { color: #e2a453; }
+.vent-moderate { color: var(--text); }
+.vent-good     { color: #7fc08a; }
+.vent-very-good{ color: #5fce8a; }

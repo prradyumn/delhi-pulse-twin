@@ -789,13 +789,16 @@ async function boot() {
         pm2_5: weather.air_baseline.pm2_5, pm10: weather.air_baseline.pm10,
         no2: weather.air_baseline.no2, so2: weather.air_baseline.so2,
         o3: weather.air_baseline.o3, co: weather.air_baseline.co,
+        // the pinned snapshot predates these fields, so they are explicitly absent rather than
+        // zero — the panel then says "not in the pinned snapshot" instead of inventing a number
+        dust: null, aod: null, uv_index: null,
         source_time: weather.air_baseline.source_time,
         state: "fallback", provider: weather.air_baseline.provider,
       }
     : null;
 
   const snapshotState: ExposureState = {
-    air: snapshotAir, forecast: [], fromSnapshot: true,
+    air: snapshotAir, forecast: [], weather: null, mixing: [], fromSnapshot: true,
     snapshotNote: "The live Open-Meteo reading has not arrived, so this is the pinned figure from "
                   + "2026-09-03. Every number derived from it is as old as it is.",
   };
@@ -871,7 +874,9 @@ async function boot() {
     if (bundle.air) {
       latestAir = bundle.air;
       exposure.setAir({
-        air: bundle.air, forecast: bundle.forecast, fromSnapshot: false, snapshotNote: "",
+        air: bundle.air, forecast: bundle.forecast,
+        weather: bundle.weather, mixing: bundle.mixing,
+        fromSnapshot: false, snapshotNote: "",
       });
       const age = bundle.air.state;
       if (!liveBuses.hasLive()) mast.setFeed(age, age === "live" ? "air quality live" : "air quality stale",

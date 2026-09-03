@@ -7,7 +7,8 @@ import { loadEnv } from "vite";
  * The production path is the edge function in `api/vehicles.ts`; this is the same contract
  * implemented as Node middleware. Keeping them separate rather than sharing code is deliberate —
  * the edge runtime and Node differ enough that a shared file would need shims, and the contract is
- * small enough to state twice: 501 when unconfigured, protobuf bytes when it works.
+ * small enough to state twice: 200 with an `unconfigured` body when there is no key, protobuf
+ * bytes when it works.
  *
  * **The key never reaches the browser.** It is read here, in the Node process, from `OTD_API_KEY`
  * in `.env.local`. Vite only exposes `VITE_`-prefixed variables to client code, so the name matters:
@@ -23,7 +24,9 @@ export function otdVehicles({ root, mode = "development" } = {}) {
     if (!req.url || !req.url.startsWith("/api/vehicles")) return next();
 
     if (!key) {
-      res.statusCode = 501;
+      // 200, not 501: see api/vehicles.ts for why a non-2xx here costs a console error for
+      // every visitor even though the client handles it.
+      res.statusCode = 200;
       res.setHeader("content-type", "application/json");
       res.end(JSON.stringify({
         error: "unconfigured",

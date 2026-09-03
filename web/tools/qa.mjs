@@ -48,6 +48,25 @@ if (!existsSync(join(DIST, "index.html"))) {
 const PORT = 8700 + Math.floor(Math.random() * 300);
 const server = createServer(async (req, res) => {
   const url = decodeURIComponent((req.url || "/").split("?")[0]);
+
+  // The live-bus endpoint, answering exactly as an unconfigured deployment does.
+  //
+  // Not a convenience: without it this harness misrepresents every real deployment. Vercel always
+  // has api/vehicles.ts and vite preview always has the plugin, and both return 501 with an
+  // "unconfigured" body when there is no key. A bare static server returns 404 instead, and the
+  // browser logs that as a console error even though the adapter handles it — which is how the
+  // console-error gate went red the moment the manifest started permitting the adapter. Serving
+  // the documented contract fixes the misrepresentation and exercises the client's unconfigured
+  // path, which is the path most viewers will actually take.
+  if (url === "/api/vehicles") {
+    res.writeHead(200, { "content-type": "application/json" });
+    res.end(JSON.stringify({
+      error: "unconfigured",
+      detail: "qa.mjs serves the unconfigured contract: no OTD key in the test environment.",
+    }));
+    return;
+  }
+
   const path = join(DIST, url === "/" ? "index.html" : url);
   try {
     const buf = await readFile(path);

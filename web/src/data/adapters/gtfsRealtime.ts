@@ -307,13 +307,28 @@ export async function fetchLiveBuses(): Promise<LiveBusFeed> {
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
   try {
     const res = await fetch(ENDPOINT, { signal: ctrl.signal, cache: "no-store" });
+    // 501 and 404 are still honoured for a deployment running an older proxy, but the current
+    // contract is 200 with a JSON body: a non-2xx status logs a console error in every browser
+    // for every visitor, which this app is explicitly not willing to spend on an expected state.
     if (res.status === 501 || res.status === 404) {
-      // the proxy is absent or has no key: the designed resting state, not a failure
       return { ...base, state: "unconfigured",
                error: "No live-bus proxy configured. See docs/08-LIVE-DATA.md." };
     }
     if (!res.ok) {
       return { ...base, state: "unavailable", error: `proxy returned HTTP ${res.status}` };
+    }
+    if ((res.headers.get("content-type") || "").includes("json")) {
+      // the proxy answered, and what it has to say is that it cannot serve the feed
+      let detail = "The live-bus proxy reported no configuration.";
+      let kind = "unconfigured";
+      try {
+        const j = await res.json() as { error?: string; detail?: string };
+        if (j.detail) detail = j.detail;
+        if (j.error) kind = j.error;
+      } catch { /* an unparseable body is still an unconfigured proxy */ }
+      return { ...base,
+               state: kind === "unconfigured" ? "unconfigured" : "unavailable",
+               error: detail };
     }
     const buf = new Uint8Array(await res.arrayBuffer());
     if (buf.length < 8) {

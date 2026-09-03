@@ -37,6 +37,7 @@ data:
 
 test:
 	$(PY) pipeline/tests/test_outputs.py
+	$(PY) pipeline/tests/test_observed.py
 
 # Blender's remaining job after the Spike-0 bake-off: hero landmarks only.
 # Ordinary buildings are extruded at runtime — see docs/06-SPIKE-0-BAKEOFF.md.

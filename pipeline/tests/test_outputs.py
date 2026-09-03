@@ -210,6 +210,31 @@ for r in (t["features"]["routes"] if (t := load("transit.json")) else []):
           f"route {r['ref']}: no road path — replay would cut straight lines between stops")
     check(r.get("path_len", 0) > 500, f"route {r['ref']}: road path only {r.get('path_len')} m")
 
+mt = load("metro.json")
+if mt:
+    lines = mt["features"]
+    check(len(lines) >= 3, f"metro: only {len(lines)} lines")
+    for l in lines:
+        check(len(l["path"]) > 5, f"metro {l['name']}: path has {len(l['path'])} points")
+        check(l["path_len"] > 300, f"metro {l['name']}: only {l['path_len']} m in box")
+        # DMRC's own colours, so a bare default would mean the tag was missing
+        check(l["colour"].startswith("#") and len(l["colour"]) == 7,
+              f"metro {l['name']}: colour {l['colour']!r} is not a hex triplet")
+        check(all(0 <= d <= l["path_len"] for d in l["station_at"]),
+              f"metro {l['name']}: a station sits off the end of its own path")
+        check(l["station_at"] == sorted(l["station_at"]),
+              f"metro {l['name']}: stations are not ordered along the path")
+    lim = " ".join(mt["provenance"]["limitations"]).lower()
+    check("live" in lim, "metro: provenance must state that movement is not a live position")
+    print(f"  metro: {len(lines)} lines, "
+          + ", ".join(f"{l['name'].split()[0]} {l['path_len']:.0f} m" for l in lines))
+
+ss = load("streetscape.json")
+if ss:
+    fw = ss["features"]["footways"]
+    check(len(fw) > 500, f"streetscape: only {len(fw)} footways — pedestrians need paths to walk")
+    check(all(len(f["p"]) >= 2 for f in fw), "streetscape: a footway with fewer than 2 points")
+
 # ---------------------------------------------------------------- manifest
 mf = load("manifest.json")
 if mf:

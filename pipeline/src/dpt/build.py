@@ -519,6 +519,7 @@ def main():
     print("trees…");      detail.trees(manifest_assets, report)
     print("streetscape…"); detail.streetscape(manifest_assets, report)
     print("building parts…"); detail.building_parts(manifest_assets, report)
+    print("metro…");      detail.metro(manifest_assets, report)
     print("transit…");    transit(cr)
     print("weather + scenario model…"); weather()
 

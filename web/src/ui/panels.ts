@@ -32,7 +32,9 @@ export function masthead(m: Manifest) {
     clear(moving);
     if (s.vehicles || s.busesOnRoad) {
       moving.append(el("b", { text: String(s.vehicles) }), " vehicles · ",
-                    el("b", { text: String(s.busesOnRoad) }), " buses");
+                    el("b", { text: String(s.busesOnRoad) }), " buses · ",
+                    el("b", { text: String(s.trains) }), " trains · ",
+                    el("b", { text: String(s.walkers) }), " walking");
     }
     clear(fps);
     const ok = s.fps >= 30;
@@ -89,7 +91,7 @@ export function layerRail(order: string[], onToggle: (id: string, on: boolean) =
 }
 
 /* ------------------------------------------------------------------ legend */
-export function legend() {
+export function legend(metroLines: { name: string; colour: string }[] = []) {
   const body = el("div", { class: "pbody" });
   const node = el("aside", { class: "panel", id: "legend" },
     el("div", { class: "phead" }, el("h2", { text: "Legend" })), body);
@@ -117,6 +119,7 @@ export function legend() {
     body.append(swatch(hex(PALETTE.green), "Parks, lawns & gardens"));
     body.append(swatch(hex(PALETTE.water), "Water"));
     body.append(swatch(hex(PALETTE.metro), "Metro & stations"));
+    for (const l of metroLines) body.append(swatch(l.colour, `${l.name} (in tunnel)`));
     body.append(swatch(hex(PALETTE.bus), "Bus (replay)"));
   };
   store.on((_s, changed) => { if (changed.includes("revealEstimated")) render(); });

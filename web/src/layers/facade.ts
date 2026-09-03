@@ -1,6 +1,15 @@
 import * as THREE from "three";
 
 /**
+ * Shared across every facade material, so one write lights the whole city.
+ *
+ * `uNight` runs 0 (broad day) to 1 (dark). The stage already computes sun elevation for the time
+ * control, so windows come on because the sun went down — the clock drives it, not a separate
+ * switch.
+ */
+export const FACADE_UNIFORMS = { uNight: { value: 0 } };
+
+/**
  * Procedural facade detail for extruded building stock.
  *
  * There are no textures in this project by design — the data register forbids redistributing
@@ -23,6 +32,8 @@ export function applyFacadeDetail(
     shader.uniforms.uStorey = { value: storey };
     shader.uniforms.uBay = { value: bay };
     shader.uniforms.uStrength = { value: strength };
+    // shared by reference, not copied: updating FACADE_UNIFORMS reaches every material at once
+    shader.uniforms.uNight = FACADE_UNIFORMS.uNight;
 
     shader.vertexShader = shader.vertexShader
       .replace(
@@ -47,8 +58,12 @@ export function applyFacadeDetail(
         "#include <common>",
         `#include <common>
          uniform float uStorey; uniform float uBay; uniform float uStrength;
+         uniform float uNight;
          varying vec3 vFacadePos;
-         varying vec3 vFacadeNrm;`,
+         varying vec3 vFacadeNrm;
+         float dptWinHash(vec2 c) {
+           return fract(sin(dot(c, vec2(41.7, 289.1))) * 24634.6345);
+         }`,
       )
       .replace(
         "#include <color_fragment>",
@@ -89,6 +104,31 @@ export function applyFacadeDetail(
              diffuseColor.rgb = mix(diffuseColor.rgb, gravel, roof * 0.62 * max(detail, 0.35));
            }
            diffuseColor.rgb *= 1.0 + up * 0.04;             // roofs catch a touch more sky
+         }`,
+      )
+      .replace(
+        "#include <emissivemap_fragment>",
+        `#include <emissivemap_fragment>
+         if (uNight > 0.01) {
+           float upN = abs(vFacadeNrm.y);
+           float wallN = 1.0 - smoothstep(0.35, 0.75, upN);
+           float uN = abs(vFacadeNrm.x) > abs(vFacadeNrm.z) ? vFacadePos.z : vFacadePos.x;
+           // one cell per window bay per storey; a hash decides which are occupied, so the
+           // pattern is scattered but identical on every reload
+           vec2 cell = vec2(floor(uN / uBay), floor(vFacadePos.y / uStorey));
+           float occupied = step(dptWinHash(cell), 0.42);
+           // the pane itself, so light comes from a window rather than the whole wall
+           float fy = abs(fract(vFacadePos.y / uStorey) - 0.62);
+           float fx = abs(fract(uN / uBay) - 0.5);
+           float pane = (1.0 - smoothstep(0.10, 0.26, fy)) * (1.0 - smoothstep(0.14, 0.32, fx));
+           // ground floors stay lit later than upper storeys: shopfronts, not flats
+           float lowFloor = 1.0 - smoothstep(0.0, 12.0, vFacadePos.y);
+           float warm = 0.55 + 0.45 * dptWinHash(cell + 7.3);
+           vec3 glow = vec3(1.0, 0.78, 0.46) * warm;
+           float amount = pane * occupied * wallN * uNight * (0.62 + lowFloor * 0.5);
+           float dist2 = length(vFacadePos - cameraPosition);
+           amount *= 1.0 - smoothstep(1200.0, 3000.0, dist2);
+           totalEmissiveRadiance += glow * amount * 2.4;
          }`,
       );
   };
@@ -131,5 +171,41 @@ export function applyGroundVariation(mat: THREE.MeshStandardMaterial, amount = 0
          }`);
   };
   mat.customProgramCacheKey = () => `ground-var-${amount}`;
+  return mat;
+}
+
+/**
+ * Street lighting. At night the sky stops being the light source, so without this the roads go
+ * black and the city becomes a field of floating windows. Delhi also has enormous skyglow, so a
+ * lit road surface is closer to the truth than a dark one.
+ *
+ * A warm emissive on the carriageway, pooled along its length so it reads as lamps rather than a
+ * uniformly glowing strip.
+ */
+export function applyStreetLighting(mat: THREE.MeshStandardMaterial, spacing = 28) {
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uNight = FACADE_UNIFORMS.uNight;
+    shader.uniforms.uLampSpacing = { value: spacing };
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", "#include <common>\n varying vec3 vLitPos;")
+      .replace("#include <begin_vertex>",
+        "#include <begin_vertex>\n vLitPos = (modelMatrix * vec4(transformed, 1.0)).xyz;");
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>",
+        `#include <common>
+         uniform float uNight; uniform float uLampSpacing;
+         varying vec3 vLitPos;`)
+      .replace("#include <emissivemap_fragment>",
+        `#include <emissivemap_fragment>
+         if (uNight > 0.01) {
+           // pools of light along whichever axis the road mostly runs
+           float along = max(abs(vLitPos.x), abs(vLitPos.z));
+           float pool = 0.45 + 0.55 * pow(
+             1.0 - smoothstep(0.0, 0.5, abs(fract(along / uLampSpacing) - 0.5)), 2.0);
+           float fade = 1.0 - smoothstep(900.0, 2400.0, length(vLitPos - cameraPosition));
+           totalEmissiveRadiance += vec3(1.0, 0.72, 0.38) * uNight * pool * fade * 0.22;
+         }`);
+  };
+  mat.customProgramCacheKey = () => `streetlight-${spacing}`;
   return mat;
 }

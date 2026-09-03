@@ -2,6 +2,7 @@ import * as THREE from "three";
 import type { Layer, LayerReport } from "./registry";
 import { ribbons, repaint, type XZ } from "./geom";
 import { PALETTE } from "./palette";
+import { applyStreetLighting } from "./facade";
 import * as load from "../geo/load";
 import type { Road } from "../geo/types";
 
@@ -49,9 +50,8 @@ export class RoadsLayer implements Layer {
       color: PALETTE.road[r.k] ?? PALETTE.road.service,
     })));
     this.vfeat = built.vertexFeature;
-    this.mesh = new THREE.Mesh(built.geometry, new THREE.MeshStandardMaterial({
-      vertexColors: true, roughness: 0.82, metalness: 0,
-    }));
+    this.mesh = new THREE.Mesh(built.geometry, applyStreetLighting(
+      new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0 })));
     this.mesh.receiveShadow = true;
     this.mesh.name = "roads";
     this.group.add(this.mesh);

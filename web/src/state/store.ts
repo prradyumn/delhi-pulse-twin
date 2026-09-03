@@ -38,6 +38,8 @@ export interface AppState {
   /** live instanced counts, shown in the masthead */
   vehicles: number;
   busesOnRoad: number;
+  trains: number;
+  walkers: number;
 }
 
 export const initialState: AppState = {
@@ -45,7 +47,8 @@ export const initialState: AppState = {
   playing: false,
   layers: { ground: true, water: true, streetscape: true, roads: true, corridors: true,
             buildings: true, buildingparts: true, roofdetail: true, landmarks: true,
-            trees: true, rail: true, transit: true, traffic: true, buses: true },
+            trees: true, rail: true, transit: true, traffic: true, buses: true,
+            metro: true, pedestrians: true },
   revealEstimated: false,
   selectedId: null,
   activeCorridor: null,
@@ -58,6 +61,8 @@ export const initialState: AppState = {
   fps: 0,
   vehicles: 0,
   busesOnRoad: 0,
+  trains: 0,
+  walkers: 0,
 };
 
 export const store = createStore<AppState>(initialState);

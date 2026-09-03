@@ -291,3 +291,87 @@ def route_paths(manifest_assets, report, routes):
               f"{f' ({len(parts)} pieces in box, longest used)' if len(parts) > 1 else ''}")
     report["route_paths"] = [{"ref": o["ref"], "len": o["path_len"]} for o in out]
     return out
+
+
+# ---------------------------------------------------------------- metro lines
+def metro(manifest_assets, report):
+    """Metro line paths and their station sequences, with DMRC's real line colours from OSM.
+
+    The rail layer already draws the tracks as loose OSM ways. This is different: a coherent
+    per-line path a train can run along, and the station order along it, so a train can dwell.
+    """
+    out = []
+    for el in osm("metro_routes"):
+        if el.get("type") != "relation":
+            continue
+        t = el.get("tags", {})
+        colour = t.get("colour") or t.get("color") or "#8899aa"
+        name = (t.get("name") or "?").split("(")[0].strip()
+
+        segs, stations = [], []
+        for m in el.get("members", []):
+            role = m.get("role", "")
+            if m.get("type") == "way" and m.get("geometry") and not role:
+                pts = P.ring(m["geometry"])
+                if len(pts) >= 2:
+                    segs.append(pts)
+            elif role.startswith(("stop", "platform")):
+                if m.get("lat"):
+                    stations.append(P.xz(m["lon"], m["lat"]))
+                elif m.get("geometry"):
+                    g = m["geometry"][0]
+                    stations.append(P.xz(g["lon"], g["lat"]))
+        if not segs:
+            continue
+
+        # stitch member ways in relation order, flipping each to meet the running end
+        path = list(segs[0])
+        for seg in segs[1:]:
+            end = path[-1]
+            chunk = seg if math.dist(end, seg[0]) <= math.dist(end, seg[-1]) else seg[::-1]
+            path.extend(chunk[1:] if math.dist(path[-1], chunk[0]) < 40 else chunk)
+
+        clipped = LineString(path).intersection(BOX)
+        parts = list(clipped.geoms) if clipped.geom_type == "MultiLineString" else [clipped]
+        parts = [p for p in parts if p.geom_type == "LineString" and p.length > 200]
+        if not parts:
+            continue
+        best = max(parts, key=lambda p: p.length).simplify(2.0, preserve_topology=False)
+
+        # keep only the stations that are actually on the piece we kept, ordered along it
+        on_path = []
+        for sx, sz in stations:
+            pt = Point(sx, sz)
+            if not BOX.contains(pt) or best.distance(pt) > 90:
+                continue
+            on_path.append((best.project(pt), round(sx, 1), round(sz, 1)))
+        on_path.sort()
+        seen_d = []
+        for d, sx, sz in on_path:
+            if seen_d and d - seen_d[-1] < 120:      # collapse the two platforms of one station
+                continue
+            seen_d.append(d)
+
+        out.append({
+            "id": f"metro/{el['id']}", "name": name, "colour": colour,
+            "osm": f"relation/{el['id']}",
+            "path": [[round(x, 1), round(z, 1)] for x, z in best.coords],
+            "path_len": round(best.length, 1),
+            "station_at": [round(d, 1) for d in seen_d],
+            "stations": len(seen_d),
+        })
+        print(f"  {name:<24} {colour:<9} {best.length:>6.0f} m in box, {len(seen_d)} stations")
+
+    report["metro"] = [{"name": o["name"], "len": o["path_len"], "stations": o["stations"]}
+                       for o in out]
+    manifest_assets["metro"] = write_json("metro.json", {
+        "kind": "metro", "count": len(out),
+        "provenance": osm_prov(
+            dataset="OSM subway route relations for the four DMRC lines crossing the box",
+            limitations=[
+                "Line paths and colours are observed OSM data; the colours are DMRC's own.",
+                "Only the longest continuous piece inside the study box is kept, so a line may appear to end at the boundary.",
+                "Station positions come from stop/platform members within 90 m of the kept path; the two platforms of one station are collapsed to a single stop.",
+                "No timetable exists in this data. Train movement is replay from an assumed headway and dwell, never a live position."]),
+        "features": out}, minify=False)
+    return out

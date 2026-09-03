@@ -87,6 +87,28 @@
   "building_parts": {
     "count": 145
   },
+  "metro": [
+    {
+      "name": "Blue Line",
+      "len": 3628.4,
+      "stations": 4
+    },
+    {
+      "name": "Yellow Line",
+      "len": 4280.6,
+      "stations": 4
+    },
+    {
+      "name": "Violet Line",
+      "len": 5379.2,
+      "stations": 3
+    },
+    {
+      "name": "Airport Express Line",
+      "len": 3145.0,
+      "stations": 1
+    }
+  ],
   "transit": {
     "stops": 166,
     "routes": [

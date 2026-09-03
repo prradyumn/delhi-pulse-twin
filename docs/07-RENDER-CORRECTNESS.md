@@ -292,3 +292,62 @@ geometry that has no colours is what breaks it.
 17,360 tree instances in the shadow pass was the one place this scene could plausibly have run out
 of frame time. Measured: still 60 fps, so canopies cast. Dappled avenue shade is what grounds them;
 without it 17k trees look pasted onto the ground.
+
+---
+
+# Part four: metro, night and people
+
+Sixteen layers. **60 fps · 41 draw calls · 816,874 triangles · 0.88 MB gzip**, 118 data invariants.
+The masthead reads *"326 vehicles · 12 buses · 20 trains · 2200 walking"*.
+
+## The metro is underground, so that is where it is drawn
+
+The obvious implementation puts trains on the line trace at ground level. That would be a plain
+factual error here: of the 19 subway ways inside this box, **13 are `tunnel=yes`**, 4 are bridge and
+2 surface. Central Delhi's metro is in tunnel.
+
+So the trace and its trains sit at **−11 m** and are drawn as an X-ray over the city —
+`depthTest: false` at low opacity, which is the established map idiom for something beneath the
+surface. It reads unmistakably as *under* rather than *on*, which is the accurate reading.
+
+Colours are DMRC's own, straight off the OSM route relations: Blue `#4169E1`, Yellow `#FFDF00`,
+Violet `#553592`, Airport Express `#FF8C00`. The legend names each one "(in tunnel)".
+
+Trains use the same time-inversion as the buses and the corridor vehicles, with a 25-second station
+dwell, so they stop where the stations are. One tunnel depth is used for every line, which the
+provenance says — real depths vary and Rajiv Chowk's interchange is deeper.
+
+## The day/night model was broken, and it took a night render to notice
+
+`setTime` mapped 05:00–19:00 onto a half sine and **clamped outside it**. Every hour from 19:00 to
+05:00 therefore produced identical output: a permanent sunset, brown sky, sun on the horizon. There
+was no night at all, and nothing failed — the scene simply stopped changing.
+
+It now runs a **signed** elevation: positive through the day, negative after dark, with dusk as a
+crossing rather than an endpoint. Sunrise and sunset are Delhi in early September.
+
+Windows come on from that same elevation, through a shared `FACADE_UNIFORMS.uNight` — so one write
+lights the whole city, and it is the clock that decides, not a separate switch. Each window is a
+hash of its own bay-and-storey cell, so the pattern is scattered but identical on every reload;
+ground floors stay lit later than upper storeys, because shopfronts do.
+
+## Where "accurate" and "readable" pulled against each other
+
+First night render was almost black: correct, and useless. The city was a field of floating windows
+with no ground, no roads, no shape.
+
+The resolution is not a fudge. **Delhi's skyglow is considerable and its main roads are lit**, so a
+dim, sodium-lit street network is *closer* to the truth than a black one. Roads now carry a warm
+emissive pooled along their length so it reads as lamps rather than a glowing strip, and the
+hemisphere light keeps a night floor. An unreadable city is not a more honest city.
+
+## People: observed paths, assumed people
+
+926 mapped footways, 2,200 walkers on them. The paths are observed OSM geometry; **the people are
+not, and no footfall data was used anywhere in this product.** Density is a declared assumption of
+one walker per 26 m of path, pace 1.1–1.6 m/s, and the provenance says outright that the numbers do
+not vary with time of day and nothing here should be read as when or where people actually walk.
+
+Walkers reverse at the end of a path rather than teleporting to the start, and position is a pure
+function of the clock, so scrubbing time stays reproducible — the same property the buses, trains
+and corridor vehicles all have.

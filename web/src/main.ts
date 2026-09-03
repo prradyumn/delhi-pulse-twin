@@ -15,6 +15,8 @@ import { CorridorLayer } from "./layers/corridors";
 import { LandmarkLayer } from "./layers/landmarks";
 import { TreesLayer } from "./layers/trees";
 import { TrafficLayer } from "./layers/traffic";
+import { MetroLayer } from "./layers/metro";
+import { PedestrianLayer } from "./layers/pedestrians";
 import { RoofDetailLayer, StreetscapeLayer, BuildingPartsLayer } from "./layers/detail";
 import { BusLayer } from "./layers/buses";
 import { placePicker, type Place } from "./ui/places";
@@ -31,7 +33,7 @@ import type { Manifest, ScenarioModel, WeatherData } from "./geo/types";
 const LAYER_ORDER = [
   "ground", "water", "streetscape", "roads", "corridors",
   "buildings", "buildingparts", "roofdetail", "landmarks",
-  "trees", "rail", "transit", "traffic", "buses",
+  "trees", "rail", "transit", "traffic", "buses", "metro", "pedestrians",
 ];
 
 function fatal(title: string, detail: string) {
@@ -77,8 +79,11 @@ async function boot() {
   const trees = new TreesLayer();
   const streetscape = new StreetscapeLayer();
   const buildingParts = new BuildingPartsLayer();
+  const metro = new MetroLayer();
+  const pedestrians = new PedestrianLayer();
   registry.add(ground).add(water).add(streetscape).add(roads).add(buildings)
-          .add(buildingParts).add(landmarks).add(trees).add(rail).add(transit).add(corridors);
+          .add(buildingParts).add(landmarks).add(trees).add(rail).add(transit)
+          .add(corridors).add(metro).add(pedestrians);
 
   await registry.buildAll();
 
@@ -197,7 +202,7 @@ async function boot() {
   const rail0 = layerRail(LAYER_ORDER,
     (id, on) => { registry.setVisible(id, on); store.set({ layers: { ...store.get().layers, [id]: on } }); rail0.refresh(); },
     (on) => { buildings.setReveal(on); store.set({ revealEstimated: on }); rail0.refresh(); });
-  const leg = legend();
+  const leg = legend(metro.lines);
   const det = drawer(() => { det.hide(); buildings.highlight(null); store.set({ selectedId: null }); });
 
   const lab = scenarioLab(corridors.corridors, model ?? ({
@@ -441,8 +446,11 @@ async function boot() {
     }
     buses.update(s.timeMin);
     traffic.update(s.timeMin * 60);
+    metro.update(s.timeMin);
+    pedestrians.update(s.timeMin);
     if (s.playing || motionTick++ % 30 === 0) {
-      store.set({ vehicles: traffic.vehicleCount(), busesOnRoad: buses.busCount() });
+      store.set({ vehicles: traffic.vehicleCount(), busesOnRoad: buses.busCount(),
+                  trains: metro.trainCount(), walkers: pedestrians.walkerCount() });
     }
     stage.render();
   }, (fps) => store.set({ fps }));

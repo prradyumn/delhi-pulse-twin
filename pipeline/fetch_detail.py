@@ -70,3 +70,14 @@ out tags center;''')
 fetch("building_parts", f'''[out:json][timeout:300];
 nwr["building:part"]({B});
 out geom;''')
+
+# ---- metro line routes, with their official DMRC colours from OSM
+# one relation per line (each line has a relation per direction; trains run both ways from one path)
+fetch("metro_routes", '''[out:json][timeout:300];
+(
+  relation(447209);    /* Blue Line            #4169E1 */
+  relation(447210);    /* Yellow Line          #FFDF00 */
+  relation(2535797);   /* Violet Line          #553592 */
+  relation(2535798);   /* Airport Express Line #FF8C00 */
+);
+out geom;''')

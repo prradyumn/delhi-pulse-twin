@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { FACADE_UNIFORMS } from "../layers/facade";
 
 /** Renderer, scene, sun/sky and camera. Restrained on purpose: the PRD's visual standard is
  *  "geographically faithful, lightly stylised PBR" — no bloom, no neon, nothing that hides data. */
@@ -103,37 +104,69 @@ export class Stage {
     this.fill = fill;
   }
 
-  /** Sun elevation and colour follow the time control, so the light itself is a time cue. */
+  /**
+   * Sun position, sky and window lighting from one clock value.
+   *
+   * The first version mapped 05:00–19:00 onto a half sine and clamped outside it, which meant the
+   * scene was stuck at sunset from 19:00 to 05:00 — permanently brown, never night. This runs a
+   * signed elevation instead: positive through the day, negative after dark, so there is a real
+   * night phase and dusk is a crossing rather than an endpoint.
+   *
+   * Sunrise and sunset are Delhi in early September, near enough for a lighting model.
+   */
   setTime(min: number) {
-    const t = Math.min(Math.max((min - 5 * 60) / (19 * 60 - 5 * 60), 0), 1);
-    const el = Math.sin(t * Math.PI);                      // 0 at 05:00 and 19:00, 1 at midday
-    const az = (t - 0.5) * Math.PI * 1.15;
+    const SUNRISE = 6 * 60 + 5;
+    const SUNSET = 18 * 60 + 40;
+    const day = (min - SUNRISE) / (SUNSET - SUNRISE);      // 0..1 across daylight
+    const el = Math.sin(Math.PI * day);                    // negative outside it
+    const above = Math.max(el, 0);
+    const night = Math.min(Math.max(-el * 2.6, 0), 1);     // 0 at sunset, 1 well after dark
+    // 0 at midday, 1 at the horizon — drives the warm, low-sun colours
+    const warm = 1 - above;
+
+    const az = (Math.min(Math.max(day, 0), 1) - 0.5) * Math.PI * 1.15;
     const r = 2200;
-    this.sun.position.set(Math.sin(az) * r, Math.max(el, 0.03) * 1900 + 60, Math.cos(az) * r * 0.4);
-    this.sun.intensity = 0.35 + el * 1.95;
-    const warm = 1 - el;
-    // Three's working colour space is linear-sRGB, and setRGB/setHSL interpret their arguments in
-    // it unless told otherwise. These are hand-picked sRGB values, so say so — left implicit the
-    // sun goes muddy and the sky desaturates.
+    this.sun.position.set(Math.sin(az) * r, Math.max(el, 0.02) * 1900 + 60,
+                          Math.cos(az) * r * 0.4);
+    this.sun.intensity = 0.02 + above * 2.15;
+    // Three's working colour space is linear-sRGB and setRGB/setHSL read their arguments in it
+    // unless told otherwise; these are hand-picked sRGB values, so say so.
     this.sun.color.setRGB(1, 0.95 - warm * 0.19, 0.86 - warm * 0.36, THREE.SRGBColorSpace);
-    this.hemi.intensity = 0.35 + el * 0.6;
-    this.fill.intensity = 0.18 + el * 0.26;
+
+    // At night the sky stops being the light source and the city becomes it: a dim, warm ground
+    // bounce standing in for street lighting, so the ground is dark but not pitch black.
+    // Delhi's skyglow is considerable, so a dim ground reads truer than a black one — and an
+    // unreadable city is not a more honest city.
+    this.hemi.intensity = 0.52 + above * 0.52;
+    this.hemi.color.setHSL(0.60 - night * 0.02, 0.16 + night * 0.10,
+                           0.60 - night * 0.24, THREE.SRGBColorSpace);
+    this.hemi.groundColor.setHSL(0.085, 0.20 + night * 0.16, 0.26 + night * 0.04,
+                                 THREE.SRGBColorSpace);
+    this.fill.intensity = 0.05 + above * 0.30;
 
     const mat = this.sky.material as THREE.ShaderMaterial;
-    // Hue 0.14 is yellow-green, which turned the whole horizon olive. Delhi's haze is a warm
-    // neutral grey, so keep the horizon barely saturated and let the zenith carry the blue.
+    // Hue 0.14 is yellow-green and turned the whole horizon olive; Delhi's haze is a warm
+    // neutral, so the horizon stays barely saturated and the zenith carries the blue.
     const zenith = new THREE.Color().setHSL(
-      0.585 - warm * 0.015, 0.40 - el * 0.06, 0.26 + el * 0.36, THREE.SRGBColorSpace);
+      0.60 - warm * 0.02, 0.42 - above * 0.06, (0.26 + above * 0.36) * (1 - night * 0.88),
+      THREE.SRGBColorSpace);
+    // dusk keeps its warmth; deep night loses it, or the sky reads as a permanent sunset
+    const duskWarmth = Math.max(1 - night * 1.5, 0);
     const horizon = new THREE.Color().setHSL(
-      0.075 + el * 0.01, 0.08 + warm * 0.22, 0.66 + el * 0.20, THREE.SRGBColorSpace);
+      0.075 + above * 0.01, (0.08 + warm * 0.24) * duskWarmth,
+      (0.66 + above * 0.20) * (1 - night * 0.80), THREE.SRGBColorSpace);
     const haze = new THREE.Color().setHSL(
-      0.065 + el * 0.01, 0.11 + warm * 0.26, 0.70 + el * 0.18, THREE.SRGBColorSpace);
+      0.065 + above * 0.01, (0.11 + warm * 0.28) * duskWarmth,
+      (0.70 + above * 0.18) * (1 - night * 0.76), THREE.SRGBColorSpace);
     mat.uniforms.uZenith.value.copy(zenith);
     mat.uniforms.uHorizon.value.copy(horizon);
     mat.uniforms.uHaze.value.copy(haze);
     mat.uniforms.uSunDir.value.copy(this.sun.position).normalize();
-    // fog takes the horizon tone so distant geometry dissolves into the sky rather than into grey
+    // distant geometry dissolves into the sky rather than into grey
     (this.scene.fog as THREE.Fog).color.copy(horizon).lerp(haze, 0.45);
+
+    // windows come on as the sun goes down; the clock is the only thing that decides
+    FACADE_UNIFORMS.uNight.value = Math.min(Math.max(1 - above / 0.30, 0), 1);
   }
 
   resize() {

@@ -97,7 +97,10 @@ export class PedestrianLayer implements Layer {
     });
     this.inst.instanceColor.needsUpdate = true;
     this.inst.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    this.inst.frustumCulled = false;
+    // Walkers stay on their own path, so a bounding sphere over the whole box is honest and lets
+    // the frustum reject them when the camera is looking elsewhere. frustumCulled=false was
+    // costing the full 2,200 every frame regardless of where the camera pointed.
+    this.inst.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 1, 0), 2900);
     this.inst.name = "pedestrians";
     this.group.add(this.inst);
 

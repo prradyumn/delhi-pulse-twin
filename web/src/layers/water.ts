@@ -8,6 +8,11 @@ export class WaterLayer implements Layer {
   id = "water"; label = "Water";
   group = new THREE.Group();
 
+  /** `env` is the sky cube from the stage. Water is the only reflective surface in the box — the
+   *  channels flanking Kartavya Path and the Bangla Sahib sarovar — so a real reflection here is a
+   *  tiny, targeted spend rather than a scene-wide effect. */
+  constructor(private env: THREE.Texture | null = null) {}
+
   async build(): Promise<LayerReport> {
     const base: LayerReport = { id: this.id, label: this.label, status: "pending",
       provenance: null, features: 0, bytes: 0, ms: 0, drawCalls: 0, triangles: 0 };
@@ -17,7 +22,12 @@ export class WaterLayer implements Layer {
     if (!f.length) return { ...base, status: "empty", provenance: res.data.provenance, bytes: res.bytes };
 
     const mat = new THREE.MeshStandardMaterial({
-      vertexColors: true, roughness: 0.22, metalness: 0.05,
+      vertexColors: true,
+      // low roughness plus a genuine environment map is what makes water read as water rather
+      // than as blue paint; metalness carries the fresnel falloff at grazing angles
+      roughness: 0.08, metalness: 0.55,
+      envMap: this.env ?? null,
+      envMapIntensity: 1.15,
     });
     let tris = 0, dc = 0;
     // Ground cover occupies y −0.30 … −0.11 (largest polygon first, stacked by a hair). Water has

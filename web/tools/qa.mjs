@@ -154,6 +154,7 @@ const FPS_FLOOR = cfg.budgets.fps_floor;
 // assertion in this harness tests the harness. Frame time is the app's own cost.
 const FRAME_MS_MAX = 1000 / FPS_FLOOR;
 const DRAW_MAX = cfg.budgets.draw_calls_default_view;
+const GPU_MS_MAX = cfg.budgets.gpu_ms_max ?? 16.7;
 const TRI_MAX = cfg.budgets.triangles_default_view_m * 1e6;
 
 const unavailable = b.layers.filter((l) => l.s === "unavailable");
@@ -176,6 +177,37 @@ if (perf.fps < FPS_FLOOR) {
 check(perf.totals.drawCalls <= DRAW_MAX, `${perf.totals.drawCalls} draw calls over the ${DRAW_MAX} budget`);
 check(perf.totals.triangles <= TRI_MAX, `${perf.totals.triangles} triangles over the ${TRI_MAX} budget`);
 await shot("01-default-view");
+
+// ---- GPU budget, at a parked camera so the frustum is not changing under the measurement
+const benchWide = JSON.parse(await evalJs(`(async () => JSON.stringify(
+  await window.__twin.bench({ pos:[1500,1400,2000], target:[0,0,0], frames: 30 })))()`));
+const benchClose = JSON.parse(await evalJs(`(async () => JSON.stringify(
+  await window.__twin.bench({ pos:[1055,330,-19], target:[1055,0,-619], frames: 30 })))()`));
+for (const [label, r] of [["wide", benchWide], ["close", benchClose]]) {
+  const g = r.gpuMedianMs;
+  if (g === null) { notes.push(`GPU timer produced no samples for the ${label} view`); continue; }
+  console.log(`  gpu ${label.padEnd(9)} ${g.toFixed(2)} ms median over ${r.gpuSamples} frames · ${r.submitted.calls} calls · ${r.submitted.triangles.toLocaleString()} tris`);
+  check(g < GPU_MS_MAX, `${label} view GPU ${g.toFixed(2)} ms exceeds the ${GPU_MS_MAX} ms budget`);
+  check(r.disjoint === 0 || r.gpuSamples > 10,
+        `${label} view: ${r.disjoint} disjoint GPU queries and only ${r.gpuSamples} good samples`);
+}
+notes.push(`pixel load ${benchWide.pixels.px.toLocaleString()} px at dpr ${benchWide.pixels.dpr}` +
+           (benchWide.pixels.dpr < 2 ? " — a Retina display is 4x this, so verify on the device" : ""));
+
+// ---- the low-quality path the PRD requires must actually exist and be cheaper
+await evalJs(`window.__twin.setQuality('low')`);
+const benchLow = JSON.parse(await evalJs(`(async () => JSON.stringify(
+  await window.__twin.bench({ pos:[1055,330,-19], target:[1055,0,-619], frames: 24 })))()`));
+await evalJs(`window.__twin.setQuality('medium')`);
+if (benchLow.gpuMedianMs !== null && benchClose.gpuMedianMs !== null) {
+  console.log(`  gpu low       ${benchLow.gpuMedianMs.toFixed(2)} ms`);
+  // A tier that is not measurably cheaper is not a tier. This assertion previously passed by
+  // accident and then failed once the tiers were identical, which is how the fake difference in
+  // QUALITY_NOTES was found.
+  check(benchLow.gpuMedianMs < benchClose.gpuMedianMs * 0.85,
+        `low quality (${benchLow.gpuMedianMs.toFixed(2)} ms) is not meaningfully cheaper than `
+        + `default (${benchClose.gpuMedianMs.toFixed(2)} ms) — the tiers must differ in something real`);
+}
 
 // ================================================================ 2. no console errors
 check(consoleErrors.length === 0,

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import type { Layer, LayerReport } from "./registry";
-import { extrudeFootprints, repaint, type XZ } from "./geom";
+import { extrudeFootprints, repaint, bucketByTile, ringCentre, type XZ } from "./geom";
 import { PALETTE } from "./palette";
 import { applyFacadeDetail } from "./facade";
 import * as load from "../geo/load";
@@ -12,9 +12,14 @@ export class BuildingsLayer implements Layer {
   buildings: Building[] = [];
   heightRuleVersion = "?";
   estimatedCount = 0;
-  private mesh?: THREE.Mesh;
-  private vfeat: Uint32Array = new Uint32Array(0);
+  /** one mesh per spatial tile; `feats` maps that mesh's vertex-feature indices back to buildings */
+  private tiles: { mesh: THREE.Mesh; vfeat: Uint32Array; feats: Building[] }[] = [];
   private reveal = false;
+
+  constructor(
+    private extent: { x: [number, number]; z: [number, number] },
+    private grid: [number, number],
+  ) {}
 
   async build(): Promise<LayerReport> {
     const base: LayerReport = { id: this.id, label: this.label, status: "pending",
@@ -26,23 +31,34 @@ export class BuildingsLayer implements Layer {
     this.heightRuleVersion = res.data.height_rule_version;
     this.estimatedCount = this.buildings.filter((b) => b.m === 1).length;
 
-    const built = extrudeFootprints(
-      this.buildings as { r: XZ[]; h: number; m: 0 | 1 }[],
-      { colorFor: (f, i) => this.colorOf(f.m, f.h, i) },
-    );
-    this.vfeat = built.vertexFeature;
-    this.mesh = new THREE.Mesh(built.geometry, applyFacadeDetail(
-      new THREE.MeshStandardMaterial({
-        vertexColors: true, roughness: 0.72, metalness: 0, flatShading: true,
-      })));
-    this.mesh.castShadow = true;
-    this.mesh.receiveShadow = true;
-    this.mesh.name = "buildings";
-    this.group.add(this.mesh);
+    // One material, shared: per-tile meshes cost draw calls, not shader programs.
+    const material = applyFacadeDetail(new THREE.MeshStandardMaterial({
+      vertexColors: true, roughness: 0.72, metalness: 0, flatShading: true,
+    }));
+
+    const buckets = bucketByTile(
+      this.buildings, (b) => ringCentre(b.r as XZ[]), this.extent, this.grid);
+    let tris = 0;
+    for (const bucket of buckets) {
+      // colour index is global, so the reveal and the highlight stay stable across tiles
+      const globalIndex = new Map(bucket.items.map((b, i) => [i, this.buildings.indexOf(b)]));
+      const built = extrudeFootprints(
+        bucket.items as { r: XZ[]; h: number; m: 0 | 1 }[],
+        { colorFor: (f, i) => this.colorOf(f.m, f.h, globalIndex.get(i) ?? i) },
+      );
+      const mesh = new THREE.Mesh(built.geometry, material);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      mesh.name = "buildings";
+      mesh.userData.tile = bucket.key;
+      this.group.add(mesh);
+      this.tiles.push({ mesh, vfeat: built.vertexFeature, feats: bucket.items });
+      tris += built.triangles;
+    }
 
     return { ...base, status: "ready", provenance: res.data.provenance,
              features: this.buildings.length, bytes: res.bytes, ms: res.ms,
-             drawCalls: 1, triangles: built.triangles };
+             drawCalls: this.tiles.length, triangles: tris };
   }
 
   /** Deterministic per-building tone spread. Real streets are not one colour, and a uniform
@@ -86,26 +102,33 @@ export class BuildingsLayer implements Layer {
   }
 
   /** Re-tint in place. The reveal is a trust feature: 91.8% of this box has a guessed height. */
+  private repaintAll(colorFor: (b: Building, globalIndex: number) => THREE.Color | null) {
+    for (const t of this.tiles) {
+      repaint(t.mesh.geometry, t.vfeat, (fi) => {
+        const b = t.feats[fi];
+        return b ? colorFor(b, this.buildings.indexOf(b)) : null;
+      });
+    }
+  }
+
   setReveal(on: boolean) {
-    if (!this.mesh || this.reveal === on) return;
+    if (this.reveal === on) return;
     this.reveal = on;
-    repaint(this.mesh.geometry, this.vfeat, (fi) => {
-      const b = this.buildings[fi];
-      return b ? this.colorOf(b.m, b.h, fi) : null;
-    });
+    this.repaintAll((b, gi) => this.colorOf(b.m, b.h, gi));
   }
 
   highlight(id: string | null) {
-    if (!this.mesh) return;
-    repaint(this.mesh.geometry, this.vfeat, (fi) => {
-      const b = this.buildings[fi];
-      if (!b) return null;
-      return b.id === id ? new THREE.Color(0xf6d98a) : this.colorOf(b.m, b.h, fi);
-    });
+    this.repaintAll((b, gi) =>
+      b.id === id ? new THREE.Color(0xf6d98a) : this.colorOf(b.m, b.h, gi));
   }
 
-  buildingAtVertex(v: number): Building | null { return this.buildings[this.vfeat[v]] ?? null; }
-  get mesh3(): THREE.Mesh | undefined { return this.mesh; }
+  /** Resolve a raycast hit back to a building, given which tile mesh was struck. */
+  buildingAt(mesh: THREE.Object3D, vertexIndex: number): Building | null {
+    const t = this.tiles.find((x) => x.mesh === mesh);
+    return t ? t.feats[t.vfeat[vertexIndex]] ?? null : null;
+  }
+
+  get meshes(): THREE.Mesh[] { return this.tiles.map((t) => t.mesh); }
   setVisible(v: boolean) { this.group.visible = v; }
-  dispose() { this.mesh?.geometry.dispose(); }
+  dispose() { for (const t of this.tiles) t.mesh.geometry.dispose(); }
 }

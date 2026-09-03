@@ -293,3 +293,42 @@ export function ringPoint(ring: XZ[], t: number): XZ {
   const a = ring[Math.floor(t * ring.length) % ring.length];
   return [cx + (a[0] - cx) * 0.42, cz + (a[1] - cz) * 0.42];
 }
+
+/**
+ * Bucket features into a spatial grid so each bucket can become its own mesh.
+ *
+ * Merging a whole layer into one mesh minimises draw calls and, at the same time, makes frustum
+ * culling impossible: a single mesh spanning a 4 km box is never off-screen, so every close-up
+ * view pays for the entire city. 42 draw calls sounded like a triumph and was actually the bug.
+ *
+ * The tile grid already existed in config as a lookup key. This is what it was for.
+ */
+export function bucketByTile<T>(
+  feats: T[],
+  positionOf: (f: T) => XZ,
+  extent: { x: [number, number]; z: [number, number] },
+  grid: [number, number],
+): { key: string; tx: number; tz: number; items: T[] }[] {
+  const [gx, gz] = grid;
+  const w = (extent.x[1] - extent.x[0]) / gx;
+  const h = (extent.z[1] - extent.z[0]) / gz;
+  const buckets = new Map<string, { key: string; tx: number; tz: number; items: T[] }>();
+  for (const f of feats) {
+    const [x, z] = positionOf(f);
+    const tx = Math.min(Math.max(Math.floor((x - extent.x[0]) / w), 0), gx - 1);
+    const tz = Math.min(Math.max(Math.floor((z - extent.z[0]) / h), 0), gz - 1);
+    const key = `${tx}_${tz}`;
+    let b = buckets.get(key);
+    if (!b) { b = { key, tx, tz, items: [] }; buckets.set(key, b); }
+    b.items.push(f);
+  }
+  return [...buckets.values()];
+}
+
+/** Centroid of a ring, for bucketing. Cheap mean of vertices, not the true area centroid — good
+ *  enough to decide which tile a building belongs to. */
+export function ringCentre(ring: XZ[]): XZ {
+  let x = 0, z = 0;
+  for (const p of ring) { x += p[0]; z += p[1]; }
+  return [x / ring.length, z / ring.length];
+}

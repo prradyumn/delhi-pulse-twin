@@ -2,7 +2,7 @@ import * as THREE from "three";
 import type { Layer, LayerReport } from "./registry";
 import { ribbons, repaint, type XZ } from "./geom";
 import { PALETTE } from "./palette";
-import { applyStreetLighting } from "./facade";
+import { applyStreetLighting, applyBakedAO } from "./facade";
 import * as load from "../geo/load";
 import type { Road } from "../geo/types";
 
@@ -13,6 +13,7 @@ const WIDTH: Record<string, number> = {
 
 export class RoadsLayer implements Layer {
   id = "roads"; label = "Roads";
+  constructor(private aoMap: THREE.Texture | null = null, private aoOrtho = 4096) {}
   group = new THREE.Group();
   roads: Road[] = [];
   private mesh?: THREE.Mesh;
@@ -35,9 +36,11 @@ export class RoadsLayer implements Layer {
                y: 0.012 + w * 0.002,
                color: (PALETTE.road[r.k] ?? PALETTE.road.service).clone().multiplyScalar(0.66) };
     }));
-    const kerb = new THREE.Mesh(casing.geometry, new THREE.MeshStandardMaterial({
+    let kerbMat = new THREE.MeshStandardMaterial({
       vertexColors: true, roughness: 0.95, metalness: 0,
-    }));
+    });
+    if (this.aoMap) kerbMat = applyBakedAO(kerbMat, this.aoMap, this.aoOrtho, 0.8);
+    const kerb = new THREE.Mesh(casing.geometry, kerbMat);
     kerb.receiveShadow = true;
     kerb.name = "road_casing";
     this.group.add(kerb);
@@ -50,8 +53,10 @@ export class RoadsLayer implements Layer {
       color: PALETTE.road[r.k] ?? PALETTE.road.service,
     })));
     this.vfeat = built.vertexFeature;
-    this.mesh = new THREE.Mesh(built.geometry, applyStreetLighting(
-      new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0 })));
+    let roadMat = applyStreetLighting(
+      new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0 }));
+    if (this.aoMap) roadMat = applyBakedAO(roadMat, this.aoMap, this.aoOrtho, 0.8);
+    this.mesh = new THREE.Mesh(built.geometry, roadMat);
     this.mesh.receiveShadow = true;
     this.mesh.name = "roads";
     this.group.add(this.mesh);

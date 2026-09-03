@@ -72,8 +72,17 @@ button { cursor: pointer; background: none; border: none; }
 #mast .brand span {
   font-family: var(--mono); font-size: 10px; color: var(--text-3);
   letter-spacing: 0.08em; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
 }
-#mast .spacer { flex: 1 1 auto; }
+/* The masthead grew a live-feed chip, a vehicle readout and cpu/gpu timings, and the dataset id
+   started colliding with the clock. The id is the least urgent thing up here, so it yields first. */
+#mast .brand { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+#mast .spacer { flex: 1 1 auto; min-width: 8px; }
+#mast .stat { flex: 0 0 auto; }
+@media (max-width: 1500px) { #mast .brand span { display: none; } }
+@media (max-width: 1240px) {
+  #mast .stat:nth-of-type(2) { display: none; }   /* the vehicle readout goes next */
+}
 #mast .stat {
   font-family: var(--mono); font-size: 11px; color: var(--text-2);
   display: flex; align-items: center; gap: 6px; white-space: nowrap;

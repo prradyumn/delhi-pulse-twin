@@ -112,7 +112,10 @@ export class TrafficLayer implements Layer {
     for (const m of [this.cars, this.autos]) {
       m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
       m.frustumCulled = false;
-      m.castShadow = true;
+      // Deliberately NOT casting: a 4 m vehicle's shadow is invisible at city scale,
+      // and moving casters are the only thing that would force the shadow map to
+      // re-render every frame — which measured at 10 ms of a 14 ms GPU budget.
+      m.castShadow = false;
       m.count = 0;
     }
     this.cars.name = "traffic_cars";

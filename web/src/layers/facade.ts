@@ -209,3 +209,65 @@ export function applyStreetLighting(mat: THREE.MeshStandardMaterial, spacing = 2
   mat.customProgramCacheKey = () => `streetlight-${spacing}`;
   return mat;
 }
+
+/**
+ * Baked city ambient occlusion.
+ *
+ * The AO that screen-space GTAO could not afford (measured ~18 ms of a 16.7 ms budget, and it
+ * doubled submitted geometry). This is the same information rendered once in Blender as top-down
+ * sky visibility, sampled here as a planar texture: **free every frame, and better quality**,
+ * because a bake is not limited to what happens to be on screen.
+ *
+ * Applied only to horizontal surfaces — ground, roads, footways, plazas. Deliberately not to
+ * walls: the bake renders occluders black, so a UV taken at a wall's base lands on that building's
+ * own dark roof and the wall would go nearly black.
+ *
+ * UVs come straight from world position. The bake is a square orthographic render centred on the
+ * study box, and the box is centred on the origin, so:
+ *
+ *     u =  x / orthoScale + 0.5
+ *     v = -z / orthoScale + 0.5
+ */
+export function applyBakedAO(
+  mat: THREE.MeshStandardMaterial,
+  aoMap: THREE.Texture,
+  orthoScale: number,
+  strength = 0.85,
+) {
+  const prev = mat.onBeforeCompile;
+  mat.onBeforeCompile = (shader, renderer) => {
+    prev?.call(mat, shader, renderer);
+    shader.uniforms.uCityAO = { value: aoMap };
+    shader.uniforms.uAOOrtho = { value: orthoScale };
+    shader.uniforms.uAOStrength = { value: strength };
+
+    if (!/varying vec3 vAOPos;/.test(shader.vertexShader)) {
+      shader.vertexShader = shader.vertexShader
+        .replace("#include <common>", "#include <common>\n varying vec3 vAOPos;")
+        .replace("#include <begin_vertex>",
+          "#include <begin_vertex>\n vAOPos = (modelMatrix * vec4(transformed, 1.0)).xyz;");
+    }
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>",
+        `#include <common>
+         uniform sampler2D uCityAO;
+         uniform float uAOOrtho;
+         uniform float uAOStrength;
+         varying vec3 vAOPos;`)
+      .replace("#include <color_fragment>",
+        `#include <color_fragment>
+         {
+           vec2 aoUv = vec2(vAOPos.x / uAOOrtho + 0.5, -vAOPos.z / uAOOrtho + 0.5);
+           if (aoUv.x > 0.0 && aoUv.x < 1.0 && aoUv.y > 0.0 && aoUv.y < 1.0) {
+             float ao = texture2D(uCityAO, aoUv).r;
+             // A floor of 0.35 keeps a deep courtyard readable rather than crushed to black —
+             // the bake bottoms out at 0.12 where a building occludes the ground entirely.
+             ao = mix(1.0, max(ao, 0.35), uAOStrength);
+             diffuseColor.rgb *= ao;
+           }
+         }`);
+  };
+  const key = mat.customProgramCacheKey?.bind(mat);
+  mat.customProgramCacheKey = () => `${key ? key() : "std"}|cityao-${strength}`;
+  return mat;
+}

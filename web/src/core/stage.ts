@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { FACADE_UNIFORMS } from "../layers/facade";
+import { GpuTimer } from "./gpuTimer";
+import { createPostFX, type PostFX, type Quality } from "./postfx";
 
 /** Renderer, scene, sun/sky and camera. Restrained on purpose: the PRD's visual standard is
  *  "geographically faithful, lightly stylised PBR" — no bloom, no neon, nothing that hides data. */
@@ -12,6 +14,10 @@ export class Stage {
   readonly sun: THREE.DirectionalLight;
   private hemi: THREE.HemisphereLight;
   private sky: THREE.Mesh;
+  readonly gpu: GpuTimer;
+  post!: PostFX;
+  private lastCam = new THREE.Vector3();
+  private stillFrames = 0;
   private fill!: THREE.DirectionalLight;
 
   constructor(canvas: HTMLCanvasElement, extent: { x: [number, number]; z: [number, number] }) {
@@ -27,6 +33,18 @@ export class Stage {
     // the single largest realism gain available — a city without contact shadows reads as a model.
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // MEASURED: the shadow map was 10.1 ms of a 13.8 ms GPU frame — 73% of all GPU time, more
+    // than the entire rest of the scene. A 4096 map is 16.7M texels re-rendered every frame with
+    // every casting mesh drawn into it.
+    //
+    // But the sun only moves when the clock moves, and the casters are buildings, trees and
+    // landmarks, none of which move at all. So the map is rendered on demand instead of every
+    // frame: once at startup, and again whenever setTime shifts the sun. On a static view that
+    // takes shadow cost to zero.
+    this.renderer.shadowMap.autoUpdate = false;
+    this.renderer.shadowMap.needsUpdate = true;
+
+    this.gpu = new GpuTimer(canvas);
 
     const span = Math.max(extent.x[1] - extent.x[0], extent.z[1] - extent.z[0]);
     this.camera = new THREE.PerspectiveCamera(48, 1, 5, span * 6);
@@ -88,20 +106,68 @@ export class Stage {
     // 2048 over the whole 4 km box works out at 2.5 m per shadow texel — technically shadows,
     // visually nothing. 4096 over a tightened box gives ~1 m, which is the scale of the thing
     // casting them.
-    this.sun.shadow.mapSize.set(4096, 4096);
+    // 8192, which would have been unthinkable at 10 ms a frame. Now the map is rendered on
+    // demand the cost is paid once per sun position, so resolution is nearly free: 8192 over
+    // ~2166 m of half-extent is about 0.53 m per texel, sharp enough for parapets and tree
+    // canopies rather than just building masses. Device max is 16384, so there is headroom.
+    this.sun.shadow.mapSize.set(8192, 8192);
     const half = span * 0.53;
     const sc = this.sun.shadow.camera;
     sc.left = -half; sc.right = half; sc.top = half; sc.bottom = -half;
     sc.near = 200; sc.far = span * 2.6;
     sc.updateProjectionMatrix();
-    this.sun.shadow.bias = -0.0004;
-    this.sun.shadow.normalBias = 0.35;
+    // bias scales with texel size, so a sharper map needs less of it
+    this.sun.shadow.bias = -0.00018;
+    this.sun.shadow.normalBias = 0.18;
     this.scene.add(this.sun);
     // a dim fill from the opposite side so north faces are shaped rather than flat black
     const fill = new THREE.DirectionalLight(0xbcd0e6, 0.35);
     fill.position.set(1400, 700, -1100);
     this.scene.add(fill);
     this.fill = fill;
+
+    // built last: it needs the finished scene and camera
+    this.post = createPostFX(this.renderer, this.scene, this.camera, "medium");
+  }
+
+  /** An environment map generated from the sky dome, for the water to reflect. Regenerated when
+   *  the sky changes materially, not every frame. */
+  private envRT?: THREE.WebGLCubeRenderTarget;
+  private envDirty = true;
+
+  environment(): THREE.Texture | null {
+    if (!this.envRT) {
+      this.envRT = new THREE.WebGLCubeRenderTarget(128, {
+        generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter,
+      });
+    }
+    if (this.envDirty) {
+      const cam = new THREE.CubeCamera(1, 20000, this.envRT);
+      // only the sky dome contributes: reflecting the city into a canal at this scale would cost
+      // a full extra scene render for something a metre of water does not show anyway
+      const wasVisible = new Map<THREE.Object3D, boolean>();
+      this.scene.traverse((o) => {
+        if (o !== this.sky && o.type === "Mesh") { wasVisible.set(o, o.visible); o.visible = false; }
+      });
+      cam.position.set(0, 60, 0);
+      cam.update(this.renderer, this.scene);
+      for (const [o, v] of wasVisible) o.visible = v;
+      this.envDirty = false;
+    }
+    return this.envRT.texture;
+  }
+
+  setQuality(q: Quality) {
+    this.post.setQuality(q);
+    // The tiers have to differ in something real, and the profiler said what: the shadow map was
+    // 73% of GPU time. `low` drops it — the baked AO carries the grounding, so the scene survives
+    // losing shadows far better than it otherwise would.
+    const wantShadows = q !== "low";
+    if (this.renderer.shadowMap.enabled !== wantShadows) {
+      this.renderer.shadowMap.enabled = wantShadows;
+      this.forceShadowRefresh();
+    }
+    this.renderer.shadowMap.needsUpdate = wantShadows;
   }
 
   /**
@@ -167,6 +233,10 @@ export class Stage {
 
     // windows come on as the sun goes down; the clock is the only thing that decides
     FACADE_UNIFORMS.uNight.value = Math.min(Math.max(1 - above / 0.30, 0), 1);
+
+    // the sun moved, so the one thing that invalidates the cached shadow map has happened
+    this.renderer.shadowMap.needsUpdate = true;
+    this.envDirty = true;
   }
 
   resize() {
@@ -176,12 +246,50 @@ export class Stage {
     this.renderer.setSize(w, h, false);
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
+    this.post?.setSize(w, h);
   }
 
   render() {
     this.controls.update();
     // keep the dome centred on the camera so it never clips at the far plane
     this.sky.position.copy(this.camera.position);
-    this.renderer.render(this.scene, this.camera);
+    // Dynamic resolution: drop while the camera moves, restore once it settles. Motion masks the
+    // softness; a still frame does not, and a still frame is what gets screenshotted.
+    const moved = this.camera.position.distanceToSquared(this.lastCam) > 0.02;
+    this.lastCam.copy(this.camera.position);
+    this.stillFrames = moved ? 0 : Math.min(this.stillFrames + 1, 999);
+    // hysteresis: 8 still frames to go back to full resolution, so a slow orbit does not
+    // oscillate the render targets
+    this.post.setMoving(this.stillFrames < 8);
+
+    this.renderer.info.reset();
+    this.gpu.begin();
+    this.post.render();
+    this.gpu.end();
+    // the scene pass has run by now; the quads have not been counted yet on the next reset
+    const r = this.renderer.info.render;
+    if (r.triangles > 8) {
+      this.lastSubmitted = { calls: r.calls, triangles: r.triangles, lines: r.lines, points: r.points };
+    }
+  }
+
+  /** What the renderer ACTUALLY submitted this frame, after frustum culling — as opposed to what
+   *  the layers declared they could draw. The gap between the two is the culling working. */
+  /** Snapshot taken inside the frame, before the composer's fullscreen passes overwrite the
+   *  counters — otherwise post-processed frames report "1 call, 1 triangle", which is the quad. */
+  private lastSubmitted = { calls: 0, triangles: 0, lines: 0, points: 0 };
+
+  submitted() { return { ...this.lastSubmitted }; }
+
+  pixelLoad() { return GpuTimer.pixelLoad(this.renderer.domElement); }
+
+  /** Materials cache their shadow-related program; toggling shadowMap.enabled needs a recompile. */
+  forceShadowRefresh() {
+    this.scene.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      const mat = mesh.material as THREE.Material | THREE.Material[] | undefined;
+      if (!mat) return;
+      for (const mm of Array.isArray(mat) ? mat : [mat]) mm.needsUpdate = true;
+    });
   }
 }

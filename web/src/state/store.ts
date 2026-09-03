@@ -37,6 +37,8 @@ export interface AppState {
   fps: number;
   /** ms spent in our own step+render — the number the budget is about */
   frameMs: number;
+  /** GPU ms, the number screen-space effects actually spend */
+  gpuMs: number;
   /** live instanced counts, shown in the masthead */
   vehicles: number;
   busesOnRoad: number;
@@ -64,6 +66,7 @@ export const initialState: AppState = {
   storyStep: null,
   fps: 0,
   frameMs: 0,
+  gpuMs: 0,
   vehicles: 0,
   busesOnRoad: 0,
   trains: 0,

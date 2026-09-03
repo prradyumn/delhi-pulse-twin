@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import type { Layer, LayerReport } from "./registry";
 import { wallStrips, insetRing, ringPoint, extrudeFootprints, ribbons, type XZ } from "./geom";
-import { applyFacadeDetail } from "./facade";
+import { applyFacadeDetail, applyBakedAO } from "./facade";
 import * as load from "../geo/load";
 import type { Building, Payload, Provenance } from "../geo/types";
 
@@ -143,6 +143,7 @@ interface StreetscapePayload {
  *  are how the parks actually read as parks rather than green polygons. */
 export class StreetscapeLayer implements Layer {
   id = "streetscape"; label = "Paths & walls";
+  constructor(private aoMap: THREE.Texture | null = null, private aoOrtho = 4096) {}
   group = new THREE.Group();
   private meshes: THREE.Mesh[] = [];
 
@@ -160,9 +161,9 @@ export class StreetscapeLayer implements Layer {
         p: f.p, width: f.k === "pedestrian" ? 6 : 2.4, y: 0.008,
         color: new THREE.Color(f.k === "pedestrian" ? 0xb8ad9b : 0xc0b6a6),
       })));
-      const m = new THREE.Mesh(built.geometry, new THREE.MeshStandardMaterial({
-        vertexColors: true, roughness: 0.95,
-      }));
+      let fwMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95 });
+      if (this.aoMap) fwMat = applyBakedAO(fwMat, this.aoMap, this.aoOrtho, 0.8);
+      const m = new THREE.Mesh(built.geometry, fwMat);
       m.receiveShadow = true; m.name = "footways";
       this.group.add(m); this.meshes.push(m);
       tris += built.triangles; dc++;

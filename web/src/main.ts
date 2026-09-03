@@ -71,17 +71,36 @@ async function boot() {
   const root = new THREE.Group();
   stage.scene.add(root);
 
+  // the tile grid the culling uses; it was already in config as a lookup key
+  const EXTENT = m.study_area.runtime_extent;
+  const GRID = m.tiles.grid;
+
+  // The baked city AO, loaded once and shared. If it is missing the layers simply do not apply
+  // it — no error, and the scene is only flatter, which is the honest degradation.
+  const ORTHO = Math.max(EXTENT.x[1] - EXTENT.x[0], EXTENT.z[1] - EXTENT.z[0]);
+  let cityAO: THREE.Texture | null = null;
+  try {
+    cityAO = await new THREE.TextureLoader().loadAsync(`${load.DATA}/bake/city-ao.png`);
+    cityAO.colorSpace = THREE.NoColorSpace;      // it is a mask, not a colour
+    cityAO.wrapS = cityAO.wrapT = THREE.ClampToEdgeWrapping;
+    cityAO.minFilter = THREE.LinearMipmapLinearFilter;
+    cityAO.generateMipmaps = true;
+    cityAO.anisotropy = Math.min(8, stage.renderer.capabilities.getMaxAnisotropy());
+  } catch {
+    cityAO = null;
+  }
+
   const registry = new LayerRegistry(root);
-  const ground = new GroundLayer();
-  const water = new WaterLayer();
-  const roads = new RoadsLayer();
-  const buildings = new BuildingsLayer();
+  const ground = new GroundLayer(EXTENT, GRID, cityAO, ORTHO);
+  const water = new WaterLayer(stage.environment());
+  const roads = new RoadsLayer(cityAO, ORTHO);
+  const buildings = new BuildingsLayer(EXTENT, GRID);
   const rail = new RailLayer();
   const transit = new TransitLayer();
   const corridors = new CorridorLayer();
   const landmarks = new LandmarkLayer();
-  const trees = new TreesLayer();
-  const streetscape = new StreetscapeLayer();
+  const trees = new TreesLayer(EXTENT, GRID);
+  const streetscape = new StreetscapeLayer(cityAO, ORTHO);
   const buildingParts = new BuildingPartsLayer();
   const metro = new MetroLayer();
   const pedestrians = new PedestrianLayer();
@@ -314,7 +333,7 @@ async function boot() {
     push(corridors.mesh3);
     transit.group.children.forEach(push);
     rail.group.children.forEach((c) => { if (c.name === "stations") push(c); });
-    push(buildings.mesh3);
+    for (const bm of buildings.meshes) push(bm);
     roads.group.children.forEach(push);
 
     const hits = ray.intersectObjects(targets, false);
@@ -346,7 +365,7 @@ async function boot() {
       const st = rail.stations[hit.instanceId];
       if (st) sel = { kind: "station", s: st, prov: provFor("rail") };
     } else if (name === "buildings" && hit.face) {
-      const b = buildings.buildingAtVertex(hit.face.a);
+      const b = buildings.buildingAt(hit.object, hit.face.a);
       if (b) {
         sel = { kind: "building", b, prov: provFor("buildings"), rule: m.height_rule };
         buildings.highlight(b.id);
@@ -475,7 +494,10 @@ async function boot() {
                   trains: metro.trainCount(), walkers: pedestrians.walkerCount() });
     }
     stage.render();
-  }, (fps, frameMs) => store.set({ fps, frameMs }));
+  }, (fps, frameMs) => {
+    const g = stage.gpu.sample();
+    store.set({ fps, frameMs, gpuMs: g.ms ?? 0 });
+  });
 
   // ---------------------------------------------------------------- live feed
   //
@@ -587,6 +609,41 @@ async function boot() {
     reports, totals: () => registry.totals(), manifest: m,
     fps: () => store.get().fps,
     frameMs: () => store.get().frameMs,
+    gpu: () => stage.gpu.sample(),
+    /**
+     * Benchmark one configuration honestly: park the camera, drop stale samples, collect a fixed
+     * number of fresh ones, then report the median. Without the reset a rolling mean spans the
+     * change being measured; without a fixed camera the frustum keeps changing what is submitted.
+     */
+    bench: async (opts: { pos: [number, number, number]; target: [number, number, number];
+                          frames?: number }) => {
+      stage.camera.position.set(...opts.pos);
+      stage.controls.target.set(...opts.target);
+      stage.controls.update();
+      await new Promise((r) => setTimeout(r, 400));
+      stage.gpu.reset();
+      const want = opts.frames ?? 40;
+      const deadline = Date.now() + 8000;
+      while (stage.gpu.count() < want && Date.now() < deadline) {
+        await new Promise((r) => setTimeout(r, 60));
+      }
+      return {
+        gpuMedianMs: stage.gpu.median(),
+        gpuSamples: stage.gpu.count(),
+        disjoint: stage.gpu.sample().disjoint,
+        cpuMs: store.get().frameMs,
+        submitted: stage.submitted(),
+        pixels: stage.pixelLoad(),
+      };
+    },
+    /** Toggle the shadow map, for isolating its cost. */
+    setShadows: (on: boolean) => { stage.renderer.shadowMap.enabled = on; stage.forceShadowRefresh(); },
+    setQuality: (q: "low" | "medium" | "high") => stage.setQuality(q),
+    quality: () => stage.post.quality,
+    renderScale: () => stage.post.scale,
+    /** submitted after culling, vs declared — the gap is the culling */
+    submitted: () => stage.submitted(),
+    pixelLoad: () => stage.pixelLoad(),
     ready: true,
   };
 }

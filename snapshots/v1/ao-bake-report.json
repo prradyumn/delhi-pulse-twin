@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-09-03T21:32:48",
+  "blender": "5.2.0 LTS",
+  "engine": "CYCLES",
+  "samples": 64,
+  "resolution": 2048,
+  "seconds": 177.7,
+  "output": "web/public/data/@v1/bake/city-ao.png",
+  "bytes": 1915558,
+  "occluders": {
+    "buildings": 3203,
+    "landmarks": 6,
+    "verts": 44864,
+    "tris": 60890
+  },
+  "extent": {
+    "x": [
+      -1967.5,
+      1967.5
+    ],
+    "z": [
+      -2043,
+      2043
+    ],
+    "ortho_scale": 4086
+  },
+  "uv_mapping": "u = (x - X0) / ortho_scale + centring offset; see the runtime sampler. The render is square and the box is not, so both axes normalise by ortho_scale.",
+  "what_it_is": "Sky visibility from ground level given the whole massing, rendered top-down with a white world and no sun. Not a light map and not a shadow map: it does not depend on sun position and stays valid at every hour."
+}

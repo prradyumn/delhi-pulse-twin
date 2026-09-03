@@ -47,7 +47,8 @@ export function masthead(m: Manifest) {
     const ok = s.frameMs > 0 ? s.frameMs < 16.7 : s.fps >= 30;
     fps.append(el("b", { text: s.frameMs > 0 ? s.frameMs.toFixed(1) : "—",
                          style: ok ? "" : "color:var(--warn)" }),
-               " ms/frame · ",
+               " cpu · ",
+               el("b", { text: s.gpuMs > 0 ? s.gpuMs.toFixed(1) : "—" }), " gpu ms · ",
                el("b", { text: String(s.fps) }), " fps");
     fps.setAttribute("title",
       "Frame time is the cost of this app's own render call. Frames per second is how often the "

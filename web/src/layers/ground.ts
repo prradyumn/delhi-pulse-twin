@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import type { Layer, LayerReport } from "./registry";
-import { fills, type XZ } from "./geom";
+import { fills, bucketByTile, ringCentre, type XZ } from "./geom";
 import { PALETTE } from "./palette";
-import { applyGroundVariation } from "./facade";
+import { applyGroundVariation, applyBakedAO } from "./facade";
 import * as load from "../geo/load";
 import type { GroundPoly } from "../geo/types";
 
@@ -14,7 +14,14 @@ export class GroundLayer implements Layer {
   id = "ground"; label = "Ground & parks";
   group = new THREE.Group();
   polys: GroundPoly[] = [];
-  private mesh?: THREE.Mesh;
+  private meshes: THREE.Mesh[] = [];
+
+  constructor(
+    private extent: { x: [number, number]; z: [number, number] },
+    private grid: [number, number],
+    private aoMap: THREE.Texture | null = null,
+    private aoOrtho = 4096,
+  ) {}
 
   async build(): Promise<LayerReport> {
     const base: LayerReport = { id: this.id, label: this.label, status: "pending",
@@ -26,7 +33,10 @@ export class GroundLayer implements Layer {
     const extent = 4400;
     const plate = new THREE.Mesh(
       new THREE.PlaneGeometry(extent, extent),
-      new THREE.MeshStandardMaterial({ color: PALETTE.bare, roughness: 0.95 }),
+      this.aoMap
+        ? applyBakedAO(new THREE.MeshStandardMaterial({ color: PALETTE.bare, roughness: 0.95 }),
+                       this.aoMap, this.aoOrtho, 0.9)
+        : new THREE.MeshStandardMaterial({ color: PALETTE.bare, roughness: 0.95 }),
     );
     plate.rotation.x = -Math.PI / 2;
     plate.position.y = -0.35;
@@ -44,23 +54,34 @@ export class GroundLayer implements Layer {
     // See docs/07-RENDER-CORRECTNESS.md, rule 5, for the full y budget.
     const n = Math.max(this.polys.length, 1);
     const BAND_LOW = -0.3, BAND_HIGH = -0.14;
-    const built = fills(this.polys.map((p, i) => ({
-      r: p.r as XZ[],
-      y: BAND_LOW + (i / n) * (BAND_HIGH - BAND_LOW),
-      color: colorOf[p.cat] ?? PALETTE.bare,
-    })));
+    // y is assigned from the GLOBAL paint order, so bucketing by tile cannot change which polygon
+    // wins where two overlap
+    const yOf = new Map(this.polys.map((p, i) => [p, BAND_LOW + (i / n) * (BAND_HIGH - BAND_LOW)]));
 
-    this.mesh = new THREE.Mesh(built.geometry, applyGroundVariation(
-      new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92, metalness: 0 })));
-    this.mesh.receiveShadow = true;
-    this.mesh.name = "ground";
-    this.group.add(this.mesh);
+    let material = applyGroundVariation(
+      new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92, metalness: 0 }));
+    if (this.aoMap) material = applyBakedAO(material, this.aoMap, this.aoOrtho, 0.9);
+    const buckets = bucketByTile(
+      this.polys, (p) => ringCentre(p.r as XZ[]), this.extent, this.grid);
+    let tris = 0;
+    for (const bucket of buckets) {
+      const built = fills(bucket.items.map((p) => ({
+        r: p.r as XZ[], y: yOf.get(p) ?? BAND_LOW, color: colorOf[p.cat] ?? PALETTE.bare,
+      })));
+      const mesh = new THREE.Mesh(built.geometry, material);
+      mesh.receiveShadow = true;
+      mesh.name = "ground";
+      mesh.userData.tile = bucket.key;
+      this.group.add(mesh);
+      this.meshes.push(mesh);
+      tris += built.triangles;
+    }
 
     return { ...base, status: "ready", provenance: res.data.provenance,
              features: this.polys.length, bytes: res.bytes, ms: res.ms,
-             drawCalls: 2, triangles: built.triangles + 2 };
+             drawCalls: this.meshes.length + 1, triangles: tris + 2 };
   }
 
   setVisible(v: boolean) { this.group.visible = v; }
-  dispose() { this.mesh?.geometry.dispose(); }
+  dispose() { for (const m of this.meshes) m.geometry.dispose(); }
 }

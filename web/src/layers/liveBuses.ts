@@ -72,7 +72,8 @@ export class LiveBusLayer implements Layer {
       this.capacity);
     this.inst.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
     this.inst.frustumCulled = false;
-    this.inst.castShadow = true;
+    // see traffic.ts: moving casters would defeat the on-demand shadow map
+    this.inst.castShadow = false;
     this.inst.count = 0;
     this.inst.name = "live_buses";
     this.group.add(this.inst);

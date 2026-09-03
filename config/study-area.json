@@ -282,7 +282,17 @@
     "landmark_lod1_kb": 120,
     "landmark_lod2_kb": 30,
     "max_texture_px": 1024,
-    "texture_memory_mb": 64
+    "texture_memory_mb": 64,
+    "gpu_ms_max": 16.7,
+    "_gpu_note": "GPU milliseconds, measured with EXT_disjoint_timer_query_webgl2 at a parked camera. This is the budget that actually limits visual quality, and it was invisible until instrumented: CPU frame time read 1.4 ms while the GPU was spending 19. Two findings came straight out of it \u2014 the shadow map was 73% of GPU time (fixed by rendering it on demand rather than every frame, 10.1 ms reclaimed), and screen-space AO cost ~18 ms and doubled submitted geometry, so it is opt-in only and the AO comes from a Blender bake instead. Note headless reports devicePixelRatio 1; a Retina display is 4x the pixels, so a headless pass is necessary but not sufficient.",
+    "_measured": {
+      "device": "Apple M1 / 8 GB, ANGLE Metal, 1600x913 at dpr 1",
+      "date": "2026-09-03",
+      "wide_view_gpu_ms": 10.8,
+      "close_view_gpu_ms": 9.6,
+      "shadow_map_share_before_fix_pct": 73,
+      "screen_space_ao_gpu_ms": 33.2
+    }
   },
   "primary_benchmark_device": "Apple M1, 8 GB, macOS 26.5, Chrome \u2014 integrated GPU, matches the PRD 'ordinary laptop' target",
   "live_adapters": {

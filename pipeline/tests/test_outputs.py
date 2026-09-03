@@ -215,7 +215,9 @@ if mt:
     lines = mt["features"]
     check(len(lines) >= 3, f"metro: only {len(lines)} lines")
     for l in lines:
-        check(len(l["path"]) > 5, f"metro {l['name']}: path has {len(l['path'])} points")
+        # not a vertex-count check: the Airport Express line runs nearly straight through the
+        # box, so 2 m simplification legitimately leaves it 5 points. Length is the invariant.
+        check(len(l["path"]) >= 2, f"metro {l['name']}: path has {len(l['path'])} points")
         check(l["path_len"] > 300, f"metro {l['name']}: only {l['path_len']} m in box")
         # DMRC's own colours, so a bare default would mean the tag was missing
         check(l["colour"].startswith("#") and len(l["colour"]) == 7,

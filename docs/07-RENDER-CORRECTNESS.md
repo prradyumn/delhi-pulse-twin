@@ -297,7 +297,7 @@ without it 17k trees look pasted onto the ground.
 
 # Part four: metro, night and people
 
-Sixteen layers. **60 fps · 41 draw calls · 816,874 triangles · 0.88 MB gzip**, 118 data invariants.
+Sixteen layers. **60 fps · 41 draw calls · 816,874 triangles · 0.88 MB gzip**, 130 data invariants.
 The masthead reads *"326 vehicles · 12 buses · 20 trains · 2200 walking"*.
 
 ## The metro is underground, so that is where it is drawn
@@ -351,3 +351,11 @@ not vary with time of day and nothing here should be read as when or where peopl
 Walkers reverse at the end of a path rather than teleporting to the start, and position is a pure
 function of the clock, so scrubbing time stays reproducible — the same property the buses, trains
 and corridor vehicles all have.
+
+## One more, on writing the test before believing it
+
+The metro invariant I added asserted a path had more than 5 vertices — and it failed immediately on
+the Airport Express Line, which runs almost straight through the box and legitimately simplifies to
+5 points. Vertex count was never the property worth asserting; **length** is, and that check was
+already there. I committed with it red, which should not have happened: the gate exists to be run
+before the commit, not after.

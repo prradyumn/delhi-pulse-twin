@@ -89,7 +89,8 @@ button { cursor: pointer; background: none; border: none; }
 .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 
 /* ---------------------------------------------------------------- left rail */
-#rail { top: 66px; left: 12px; width: 232px; max-height: calc(100vh - 190px); overflow-y: auto; }
+/* 14 layers no longer fit above the legend, so the rail scrolls inside its own box */
+#rail { top: 66px; left: 12px; width: 232px; max-height: calc(100vh - 430px); overflow-y: auto; }
 
 .lrow {
   display: grid; grid-template-columns: 14px 1fr auto; align-items: center; gap: 9px;
@@ -280,3 +281,29 @@ h3.sub:first-child { margin-top: 0; padding-top: 0; border-top: none; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
+/* ---------------------------------------------------------------- place picker */
+#places { top: 66px; left: 256px; width: 330px; max-height: calc(100vh - 190px); overflow: hidden;
+          display: flex; flex-direction: column; }
+#places .pbody { display: flex; flex-direction: column; gap: 9px; overflow: hidden; min-height: 0; }
+.psearch {
+  width: 100%; padding: 7px 10px; border-radius: 2px;
+  background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line-2); color: var(--text);
+  font-size: 13px;
+}
+.psearch::placeholder { color: var(--text-3); }
+.pchips { display: flex; flex-wrap: wrap; gap: 4px; }
+.pchips .chip { cursor: pointer; font-size: 9.5px; padding: 3px 6px; }
+.plist { overflow-y: auto; min-height: 0; display: flex; flex-direction: column; }
+.prow {
+  display: flex; flex-direction: column; gap: 1px; align-items: flex-start;
+  padding: 7px 2px; text-align: left; border-bottom: 1px solid var(--line); width: 100%;
+}
+.prow:last-child { border-bottom: none; }
+.prow:hover { background: rgba(255, 255, 255, 0.045); }
+.pname { font-size: 13px; color: var(--text); line-height: 1.3; }
+.pcat {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-3);
+}
+@media (max-width: 1100px) { #places { left: 12px; top: 300px; } }

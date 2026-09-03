@@ -35,13 +35,17 @@ export interface AppState {
   compare: boolean;
   storyStep: number | null;
   fps: number;
+  /** live instanced counts, shown in the masthead */
+  vehicles: number;
+  busesOnRoad: number;
 }
 
 export const initialState: AppState = {
   timeMin: 8 * 60 + 30,
   playing: false,
-  layers: { ground: true, water: true, roads: true, buildings: true, rail: true,
-            transit: true, corridors: true, buses: true, landmarks: true },
+  layers: { ground: true, water: true, streetscape: true, roads: true, corridors: true,
+            buildings: true, buildingparts: true, roofdetail: true, landmarks: true,
+            trees: true, rail: true, transit: true, traffic: true, buses: true },
   revealEstimated: false,
   selectedId: null,
   activeCorridor: null,
@@ -52,6 +56,8 @@ export const initialState: AppState = {
   compare: false,
   storyStep: null,
   fps: 0,
+  vehicles: 0,
+  busesOnRoad: 0,
 };
 
 export const store = createStore<AppState>(initialState);

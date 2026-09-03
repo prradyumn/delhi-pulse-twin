@@ -173,6 +173,43 @@ if sm:
     for cid in {x["id"] for x in CONFIG["corridors"]}:
         check(cid in sm["corridor_base"], f"scenario model: no corridor_base entry for {cid}")
 
+# ---------------------------------------------------------------- detail pass
+tr = load("trees.json")
+if tr:
+    obs, gen = tr["observed_trees"], tr["generated_trees"]
+    check(len(obs) == tr["observed"], "trees: observed count disagrees with the array")
+    check(len(gen) == tr["generated"], "trees: generated count disagrees with the array")
+    check(len(obs) > 800, f"trees: only {len(obs)} observed")
+    # the honesty requirement: the split must be stated, because most trees here are generated
+    lim = " ".join(tr["provenance"]["limitations"]).lower()
+    check("generated" in lim, "trees: provenance must say that most trees are generated")
+    check(tr["provenance"]["mode"] == "simulated",
+          "trees: mode must be simulated while generated planting is included")
+    bad = sum(1 for x, z, *_ in obs + [(*g, 0) for g in gen]
+              if x < X0 - 2 or x > X1 + 2 or z < Z0 - 2 or z > Z1 + 2)
+    check(bad == 0, f"trees: {bad} outside the locked bounds")
+    print(f"  trees: {len(obs):,} observed + {len(gen):,} generated")
+
+pl = load("places.json")
+if pl:
+    ps = pl["features"]
+    check(len(ps) > 200, f"places: only {len(ps)}")
+    check(all(p.get("name") and p.get("cat") and p.get("dist") for p in ps),
+          "places: every entry needs a name, category and framing distance")
+    bad = [p["id"] for p in ps if p["x"] < X0 or p["x"] > X1 or p["z"] < Z0 or p["z"] > Z1]
+    check(not bad, f"places: {len(bad)} outside the locked bounds")
+    print(f"  places: {len(ps)} across {len({p['cat'] for p in ps})} categories")
+
+bp = load("building-parts.json")
+if bp:
+    check(all(f["h"] > f["min"] for f in bp["features"]),
+          "building parts: a part must be taller than its own base height")
+
+for r in (t["features"]["routes"] if (t := load("transit.json")) else []):
+    check(len(r.get("path", [])) > 3,
+          f"route {r['ref']}: no road path — replay would cut straight lines between stops")
+    check(r.get("path_len", 0) > 500, f"route {r['ref']}: road path only {r.get('path_len')} m")
+
 # ---------------------------------------------------------------- manifest
 mf = load("manifest.json")
 if mf:

@@ -202,3 +202,93 @@ Both produced a **flat grey frame with no error of any kind**:
   was empty because the geometry sat beyond the far plane.
 - **Hand-rolled look-at Euler angles.** A Blender camera looks down its local −Z, and a sign error
   aims it at nothing. Now `direction.to_track_quat("-Z", "Y")`, which is Blender's own.
+
+---
+
+# Part three: the detail pass
+
+The scene worked but read as a diagram. Fourteen layers now, **60 fps · 38 draw calls · 762,528
+triangles · 0.88 MB gzip** including the bundle, and 106 data invariants.
+
+## What was actually missing
+
+Not polish. Three specific absences, each with a data answer:
+
+**Buses cut straight lines between stops.** `CatmullRomCurve3` through stop positions drives through
+buildings and rounds every corner. The fix was data, not code: OSM route relations list the actual
+ways each route traverses, and the first extract only asked for member *refs* (`out body`), not
+their geometry. `fetch_detail.py` now pulls `out geom` for the three selected relations and
+`detail.route_paths` stitches the member ways in relation order, flipping each so its start meets
+the running end. Routes 73, 604 and 281 now follow 5.9 km, 4.5 km and 5.1 km of real road.
+
+**Nothing moved except buses.** A corridor coloured red with no vehicles on it asks the viewer to
+take the colour on faith. Now the same estimate is drawn twice.
+
+**No trees.** Lutyens' Delhi *is* its avenues, and 16 km² of it with 1,171 surveyed trees will never
+read as this city. See the honesty note below.
+
+## Vehicles: bunching for free, and still deterministic
+
+The naive approach integrates position per frame, which drifts and is not reproducible. Instead
+`traffic.ts` releases vehicles at a fixed **time** headway and recovers distance by inverting the
+cumulative travel-time table along the spine:
+
+    time[i] = time[i-1] + (dist[i] - dist[i-1]) / speed(segment i)
+    distance(t) = invert(time, t)          // binary search + lerp
+
+Three properties fall out of that, none of which had to be coded:
+
+- Vehicles **bunch where the estimate says the corridor is slow**, because equal time steps are
+  unequal distance steps.
+- The **count rises with congestion** — slots are `total_time / headway` — so the number in the
+  masthead is the estimate being drawn, not a demand figure. The provenance says exactly that.
+- It stays a **pure function of the clock**, so scrubbing time is reproducible.
+
+Buses use the same inversion, with an 18-second dwell added at every mapped stop, so they visibly
+stop rather than gliding through. Stops are projected onto the path and any stop further than 70 m
+from it is ignored as not really on this route.
+
+## Trees: the one place this project generates data
+
+1,171 of the 17,360 trees are surveyed OSM records. **16,189 are generated** at fixed spacing along
+main-road edges. That is a real line to cross, so:
+
+- they are counted separately in the payload and the build report;
+- the layer reports `mode: simulated` **because of them**, not despite them;
+- the provenance states that no individual generated tree corresponds to a real tree;
+- generation skips within 9 m of an observed tree, so the two never double up;
+- a data invariant now fails the build if that disclosure goes missing from the provenance.
+
+The same reasoning covers rooftop parapets and water tanks: OSM has no usable roof detail here (263
+of 290 `roof:shape` tags say `flat`), a flat-topped prism is the single thing that makes procedural
+massing look like a toy, and what is actually on a Delhi roof is a parapet and a black polymer tank.
+So they are generated, declared `simulated`, and the layer says no individual tank is a real tank.
+
+## The bug that made three layers black
+
+Trees, cars and water tanks all rendered black. All three set `vertexColors: true` **and** supplied
+an `instanceColor`, on geometries with no `color` attribute:
+
+    #elif defined( USE_COLOR ) || defined( USE_INSTANCING_COLOR )
+        vColor = vec3( 1.0 );
+    #endif
+    #ifdef USE_COLOR
+        vColor *= vertexColor;      // attribute absent -> WebGL supplies (0,0,0)
+    #endif
+    #ifdef USE_INSTANCING_COLOR
+        vColor.xyz *= instanceColor.xyz;
+    #endif
+
+`vertexColors` declares `USE_COLOR`, the missing attribute reads as zero, and every instance is
+multiplied to black. `instanceColor` needs no help — setting `vertexColors` alongside it on a
+geometry that has no colours is what breaks it.
+
+> **When you add an instanced layer:** per-instance colour comes from `instanceColor` alone. Set
+> `vertexColors` only when the geometry genuinely carries a `color` attribute — which, in this
+> codebase, means it came out of `geom.ts`'s `finish()`.
+
+## Shadow budget, measured not assumed
+
+17,360 tree instances in the shadow pass was the one place this scene could plausibly have run out
+of frame time. Measured: still 60 fps, so canopies cast. Dappled avenue shade is what grounds them;
+without it 17k trees look pasted onto the ground.

@@ -8,6 +8,7 @@ from shapely.geometry import Polygon, LineString, Point
 from shapely.ops import unary_union, linemerge
 from dpt.core import cfg, Proj, osm, write_json, provenance, osm_prov, OUT, SNAP
 from dpt.heights import resolve as resolve_height
+from dpt import detail
 
 C = cfg(); P = Proj(C)
 BOX = P.box()
@@ -352,6 +353,9 @@ def transit(corr):
     for c in chosen:
         print(f"  route {c['ref']}: {len(c['stops'])} in-box stops, corridors {c['corridors']}")
 
+    # replace the straight stop-to-stop interpolation with the real road path per route
+    chosen = detail.route_paths(manifest_assets, report, chosen)
+
     manifest_assets["transit"] = write_json("transit.json", {
         "kind": "transit", "stops": len(stops), "routes": len(chosen),
         "provenance": osm_prov(
@@ -360,7 +364,8 @@ def transit(corr):
             limitations=[
                 "Route geometry and stop order come from OSM relations, NOT from GTFS. Delhi OTD static GTFS sits behind a usage-declaration form and its file host was unreachable on 2026-09-03; OTD realtime returns 401 without an authorised key.",
                 "No schedule exists in this dataset. baseline headway of 12 min is an ASSUMPTION, not an observation, and every metric derived from it is labelled a proxy.",
-                "Stop order follows the relation member sequence, which is community-maintained and may contain gaps."]),
+                "Stop order follows the relation member sequence, which is community-maintained and may contain gaps.",
+                "Each route carries the actual OSM ways it traverses as `path`, stitched in relation member order. Where a relation is discontinuous inside the box the longest continuous piece is used."]),
         "features": {"stops": stops, "routes": chosen}})
     return chosen
 
@@ -510,6 +515,10 @@ def main():
     print("ground…");     ground()
     print("rail…");       rail()
     print("landmarks…");  landmarks()
+    print("places…");     detail.places(manifest_assets, report)
+    print("trees…");      detail.trees(manifest_assets, report)
+    print("streetscape…"); detail.streetscape(manifest_assets, report)
+    print("building parts…"); detail.building_parts(manifest_assets, report)
     print("transit…");    transit(cr)
     print("weather + scenario model…"); weather()
 

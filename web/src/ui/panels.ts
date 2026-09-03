@@ -11,7 +11,9 @@ const hex = (c: { getHexString(): string }) => `#${c.getHexString()}`;
 export function masthead(m: Manifest) {
   const clock = el("span", { class: "stat" });
   const fps = el("span", { class: "stat" });
+  const moving = el("span", { class: "stat" });
   const statusBtn = el("button", { class: "chip", text: "Data status" });
+  const placesBtn = el("button", { class: "chip", text: "Places" });
   const storyBtn = el("button", { class: "btn", text: "Guided story" });
 
   const node = el("header", { id: "mast" },
@@ -19,20 +21,25 @@ export function masthead(m: Manifest) {
       el("strong", { text: "Delhi Pulse Twin" }),
       el("span", { text: `${m.study_area.id} · ${m.dataset_version} · transform ${m.transform_version}` })),
     el("div", { class: "spacer" }),
-    clock, fps,
+    clock, moving, fps,
     el("span", { class: "chip", text: `${m.health.live_adapters.length} live feeds` }),
-    statusBtn, storyBtn);
+    placesBtn, statusBtn, storyBtn);
 
   const render = () => {
     const s = store.get();
     clear(clock);
     clock.append(el("b", { text: hhmm(s.timeMin) }), " local");
+    clear(moving);
+    if (s.vehicles || s.busesOnRoad) {
+      moving.append(el("b", { text: String(s.vehicles) }), " vehicles · ",
+                    el("b", { text: String(s.busesOnRoad) }), " buses");
+    }
     clear(fps);
     const ok = s.fps >= 30;
     fps.append(el("b", { text: String(s.fps), style: ok ? "" : "color:var(--warn)" }), " fps");
   };
   store.on(render); render();
-  return { node, statusBtn, storyBtn };
+  return { node, statusBtn, placesBtn, storyBtn };
 }
 
 /* ------------------------------------------------------------------ layer rail */

@@ -62,6 +62,31 @@
     "count": 8,
     "required_present": 3
   },
+  "places": {
+    "count": 352,
+    "by_cat": {
+      "attraction": 23,
+      "building": 130,
+      "civic": 34,
+      "district": 11,
+      "government": 63,
+      "heritage": 21,
+      "market": 20,
+      "station": 11,
+      "worship": 39
+    }
+  },
+  "trees": {
+    "observed": 1171,
+    "generated": 16189
+  },
+  "streetscape": {
+    "footways": 926,
+    "walls": 238
+  },
+  "building_parts": {
+    "count": 145
+  },
   "transit": {
     "stops": 166,
     "routes": [
@@ -88,5 +113,19 @@
         ]
       ]
     ]
-  }
+  },
+  "route_paths": [
+    {
+      "ref": "73",
+      "len": 5923.9
+    },
+    {
+      "ref": "604",
+      "len": 4535.0
+    },
+    {
+      "ref": "281",
+      "len": 5129.7
+    }
+  ]
 }

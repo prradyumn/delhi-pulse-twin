@@ -13,7 +13,11 @@ import { RailLayer } from "./layers/rail";
 import { TransitLayer } from "./layers/transit";
 import { CorridorLayer } from "./layers/corridors";
 import { LandmarkLayer } from "./layers/landmarks";
+import { TreesLayer } from "./layers/trees";
+import { TrafficLayer } from "./layers/traffic";
+import { RoofDetailLayer, StreetscapeLayer, BuildingPartsLayer } from "./layers/detail";
 import { BusLayer } from "./layers/buses";
+import { placePicker, type Place } from "./ui/places";
 import * as load from "./geo/load";
 import { store, type RainBand } from "./state/store";
 import { corridorMetrics, type CorridorMetrics } from "./scenario/engine";
@@ -24,7 +28,11 @@ import { scenarioLab, exportPanel } from "./ui/scenarioLab";
 import { STORY } from "./story/steps";
 import type { Manifest, ScenarioModel, WeatherData } from "./geo/types";
 
-const LAYER_ORDER = ["ground", "water", "roads", "corridors", "buildings", "landmarks", "rail", "transit", "buses"];
+const LAYER_ORDER = [
+  "ground", "water", "streetscape", "roads", "corridors",
+  "buildings", "buildingparts", "roofdetail", "landmarks",
+  "trees", "rail", "transit", "traffic", "buses",
+];
 
 function fatal(title: string, detail: string) {
   document.body.append(el("div", { class: "fallback" },
@@ -66,24 +74,31 @@ async function boot() {
   const transit = new TransitLayer();
   const corridors = new CorridorLayer();
   const landmarks = new LandmarkLayer();
-  registry.add(ground).add(water).add(roads).add(buildings)
-          .add(landmarks).add(rail).add(transit).add(corridors);
+  const trees = new TreesLayer();
+  const streetscape = new StreetscapeLayer();
+  const buildingParts = new BuildingPartsLayer();
+  registry.add(ground).add(water).add(streetscape).add(roads).add(buildings)
+          .add(buildingParts).add(landmarks).add(trees).add(rail).add(transit).add(corridors);
 
   await registry.buildAll();
 
-  // Buses depend on the transit layer's routes, so they join after it resolves. Wrapped the same
-  // way buildAll wraps the others — a bus failure must degrade to a reported status, not a dead
-  // scene (FR-01).
+  // Second wave: layers built from another layer's resolved data. Each is wrapped the way
+  // buildAll wraps the others, so a failure here degrades to a reported status rather than a
+  // dead scene (FR-01).
   const buses = new BusLayer(transit.routes);
-  registry.add(buses);
-  try {
-    registry.reports.set("buses", await buses.build());
-  } catch (e) {
-    registry.reports.set("buses", {
-      id: "buses", label: "Bus replay", status: "unavailable", provenance: null,
-      features: 0, bytes: 0, ms: 0, drawCalls: 0, triangles: 0,
-      error: e instanceof Error ? e.message : String(e),
-    });
+  const traffic = new TrafficLayer(corridors.corridors);
+  const roofDetail = new RoofDetailLayer(buildings.buildings);
+  for (const l of [roofDetail, traffic, buses]) {
+    registry.add(l);
+    try {
+      registry.reports.set(l.id, await l.build());
+    } catch (e) {
+      registry.reports.set(l.id, {
+        id: l.id, label: l.label, status: "unavailable", provenance: null,
+        features: 0, bytes: 0, ms: 0, drawCalls: 0, triangles: 0,
+        error: e instanceof Error ? e.message : String(e),
+      });
+    }
   }
   const reports: LayerReport[] = LAYER_ORDER
     .map((id) => registry.reports.get(id))
@@ -130,10 +145,35 @@ async function boot() {
     corridors.paint((cid, si) => cache.get(cid)?.[si] ?? null);
   }
 
+  /** The vehicles read the same estimate the corridor colour does, so they are refreshed from
+   *  the same place — one source of truth for "how fast is this corridor right now". */
+  function refreshMotion() {
+    if (!model) return;
+    const s = store.get();
+    const segsFor = new Map<string, number[]>();
+    for (const c of corridors.corridors) {
+      const mm = corridorMetrics({
+        corridor: c, timeMin: s.timeMin, rain: s.rain, model,
+        diurnal: model.diurnal_congestion.profile, corridorBase: model.corridor_base,
+        routes: transit.routes, busFreqMultiplier: s.busFreqMultiplier,
+      });
+      segsFor.set(c.id, mm.segments.map((x) => x.speedKmh));
+    }
+    traffic.setSpeeds((cid, frac) => {
+      const arr = segsFor.get(cid);
+      if (!arr || !arr.length) return 25;
+      return arr[Math.min(Math.floor(frac * arr.length), arr.length - 1)];
+    });
+    // buses slow with the weather too, or the rainfall scenario only changes numbers
+    const rainMult = model.rain_speed_multiplier[s.rain]?.secondary ?? 1;
+    buses.setSpeedScale(rainMult);
+  }
+
   function recompute() {
     baseline = metricsFor("none", 1);
     lab.setMetrics(baseline, frozenScenario);
     paintCorridors();
+    refreshMotion();
   }
 
   /** Playback moves the clock roughly every 60 ms. Repainting corridor vertices at that rate is
@@ -143,6 +183,7 @@ async function boot() {
   function onClockMoved() {
     stage.setTime(store.get().timeMin);
     paintCorridors();
+    refreshMotion();
     const now = performance.now();
     if (now - lastMetricsAt > 400) {
       lastMetricsAt = now;
@@ -200,6 +241,17 @@ async function boot() {
 
   mast.statusBtn.addEventListener("click", () =>
     document.body.append(dataStatus(m, reports)));
+
+  // ---------------------------------------------------------------- places to jump to
+  const placesRes = await load.grab<{ features: Place[] }>("places.json");
+  const picker = placePicker(placesRes.ok ? placesRes.data.features : [], (pl) => {
+    // frame from the south-east at a height proportional to the framing distance, so a district
+    // reads as a district and a monument fills the view
+    flyTo([pl.x + pl.dist * 0.55, pl.dist * 0.62, pl.z + pl.dist], [pl.x, 0, pl.z]);
+    picker.hide();
+  });
+  document.body.append(picker.node);
+  mast.placesBtn.addEventListener("click", () => picker.toggle());
 
   // ---------------------------------------------------------------- camera moves
   let flight: { from: THREE.Vector3; to: THREE.Vector3; tFrom: THREE.Vector3; tTo: THREE.Vector3; t: number } | null = null;
@@ -361,9 +413,13 @@ async function boot() {
     }
     if (e.key === "Escape") { det.hide(); buildings.highlight(null); }
     if (e.key === "r" || e.key === "R") flyTo([1500, 1400, 2000], [0, 0, 0]);
+    if ((e.key === "p" || e.key === "P") && !(e.target instanceof HTMLInputElement)) {
+      e.preventDefault(); picker.toggle();
+    }
   });
 
   let acc = 0;
+  let motionTick = 0;
   startLoop((dt) => {
     const s = store.get();
     if (s.playing) {
@@ -384,6 +440,10 @@ async function boot() {
       if (flight.t >= 1) flight = null;
     }
     buses.update(s.timeMin);
+    traffic.update(s.timeMin * 60);
+    if (s.playing || motionTick++ % 30 === 0) {
+      store.set({ vehicles: traffic.vehicleCount(), busesOnRoad: buses.busCount() });
+    }
     stage.render();
   }, (fps) => store.set({ fps }));
 

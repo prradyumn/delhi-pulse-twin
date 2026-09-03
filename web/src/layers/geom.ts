@@ -204,3 +204,92 @@ export function repaint(
   }
   attr.needsUpdate = true;
 }
+
+/** Merge a few box geometries into one so a vehicle is a single instanced draw. */
+export function mergeBoxes(geos: THREE.BufferGeometry[]): THREE.BufferGeometry {
+  const pos: number[] = [], nor: number[] = [], idx: number[] = [];
+  let offset = 0;
+  for (const g of geos) {
+    const gp = g.getAttribute("position") as THREE.BufferAttribute;
+    const gn = g.getAttribute("normal") as THREE.BufferAttribute;
+    for (let i = 0; i < gp.count; i++) {
+      pos.push(gp.getX(i), gp.getY(i), gp.getZ(i));
+      nor.push(gn.getX(i), gn.getY(i), gn.getZ(i));
+    }
+    const gi = g.getIndex();
+    if (gi) for (let i = 0; i < gi.count; i++) idx.push(gi.getX(i) + offset);
+    else for (let i = 0; i < gp.count; i++) idx.push(i + offset);
+    offset += gp.count;
+    g.dispose();
+  }
+  const out = new THREE.BufferGeometry();
+  out.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  out.setAttribute("normal", new THREE.Float32BufferAttribute(nor, 3));
+  out.setIndex(idx);
+  out.computeBoundingSphere();
+  return out;
+}
+
+/**
+ * Vertical strips along polylines or rings — parapets on a roof edge, compound walls along a
+ * boundary. Emits only the side faces, no cap: a 0.9 m parapet needs no lid, and leaving it off
+ * halves the triangles.
+ *
+ * `closed` walks the ring back to its first point. `doubleSided` emits the inward faces too,
+ * which a free-standing wall needs and a roof parapet does not.
+ */
+export function wallStrips(
+  lines: { p: XZ[]; base: number; top: number; color: THREE.Color; closed?: boolean }[],
+  doubleSided = false,
+): Built {
+  const pos: number[] = [], col: number[] = [], idx: number[] = [];
+  const vfeat: number[] = [];
+
+  lines.forEach((ln, li) => {
+    const ring = ln.closed ? orient(ln.p) : ln.p;
+    const n = ring.length;
+    if (n < 2) return;
+    const last = ln.closed ? n : n - 1;
+    for (let i = 0; i < last; i++) {
+      const [x0, z0] = ring[i], [x1, z1] = ring[(i + 1) % n];
+      if (x0 === x1 && z0 === z1) continue;
+      const b = pos.length / 3;
+      const quad: [number, number, number][] = [
+        [x0, ln.base, z0], [x1, ln.base, z1], [x1, ln.top, z1], [x0, ln.top, z0],
+      ];
+      for (const [px, py, pz] of quad) {
+        pos.push(px, py, pz);
+        const shade = py === ln.base ? 0.82 : 1.0;
+        col.push(ln.color.r * shade, ln.color.g * shade, ln.color.b * shade);
+        vfeat.push(li);
+      }
+      idx.push(b, b + 1, b + 2, b, b + 2, b + 3);
+      if (doubleSided) idx.push(b, b + 2, b + 1, b, b + 3, b + 2);
+    }
+  });
+
+  return { geometry: finish(pos, col, idx), vertexFeature: new Uint32Array(vfeat),
+           triangles: idx.length / 3 };
+}
+
+/** Inset a ring toward its centroid — a parapet sits inboard of the wall face, not on it. */
+export function insetRing(ring: XZ[], by: number): XZ[] {
+  let cx = 0, cz = 0;
+  for (const [x, z] of ring) { cx += x; cz += z; }
+  cx /= ring.length; cz /= ring.length;
+  return ring.map(([x, z]) => {
+    const dx = x - cx, dz = z - cz;
+    const L = Math.hypot(dx, dz) || 1;
+    const k = Math.max(L - by, L * 0.55) / L;
+    return [cx + dx * k, cz + dz * k] as XZ;
+  });
+}
+
+/** Deterministic point inside a ring, for placing roof clutter reproducibly. */
+export function ringPoint(ring: XZ[], t: number): XZ {
+  let cx = 0, cz = 0;
+  for (const [x, z] of ring) { cx += x; cz += z; }
+  cx /= ring.length; cz /= ring.length;
+  const a = ring[Math.floor(t * ring.length) % ring.length];
+  return [cx + (a[0] - cx) * 0.42, cz + (a[1] - cz) * 0.42];
+}

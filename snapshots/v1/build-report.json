@@ -1,0 +1,88 @@
+{
+  "buildings": {
+    "count": 3203,
+    "modes": {
+      "observed": 267,
+      "estimated": 2936
+    },
+    "dropped_outside_box": 102,
+    "top_bases": {
+      "rule:class=yes": 2701,
+      "osm:building:levels": 242,
+      "rule:area<50": 131,
+      "osm:height": 25,
+      "rule:class=house": 17,
+      "rule:class=roof": 13
+    }
+  },
+  "roads": {
+    "count": 684,
+    "by_class": {
+      "tertiary": 160,
+      "residential": 103,
+      "secondary": 399,
+      "unclassified": 10,
+      "service": 12
+    }
+  },
+  "corridors": [
+    {
+      "id": "baba-kharak-singh-marg",
+      "spine_len": 1046.7,
+      "segments": 6
+    },
+    {
+      "id": "barakhamba-road",
+      "spine_len": 1077.8,
+      "segments": 7
+    },
+    {
+      "id": "kartavya-path",
+      "spine_len": 2346.3,
+      "segments": 15
+    }
+  ],
+  "ground": {
+    "count": 489,
+    "by_cat": {
+      "green": 282,
+      "urban": 157,
+      "pitch": 37,
+      "bare": 13
+    }
+  },
+  "water": {
+    "count": 18
+  },
+  "rail": {
+    "lines": 115,
+    "stations": 11
+  },
+  "transit": {
+    "stops": 166,
+    "routes": [
+      [
+        "73",
+        12,
+        [
+          "baba-kharak-singh-marg",
+          "barakhamba-road"
+        ]
+      ],
+      [
+        "604",
+        14,
+        [
+          "baba-kharak-singh-marg"
+        ]
+      ],
+      [
+        "281",
+        12,
+        [
+          "barakhamba-road"
+        ]
+      ]
+    ]
+  }
+}

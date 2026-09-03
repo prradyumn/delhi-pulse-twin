@@ -1,0 +1,2909 @@
+[
+  {
+    "rel": 8238141,
+    "ref": "349",
+    "name": "349: Mayur Vihar Phase 2 -> Kendriya Terminal",
+    "operator": "-",
+    "stops_in_box": 12,
+    "corridors": [
+      "barakhamba-road",
+      "janpath"
+    ],
+    "n_corridors": 2,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Modern School",
+      "?",
+      "Janpath",
+      "Police Station Parliament Street"
+    ]
+  },
+  {
+    "rel": 8050584,
+    "ref": "410",
+    "name": "410: Khyala JJ Colony -> Jal Vihar Terminal",
+    "operator": "-",
+    "stops_in_box": 18,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Doctor Ram Manohar Lohia Hospital",
+      "Talkatora Road",
+      "Gurudwara Rakab Ganj",
+      "Kendriya Terminal",
+      "New Delhi Post Office",
+      "Gurudwara Bangla Sahib"
+    ]
+  },
+  {
+    "rel": 9444906,
+    "ref": "410A",
+    "name": "410A: Subhash Nagar Crossing -> Jal Vihar Terminal",
+    "operator": "-",
+    "stops_in_box": 18,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Doctor Ram Manohar Lohia Hospital",
+      "Talkatora Road",
+      "Gurudwara Rakab Ganj",
+      "Kendriya Terminal",
+      "New Delhi Post Office",
+      "Gurudwara Bangla Sahib"
+    ]
+  },
+  {
+    "rel": 7921454,
+    "ref": "410",
+    "name": "410: Jal Vihar Terminal -> Khyala JJ Colony",
+    "operator": "-",
+    "stops_in_box": 16,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Bapa Nagar",
+      "Jaipur House",
+      "Nirman Bhavan",
+      "Udyog Bhawan",
+      "Udyog Bhawan",
+      "Rail Bhawan Metro Station"
+    ]
+  },
+  {
+    "rel": 9444907,
+    "ref": "410A",
+    "name": "410A: Jal Vihar Terminal \u2192 Subhash Nagar Crossing",
+    "operator": "-",
+    "stops_in_box": 16,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Bapa Nagar",
+      "Jaipur House",
+      "Nirman Bhavan",
+      "Udyog Bhawan",
+      "Udyog Bhawan",
+      "Rail Bhawan Metro Station"
+    ]
+  },
+  {
+    "rel": 8126651,
+    "ref": "391",
+    "name": "391: Kalyanpuri -> Kendriya Terminal",
+    "operator": "-",
+    "stops_in_box": 15,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Mandi House",
+      "Kasturba Gandhi Marg Crossing",
+      "Firoz Shah Road",
+      "Windsor Place"
+    ]
+  },
+  {
+    "rel": 7917865,
+    "ref": "793",
+    "name": "793: Delhi Secretariat (Rajghat Power House) -> H-3 Vikas Puri Terminal",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 14,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Mandi House",
+      "Kasturba Gandhi Marg Crossing",
+      "Firoz Shah Road",
+      "Windsor Place"
+    ]
+  },
+  {
+    "rel": 8197605,
+    "ref": "181A",
+    "name": "181A: Jahangirpuri E-Block -> Nizamuddin Railway Station",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 14,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Marina Hotel",
+      "Super Bazar",
+      "Palika Kendra",
+      "Police Station Parliament Street",
+      "Akashwani Bhawan",
+      "Krishi Bhawan"
+    ]
+  },
+  {
+    "rel": 10477216,
+    "ref": "166",
+    "name": "166: ? -> Nizamuddin Railway Station",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 14,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Marina Hotel",
+      "Super Bazar",
+      "Palika Kendra",
+      "Police Station Parliament Street",
+      "Akashwani Bhawan",
+      "Krishi Bhawan"
+    ]
+  },
+  {
+    "rel": 7917872,
+    "ref": "604",
+    "name": "604: New Delhi Railway Station Gate Number 2 -> Lado Sarai Terminal",
+    "operator": "-",
+    "stops_in_box": 13,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Super Bazar",
+      "Kailash Building",
+      "?",
+      "Eastern Court",
+      "Windsor Place",
+      "Krishi Bhawan"
+    ]
+  },
+  {
+    "rel": 13388413,
+    "ref": "281",
+    "name": "281: New Seemapuri -> Kendriya Terminal",
+    "operator": "-",
+    "stops_in_box": 13,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Modern School",
+      "Barakhamba Metro Station",
+      "Statesman House",
+      "Palika Kendra"
+    ]
+  },
+  {
+    "rel": 6642987,
+    "ref": "73",
+    "name": "Bus 73: Hari Nagar Clock Tower \u2192 Anand Vihar ISBT",
+    "operator": "-",
+    "stops_in_box": 12,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Doctor Ram Manohar Lohia Hospital",
+      "Talkatora Road",
+      "Gurudwara Rakab Ganj",
+      "Kendriya Terminal",
+      "New Delhi Post Office",
+      "Gurudwara Bangla Sahib"
+    ]
+  },
+  {
+    "rel": 13388414,
+    "ref": "281",
+    "name": "281: Kendriya Terminal -> New Seemapuri",
+    "operator": "-",
+    "stops_in_box": 12,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "Kendriya Terminal",
+      "Kendriya Terminal",
+      "New Delhi Post Office",
+      "Gurudwara Bangla Sahib",
+      "YMCA"
+    ]
+  },
+  {
+    "rel": 6642988,
+    "ref": "73",
+    "name": "Bus 73: Anand Vihar ISBT \u2192 Hari Nagar Clock Tower",
+    "operator": "-",
+    "stops_in_box": 11,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Modern School",
+      "Statesman House",
+      "Gurudwara Bangla Sahib",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7918189,
+    "ref": "740EXT",
+    "name": "740EXT: Anand Vihar ISBT -> Uttam Nagar Terminal",
+    "operator": "-",
+    "stops_in_box": 11,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Mandi House",
+      "Kasturba Gandhi Marg Crossing",
+      "Firoz Shah Road",
+      "Windsor Place"
+    ]
+  },
+  {
+    "rel": 8126650,
+    "ref": "740B",
+    "name": "740B: ? -> Bindapur Terminal",
+    "operator": "-",
+    "stops_in_box": 11,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Mandi House",
+      "Kasturba Gandhi Marg Crossing",
+      "Firoz Shah Road",
+      "Windsor Place"
+    ]
+  },
+  {
+    "rel": 8202259,
+    "ref": "181A",
+    "name": "181A: Nizamuddin Railway Station -> Jahangirpuri E-Block",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 11,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Shahjahan Road UPSC",
+      "Akbar Road",
+      "Nirman Bhavan",
+      "Udyog Bhawan",
+      "Udyog Bhawan",
+      "Rail Bhawan Metro Station"
+    ]
+  },
+  {
+    "rel": 10477215,
+    "ref": "166",
+    "name": "166: Nizamuddin Railway Station -> ?",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 11,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Shahjahan Road UPSC",
+      "Akbar Road",
+      "Nirman Bhavan",
+      "Udyog Bhawan",
+      "Udyog Bhawan",
+      "Rail Bhawan Metro Station"
+    ]
+  },
+  {
+    "rel": 7921462,
+    "ref": "349",
+    "name": "349: Kendriya Terminal -> Mayur Vihar Phase 2",
+    "operator": "-",
+    "stops_in_box": 10,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "Kendriya Terminal",
+      "Kendriya Terminal",
+      "New Delhi Post Office",
+      "Gurudwara Bangla Sahib",
+      "YMCA"
+    ]
+  },
+  {
+    "rel": 8238142,
+    "ref": "378",
+    "name": "378: Mayur Vihar Phase 3 -> Kendriya Terminal",
+    "operator": "-",
+    "stops_in_box": 10,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Modern School",
+      "?",
+      "Police Station Parliament Street",
+      "Patel Chowk"
+    ]
+  },
+  {
+    "rel": 6634343,
+    "ref": "85",
+    "name": "Bus 85: Anand Vihar ISBT \u2192 Punjabi Bagh Terminal",
+    "operator": "-",
+    "stops_in_box": 9,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Modern School",
+      "Barakhamba Metro Station",
+      "Statesman House",
+      "Shivaji Stadium"
+    ]
+  },
+  {
+    "rel": 6634348,
+    "ref": "85EXT",
+    "name": "Bus 85EXT: Anand Vihar ISBT -> West Enclave",
+    "operator": "-",
+    "stops_in_box": 9,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Modern School",
+      "Barakhamba Metro Station",
+      "Statesman House",
+      "Shivaji Stadium"
+    ]
+  },
+  {
+    "rel": 7921460,
+    "ref": "378",
+    "name": "378: Kendriya Terminal -> Mayur Vihar Phase 3",
+    "operator": "-",
+    "stops_in_box": 9,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "Kendriya Terminal",
+      "New Delhi Post Office",
+      "Gurudwara Bangla Sahib",
+      "YMCA",
+      "Jantar Mantar"
+    ]
+  },
+  {
+    "rel": 9581810,
+    "ref": "740EX",
+    "name": "740EX: Anand Vihar ISBT \u2192 Uttam Nagar Terminal",
+    "operator": "-",
+    "stops_in_box": 9,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Mandi House",
+      "Kasturba Gandhi Marg Crossing",
+      "Firoz Shah Road",
+      "Windsor Place"
+    ]
+  },
+  {
+    "rel": 7929055,
+    "ref": "522",
+    "name": "522: Ambedkar Nagar Terminal -> Indrapuri (Krishi Kunj)",
+    "operator": "-",
+    "stops_in_box": 8,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "National Museum",
+      "National Archives",
+      "Windsor Place",
+      "Western Court",
+      "Indian Oil Bhawan",
+      "Shaheed Baghat Singh Marg"
+    ]
+  },
+  {
+    "rel": 7921457,
+    "ref": "390",
+    "name": "390: Kendriya Terminal -> Trilokpuri 13 Block",
+    "operator": "-",
+    "stops_in_box": 7,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "New Delhi Post Office",
+      "Super Bazar",
+      "Statesman House",
+      "Barakhamba Metro Station",
+      "Modern School"
+    ]
+  },
+  {
+    "rel": 6634347,
+    "ref": "85EXT",
+    "name": "Bus 85EXT: West Enclave \u2192 Anand Vihar ISBT",
+    "operator": "-",
+    "stops_in_box": 6,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Sucheta Kriplani Hospital",
+      "Super Bazar",
+      "Statesman House",
+      "Barakhamba Metro Station",
+      "Modern School",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 6639422,
+    "ref": "85",
+    "name": "Bus 85: Punjabi Bagh Terminal \u2192 Anand Vihar ISBT",
+    "operator": "DTC",
+    "stops_in_box": 6,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Sucheta Kriplani Hospital",
+      "Super Bazar",
+      "Statesman House",
+      "Barakhamba Metro Station",
+      "Modern School",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 7944212,
+    "ref": "522",
+    "name": "522: Indrapuri (Krishi Kunj) -> Ambedkar Nagar Terminal",
+    "operator": "-",
+    "stops_in_box": 6,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Super Bazar",
+      "Kailash Building",
+      "?",
+      "Eastern Court",
+      "Windsor Place",
+      "National Museum"
+    ]
+  },
+  {
+    "rel": 8077071,
+    "ref": "445A",
+    "name": "445A: New Delhi Railway Station Gate Number 2 -> Hamdard Nagar",
+    "operator": "-",
+    "stops_in_box": 6,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Shivaji Park",
+      "Super Bazar",
+      "Statesman House",
+      "Barakhamba Metro Station",
+      "Modern School",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 10488425,
+    "ref": "445A",
+    "name": "445A: Hamdard Nagar Terminal -> New Delhi Railway Station",
+    "operator": "-",
+    "stops_in_box": 6,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Modern School",
+      "Barakhamba Metro Station",
+      "Statesman House",
+      "Shivaji Park"
+    ]
+  },
+  {
+    "rel": 13394582,
+    "ref": "349",
+    "name": "349: Mayur Vihar Phase 2 -> Shivaji Stadium",
+    "operator": "-",
+    "stops_in_box": 6,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Modern School",
+      "Barakhamba Metro Station",
+      "Statesman House",
+      "Shivaji Stadium"
+    ]
+  },
+  {
+    "rel": 20385323,
+    "ref": "359",
+    "name": "Bus 359: Mayur Vihar Phase III (T) Paper Market => Shivaji Stadium Terminal",
+    "operator": "DTC",
+    "stops_in_box": 6,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Modern School",
+      "Barakhamba Metro Station",
+      "Statesman House",
+      "Shivaji Stadium"
+    ]
+  },
+  {
+    "rel": 8222921,
+    "ref": "390",
+    "name": "390: Mayur Vihar Phase 3 => Kendriya Terminal",
+    "operator": "-",
+    "stops_in_box": 5,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Modern School",
+      "Barakhamba Metro Station",
+      "Statesman House"
+    ]
+  },
+  {
+    "rel": 10803129,
+    "ref": "505",
+    "name": "505: Kamla Market -> Mehrauli",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 5,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Shivaji Park",
+      "Super Bazar",
+      "Kailash Building",
+      "?",
+      "Eastern Court"
+    ]
+  },
+  {
+    "rel": 13373549,
+    "ref": "351",
+    "name": "-",
+    "operator": "-",
+    "stops_in_box": 5,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Modern School",
+      "Barakhamba Metro Station",
+      "Statesman House"
+    ]
+  },
+  {
+    "rel": 13373550,
+    "ref": "351",
+    "name": "-",
+    "operator": "-",
+    "stops_in_box": 5,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Super Bazar",
+      "Statesman House",
+      "Barakhamba Metro Station",
+      "Modern School",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 13394583,
+    "ref": "349",
+    "name": "349: Shivaji Stadium -> Mayur Vihar Phase 3",
+    "operator": "-",
+    "stops_in_box": 5,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Super Bazar",
+      "Statesman House",
+      "Barakhamba Metro Station",
+      "Modern School",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 13873912,
+    "ref": "993",
+    "name": "993: West Enclave/Sansad Vihar Terminal",
+    "operator": "-",
+    "stops_in_box": 5,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Statesman House",
+      "Shivaji Stadium",
+      "Ramakrishna Ashram Marg",
+      "Shaheed Baghat Singh Marg",
+      "Gole Market"
+    ]
+  },
+  {
+    "rel": 15677592,
+    "ref": "352",
+    "name": "352: Wazirpur JJ Colony",
+    "operator": "-",
+    "stops_in_box": 5,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Modern School",
+      "Barakhamba Metro Station",
+      "Statesman House"
+    ]
+  },
+  {
+    "rel": 8011656,
+    "ref": "615",
+    "name": "615: Minto Road \u2192 Poorvanchal Hostel",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 3,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Kailash Building",
+      "?",
+      "Eastern Court"
+    ]
+  },
+  {
+    "rel": 8418593,
+    "ref": "505",
+    "name": "505: Mehrauli -> Kamla Market",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 3,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Western Court",
+      "Indian Oil Bhawan",
+      "Shivaji Park"
+    ]
+  },
+  {
+    "rel": 20384980,
+    "ref": "359",
+    "name": "Bus 359: Shivaji Stadium Terminal =>Mayur Vihar Phase III (T) Paper Market",
+    "operator": "DTC",
+    "stops_in_box": 3,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Super Bazar",
+      "Modern School",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 20656048,
+    "ref": "318",
+    "name": "318: ? -> Sarai Kale Khan ISBT",
+    "operator": "-",
+    "stops_in_box": 3,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Statesman House",
+      "Barakhamba Metro Station",
+      "Modern School"
+    ]
+  },
+  {
+    "rel": 7944213,
+    "ref": "521",
+    "name": "521: Ambedkar Nagar Sector 4 -> Karampura Terminal",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Western Court",
+      "Indian Oil Bhawan"
+    ]
+  },
+  {
+    "rel": 7965751,
+    "ref": "445",
+    "name": "445: Hamdard Nagar Terminal -> New Delhi Railway Station",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Mandi House",
+      "Modern School"
+    ]
+  },
+  {
+    "rel": 8050589,
+    "ref": "522A",
+    "name": "522A: Indrapuri => Hamdard Nagar",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Eastern Court",
+      "?"
+    ]
+  },
+  {
+    "rel": 13199965,
+    "ref": "500",
+    "name": "500: Saket -> New Delhi Railway Station Gate #2",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Indian Oil Bhawan",
+      "Shivaji Park"
+    ]
+  },
+  {
+    "rel": 15674040,
+    "ref": "139",
+    "name": "139: Bhalaswa JJ Colony",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [
+      "barakhamba-road"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Barakhamba Metro Station",
+      "Statesman House"
+    ]
+  },
+  {
+    "rel": 8013624,
+    "ref": "615",
+    "name": "615: Poorvanchal Hostel \u2192 Minto Road",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 1,
+    "corridors": [
+      "janpath"
+    ],
+    "n_corridors": 1,
+    "stop_names": [
+      "Indian Oil Bhawan"
+    ]
+  },
+  {
+    "rel": 7917861,
+    "ref": "720",
+    "name": "720: Janakpuri B-1 Terminal -> Shahdara",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 15,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Teen Murti",
+      "South Avenue",
+      "Tyagraj Marg",
+      "Sena Bhawan",
+      "G Block",
+      "Udyog Bhawan"
+    ]
+  },
+  {
+    "rel": 7918170,
+    "ref": "740EXT",
+    "name": "740EXT: Uttam Nagar Terminal -> Anand Vihar ISBT",
+    "operator": "-",
+    "stops_in_box": 15,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Doctor Ram Manohar Lohia Hospital",
+      "Doctor Ram Manohar Lohia Hospital",
+      "Talkatora Road",
+      "Gurudwara Rakab Ganj",
+      "Kendriya Terminal",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7917870,
+    "ref": "604",
+    "name": "604: Lado Sarai Terminal -> New Delhi Railway Station Gate Number 2",
+    "operator": "-",
+    "stops_in_box": 14,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Teen Murti",
+      "South Avenue",
+      "Tyagraj Marg",
+      "Sena Bhawan",
+      "G Block",
+      "Udyog Bhawan"
+    ]
+  },
+  {
+    "rel": 10335828,
+    "ref": "610",
+    "name": "610: Wazirpur Depot -> RK Puram Sector 1",
+    "operator": "-",
+    "stops_in_box": 14,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Police Station Mandir Marg",
+      "Laxmi Narayan Mandir",
+      "Kali Bari Marg",
+      "Doctor Ram Manohar Lohia Hospital",
+      "Talkatora Road",
+      "Gurudwara Rakab Ganj"
+    ]
+  },
+  {
+    "rel": 7917864,
+    "ref": "890",
+    "name": "890: Hastsal Village LIG Flats",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 13,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal",
+      "Kendriya Terminal",
+      "Sena Bhawan",
+      "Kendriya Terminal Church Road",
+      "Gurudwara Bangla Sahib",
+      "Tyagraj Marg"
+    ]
+  },
+  {
+    "rel": 14191706,
+    "ref": "890",
+    "name": "890: Hastsal Village LIG Flats",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 13,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "Kendriya Terminal",
+      "Kendriya Terminal",
+      "New Delhi Post Office",
+      "Gurudwara Bangla Sahib",
+      "Patel Chowk"
+    ]
+  },
+  {
+    "rel": 7917859,
+    "ref": "793",
+    "name": "793: H-3 Vikas Puri Terminal -> Delhi Secretariat (Rajhghat Power House)",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 12,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Teen Murti",
+      "South Avenue",
+      "Tyagraj Marg",
+      "Sena Bhawan",
+      "G Block",
+      "Udyog Bhawan"
+    ]
+  },
+  {
+    "rel": 7921456,
+    "ref": "391",
+    "name": "391: Kendriya Terminal -> Kalyanpuri",
+    "operator": "-",
+    "stops_in_box": 12,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "Kendriya Terminal",
+      "Kendriya Terminal",
+      "New Delhi Post Office",
+      "Gurudwara Bangla Sahib",
+      "Patel Chowk"
+    ]
+  },
+  {
+    "rel": 7921525,
+    "ref": "100",
+    "name": "100: Kendriya Terminal",
+    "operator": "-",
+    "stops_in_box": 12,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Sucheta Kriplani Hospital",
+      "Super Bazar",
+      "Palika Kendra",
+      "Police Station Parliament Street",
+      "Patel Chowk",
+      "Gurudwara Bangla Sahib"
+    ]
+  },
+  {
+    "rel": 10790072,
+    "ref": "740B",
+    "name": "740B: Bindapur Terminal -> ?",
+    "operator": "-",
+    "stops_in_box": 12,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Talkatora Road",
+      "Gurudwara Rakab Ganj",
+      "Kendriya Terminal",
+      "New Delhi Post Office",
+      "Gurudwara Bangla Sahib",
+      "Patel Chowk"
+    ]
+  },
+  {
+    "rel": 7460412,
+    "ref": "620",
+    "name": "620: Shivaji Stadium -> Hauz Khas Metro Station",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 11,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Super Bazar",
+      "Palika Kendra",
+      "Police Station Parliament Street",
+      "Akashwani Bhawan",
+      "Krishi Bhawan",
+      "Udyog Bhawan"
+    ]
+  },
+  {
+    "rel": 7917858,
+    "ref": "890",
+    "name": "890: Kendriya Terminal",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 11,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "South Avenue",
+      "Tyagraj Marg",
+      "Sena Bhawan",
+      "G Block",
+      "Udyog Bhawan",
+      "Rail Bhawan Metro Station"
+    ]
+  },
+  {
+    "rel": 7917871,
+    "ref": "620",
+    "name": "620: Hauz Khas Metro Station -> Shivaji Stadium",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 11,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Teen Murti",
+      "South Avenue",
+      "Tyagraj Marg",
+      "Sena Bhawan",
+      "G Block",
+      "Udyog Bhawan"
+    ]
+  },
+  {
+    "rel": 7918182,
+    "ref": "RL-77",
+    "name": "RL-77: New Delhi Railway Station Gate Number 2 -> Manglapuri Terminal",
+    "operator": "-",
+    "stops_in_box": 10,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Shivaji Park",
+      "Super Bazar",
+      "Palika Kendra",
+      "Police Station Parliament Street",
+      "Patel Chowk",
+      "Gurudwara Bangla Sahib"
+    ]
+  },
+  {
+    "rel": 7611292,
+    "ref": "548",
+    "name": "548: Minto Road Terminal -> Hamdard Nagar Terminal",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 9,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Minto Road Terminal",
+      "Shivaji Park",
+      "Super Bazar",
+      "Palika Kendra",
+      "Police Station Parliament Street",
+      "Akashwani Bhawan"
+    ]
+  },
+  {
+    "rel": 7918162,
+    "ref": "RL-77",
+    "name": "RL-77: Manglapuri Terminal -> New Delhi Railway Station Gate Number 2",
+    "operator": "-",
+    "stops_in_box": 9,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Doctor Ram Manohar Lohia Hospital",
+      "Talkatora Road",
+      "Gurudwara Rakab Ganj",
+      "Kendriya Terminal",
+      "New Delhi Post Office",
+      "Gurudwara Bangla Sahib"
+    ]
+  },
+  {
+    "rel": 7948147,
+    "ref": "460",
+    "name": "460: Minto Road Terminal -> Badarpur Border",
+    "operator": "-",
+    "stops_in_box": 9,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Minto Road Terminal",
+      "Shivaji Park",
+      "Super Bazar",
+      "Palika Kendra",
+      "Police Station Parliament Street",
+      "Akashwani Bhawan"
+    ]
+  },
+  {
+    "rel": 8195973,
+    "ref": "460",
+    "name": "460: Badarpur Border -> Minto Road Terminal",
+    "operator": "-",
+    "stops_in_box": 9,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "G Block",
+      "Udyog Bhawan",
+      "Rail Bhawan Metro Station",
+      "Red Cross Road",
+      "Akashwani Bhawan",
+      "Police Station Parliament Street"
+    ]
+  },
+  {
+    "rel": 7921444,
+    "ref": "680",
+    "name": "680: Ambedkar Nagar Sector 4 -> Kendriya Terminal",
+    "operator": "-",
+    "stops_in_box": 8,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Teen Murti",
+      "South Avenue",
+      "Tyagraj Marg",
+      "Sena Bhawan",
+      "G Block",
+      "Udyog Bhawan"
+    ]
+  },
+  {
+    "rel": 7921521,
+    "ref": "100",
+    "name": "100: Adarsh Nagar",
+    "operator": "-",
+    "stops_in_box": 8,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "Kendriya Terminal",
+      "Gurudwara Rakab Ganj",
+      "Talkatora Road",
+      "Doctor Ram Manohar Lohia Hospital",
+      "Doctor Ram Manohar Lohia Hospital"
+    ]
+  },
+  {
+    "rel": 10533277,
+    "ref": "460",
+    "name": "460: Minto Road Terminal -> Badarpur Border",
+    "operator": "-",
+    "stops_in_box": 8,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Minto Road Terminal",
+      "Shivaji Park",
+      "Super Bazar",
+      "Palika Kendra",
+      "Police Station Parliament Street",
+      "Akashwani Bhawan"
+    ]
+  },
+  {
+    "rel": 18130139,
+    "ref": "207",
+    "name": "207: Bhajanpura -> Dhaula Kuan",
+    "operator": "-",
+    "stops_in_box": 8,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Balmiki Mandir, Mandir Marg",
+      "Police Station Mandir Marg",
+      "Gole Market",
+      "New Delhi Post Office",
+      "NDPO",
+      "Kendriya Terminal"
+    ]
+  },
+  {
+    "rel": 7948132,
+    "ref": "433",
+    "name": "433: Badarpur Border -> New Delhi Railway Station Gate Number 2",
+    "operator": "-",
+    "stops_in_box": 7,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Udyog Bhawan",
+      "Rail Bhawan Metro Station",
+      "Red Cross Road",
+      "Akashwani Bhawan",
+      "Police Station Parliament Street",
+      "Palika Kendra"
+    ]
+  },
+  {
+    "rel": 7964852,
+    "ref": "540",
+    "name": "540: Kendriya Terminal -> Tara Apartment",
+    "operator": "-",
+    "stops_in_box": 7,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "New Delhi Post Office",
+      "Gurudwara Bangla Sahib",
+      "Akashwani Bhawan",
+      "Krishi Bhawan",
+      "Udyog Bhawan"
+    ]
+  },
+  {
+    "rel": 8014348,
+    "ref": "548",
+    "name": "548: Hamdard Nagar Terminal -> Minto Road Terminal",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 7,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "G Block",
+      "Udyog Bhawan",
+      "Rail Bhawan Metro Station",
+      "Akashwani Bhawan",
+      "Palika Kendra",
+      "Shivaji Park"
+    ]
+  },
+  {
+    "rel": 8055718,
+    "ref": "894",
+    "name": "894: Karampura -> Okhla",
+    "operator": "-",
+    "stops_in_box": 7,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Marina Hotel",
+      "Super Bazar",
+      "Kailash Building",
+      "Max Mueller Bhawan",
+      "Bhartiya Vidya Bhawan",
+      "Baroda House"
+    ]
+  },
+  {
+    "rel": 7921469,
+    "ref": "270",
+    "name": "270",
+    "operator": "-",
+    "stops_in_box": 6,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal",
+      "Mandi House",
+      "Kasturba Gandhi Marg Crossing",
+      "Firoz Shah Road",
+      "New Delhi Post Office",
+      "Kendriya Terminal Church Road"
+    ]
+  },
+  {
+    "rel": 9600222,
+    "ref": "623",
+    "name": "623: Shahdara Terminal -> Vasant Vihar CPWD",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 6,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Supreme Court",
+      "Patiala House",
+      "National Stadium",
+      "Akbar Road",
+      "National Gallery of Modern Art",
+      "Shahjahan Road UPSC"
+    ]
+  },
+  {
+    "rel": 20444607,
+    "ref": "0740",
+    "name": "Bus 0740: Uttam Nagar Terminal -> Anand Vihar ISBT",
+    "operator": "-",
+    "stops_in_box": 6,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office",
+      "Firoz Shah Road",
+      "Kasturba Gandhi Marg Crossing",
+      "Kali Mandir",
+      "Government Senior Secondary School",
+      "Bal Bhawan"
+    ]
+  },
+  {
+    "rel": 6633074,
+    "ref": "740",
+    "name": "740: Anand Vihar ISBT -> Uttam Nagar Terminal",
+    "operator": "-",
+    "stops_in_box": 5,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Mandi House",
+      "Kasturba Gandhi Marg Crossing",
+      "Firoz Shah Road"
+    ]
+  },
+  {
+    "rel": 6633896,
+    "ref": "740",
+    "name": "740: Uttam Nagar Terminal -> Anand Vihar ISBT",
+    "operator": "-",
+    "stops_in_box": 5,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office",
+      "Firoz Shah Road",
+      "Kasturba Gandhi Marg Crossing",
+      "Mandi House",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 7919677,
+    "ref": "621",
+    "name": "621: Mori Gate -> Poorvanchal Hostel",
+    "operator": "-",
+    "stops_in_box": 5,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Supreme Court",
+      "Patiala House",
+      "National Stadium",
+      "Akbar Road",
+      "National Gallery of Modern Art"
+    ]
+  },
+  {
+    "rel": 7921465,
+    "ref": "320",
+    "name": "320: Kendriya Terminal -> Shahdara Terminal",
+    "operator": "-",
+    "stops_in_box": 5,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office",
+      "Firoz Shah Road",
+      "Kasturba Gandhi Marg Crossing",
+      "Mandi House",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 8055719,
+    "ref": "894",
+    "name": "894: Okhla -> Karampura",
+    "operator": "-",
+    "stops_in_box": 5,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Bhartiya Vidya Bhawan",
+      "Kasturba Gandhi Marg",
+      "Scindia House",
+      "Scindia House",
+      "Marina Hotel"
+    ]
+  },
+  {
+    "rel": 9581809,
+    "ref": "740EX",
+    "name": "740EX: Uttam Nagar Terminal \u2192 Anand Vihar ISBT",
+    "operator": "-",
+    "stops_in_box": 5,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office",
+      "Firoz Shah Road",
+      "Kasturba Gandhi Marg Crossing",
+      "Mandi House",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 13394585,
+    "ref": "706A",
+    "name": "706A",
+    "operator": "-",
+    "stops_in_box": 5,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "Kendriya Terminal",
+      "Mandi House",
+      "Kasturba Gandhi Marg Crossing",
+      "Firoz Shah Road"
+    ]
+  },
+  {
+    "rel": 20040719,
+    "ref": "989",
+    "name": "989: New Delhi Railway Station -> Q Block Mangolpuri",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 5,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Shivaji Stadium",
+      "Shaheed Baghat Singh Marg",
+      "Shaheed Baghat Singh Marg",
+      "Gole Market",
+      "Police Station Mandir Marg"
+    ]
+  },
+  {
+    "rel": 20444608,
+    "ref": "0740",
+    "name": "Bus 0740: Anand Vihar ISBT -> Uttam Nagar Terminal",
+    "operator": "-",
+    "stops_in_box": 5,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Mandi House",
+      "Kasturba Gandhi Marg Crossing",
+      "Firoz Shah Road"
+    ]
+  },
+  {
+    "rel": 6634351,
+    "ref": "740A",
+    "name": "740A: Manglapuri -> Anand Vihar ISBT",
+    "operator": "-",
+    "stops_in_box": 4,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Firoz Shah Road",
+      "Kasturba Gandhi Marg Crossing",
+      "Mandi House",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 7918173,
+    "ref": "722",
+    "name": "722 (2)",
+    "operator": "-",
+    "stops_in_box": 4,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Mandi House",
+      "Kasturba Gandhi Marg Crossing",
+      "Firoz Shah Road",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7920423,
+    "ref": "502",
+    "name": "502: Old Delhi Railway Station -> Mehrauli Terminal",
+    "operator": "-",
+    "stops_in_box": 4,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Patiala House",
+      "National Stadium",
+      "National Gallery of Modern Art",
+      "Shahjahan Road UPSC"
+    ]
+  },
+  {
+    "rel": 7921461,
+    "ref": "370",
+    "name": "370 (2)",
+    "operator": "-",
+    "stops_in_box": 4,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "Kendriya Terminal",
+      "Kendriya Terminal",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921466,
+    "ref": "310",
+    "name": "310: Indrapuri (Krishi Kunj) -> Jheel Terminal",
+    "operator": "-",
+    "stops_in_box": 4,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office",
+      "Firoz Shah Road",
+      "Kasturba Gandhi Marg Crossing",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 7921471,
+    "ref": "260",
+    "name": "260 (2)",
+    "operator": "-",
+    "stops_in_box": 4,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Mandi House",
+      "Kasturba Gandhi Marg Crossing",
+      "Firoz Shah Road",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7948131,
+    "ref": "450",
+    "name": "450: Jal Vihar Terminal -> Anand Parvat",
+    "operator": "-",
+    "stops_in_box": 4,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Bhartiya Vidya Bhawan",
+      "Kasturba Gandhi Marg",
+      "Scindia House",
+      "Scindia House"
+    ]
+  },
+  {
+    "rel": 7948149,
+    "ref": "450",
+    "name": "450: Anand Parvat -> Jal Vihar Terminal",
+    "operator": "-",
+    "stops_in_box": 4,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Super Bazar",
+      "Kailash Building",
+      "Max Mueller Bhawan",
+      "Bhartiya Vidya Bhawan"
+    ]
+  },
+  {
+    "rel": 7965739,
+    "ref": "440",
+    "name": "440: New Delhi Railway Station Gate Number 2 -> Ambedkar Nagar Terminal",
+    "operator": "-",
+    "stops_in_box": 4,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Shivaji Park",
+      "Kailash Building",
+      "Max Mueller Bhawan",
+      "Bhartiya Vidya Bhawan"
+    ]
+  },
+  {
+    "rel": 8135254,
+    "ref": "502",
+    "name": "502: Mehrauli Terminal -> Old Delhi Railway Station",
+    "operator": "-",
+    "stops_in_box": 4,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Shahjahan Road UPSC",
+      "Baroda House",
+      "Patiala House",
+      "Supreme Court"
+    ]
+  },
+  {
+    "rel": 11232098,
+    "ref": "623",
+    "name": "623: Vasant Vihar CPWD -> Shahdara Terminal",
+    "operator": "Delhi Transport Corporation, Delhi Transit",
+    "stops_in_box": 4,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Shahjahan Road UPSC",
+      "Baroda House",
+      "Patiala House",
+      "Supreme Court"
+    ]
+  },
+  {
+    "rel": 7917867,
+    "ref": "720",
+    "name": "720: Shahdara -> Janakpuri B-1 Terminal",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 3,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Tilak Bridge",
+      "Mandi House",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 7918164,
+    "ref": "790",
+    "name": "790: Kapashera Border => Najafgarh Terminal",
+    "operator": "-",
+    "stops_in_box": 3,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kasturba Gandhi Marg Crossing",
+      "Firoz Shah Road",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7918165,
+    "ref": "773",
+    "name": "773 (2)",
+    "operator": "-",
+    "stops_in_box": 3,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Mandi House",
+      "Kasturba Gandhi Marg Crossing",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7918167,
+    "ref": "770A",
+    "name": "770A: Delhi Secretariat",
+    "operator": "-",
+    "stops_in_box": 3,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Mandi House",
+      "Kasturba Gandhi Marg Crossing",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 7918175,
+    "ref": "706",
+    "name": "706 (2)",
+    "operator": "-",
+    "stops_in_box": 3,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Mandi House",
+      "Kasturba Gandhi Marg Crossing",
+      "Firoz Shah Road"
+    ]
+  },
+  {
+    "rel": 7918841,
+    "ref": "680",
+    "name": "680: Kendriya Terminal -> Ambedkar Nagar Sector 4",
+    "operator": "-",
+    "stops_in_box": 3,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "Kendriya Terminal",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921455,
+    "ref": "408E",
+    "name": "408E: Raghubir Nagar",
+    "operator": "-",
+    "stops_in_box": 3,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "Kendriya Terminal",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7948156,
+    "ref": "400",
+    "name": "400: Minto Road Terminal -> Abul Fazl Enclave",
+    "operator": "-",
+    "stops_in_box": 3,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Minto Road Terminal",
+      "Shivaji Park",
+      "Super Bazar"
+    ]
+  },
+  {
+    "rel": 6634352,
+    "ref": "740A",
+    "name": "740A: Anand Vihar ISBT -> Manglapuri",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Mandi House",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 7917860,
+    "ref": "783",
+    "name": "783 (2)",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kasturba Gandhi Marg Crossing",
+      "Firoz Shah Road"
+    ]
+  },
+  {
+    "rel": 7918161,
+    "ref": "RL-79",
+    "name": "RL-79: Dwarka Sector 23 -> New Delhi Railway Station Gate #2",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office",
+      "Shivaji Park"
+    ]
+  },
+  {
+    "rel": 7918181,
+    "ref": "RL-79",
+    "name": "RL-79: New Delhi Railway Station Gate #2 -> Dwarka Sector 23",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Shivaji Park",
+      "Super Bazar"
+    ]
+  },
+  {
+    "rel": 7918190,
+    "ref": "729",
+    "name": "729: Kashmere Gate \u2192 Kapashera Border",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Palika Kendra",
+      "Super Bazar"
+    ]
+  },
+  {
+    "rel": 7918840,
+    "ref": "781",
+    "name": "781: New Delhi Railway Station Gate Number 2 => Dwarka Sector 16C",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Shivaji Park",
+      "Super Bazar"
+    ]
+  },
+  {
+    "rel": 7921435,
+    "ref": "970",
+    "name": "970: Jawaharlal Nehru Stadium -> Avantika",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Rail Bhawan Metro Station",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921443,
+    "ref": "725",
+    "name": "725: => Indrapuri Krishi Kunj",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Rail Bhawan Metro Station",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921451,
+    "ref": "480",
+    "name": "480: Kendriya Terminal -> DDA Flats Kalkaji",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921473,
+    "ref": "210",
+    "name": "210: Kendriya Terminal =>",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office",
+      "Shivaji Park"
+    ]
+  },
+  {
+    "rel": 7921476,
+    "ref": "185",
+    "name": "185: Kendriya Terminal =>",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office",
+      "Shivaji Park"
+    ]
+  },
+  {
+    "rel": 7921477,
+    "ref": "120",
+    "name": "120 (2)",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Firoz Shah Road",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921524,
+    "ref": "100EXT",
+    "name": "100EXT: Kendriya Terminal",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Doctor Ram Manohar Lohia Hospital",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921526,
+    "ref": "091",
+    "name": "091 (1)",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Doctor Ram Manohar Lohia Hospital",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921527,
+    "ref": "010",
+    "name": "010 (1)",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Doctor Ram Manohar Lohia Hospital",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7931521,
+    "ref": "621",
+    "name": "621: Poorvanchal Hostel -> Mori Gate",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Patiala House",
+      "Supreme Court"
+    ]
+  },
+  {
+    "rel": 7944209,
+    "ref": "580",
+    "name": "580: Kendriya Terminal => Ambedkar Nagar Sector 4",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7944211,
+    "ref": "522SPL",
+    "name": "522SPL: New Delhi Railway Station Gate Number 2 ->",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Shivaji Park",
+      "Super Bazar"
+    ]
+  },
+  {
+    "rel": 7948136,
+    "ref": "400",
+    "name": "400: Abul Fazl Enclave -> Minto Road Terminal",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Shivaji Park",
+      "Minto Road Terminal"
+    ]
+  },
+  {
+    "rel": 8055717,
+    "ref": "990E",
+    "name": "990E: => Shivaji Stadium",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Gurudwara Bangla Sahib",
+      "Hanuman Mandir"
+    ]
+  },
+  {
+    "rel": 8123124,
+    "ref": "210",
+    "name": "210: => Kendriya Terminal",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Shivaji Park",
+      "Super Bazar"
+    ]
+  },
+  {
+    "rel": 8126652,
+    "ref": "355",
+    "name": "355: => Anand Parvat",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Aga Khan Hall",
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 8202257,
+    "ref": "781",
+    "name": "781: Dwarka Sector 16C => New Delhi Railway Station Gate Number 2",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Rail Bhawan Metro Station",
+      "Shivaji Park"
+    ]
+  },
+  {
+    "rel": 8235171,
+    "ref": "624A",
+    "name": "624A: Munirka -> Anand Vihar ISBT",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Patiala House",
+      "Supreme Court"
+    ]
+  },
+  {
+    "rel": 9306318,
+    "ref": "729",
+    "name": "729: Mori Gate Terminal \u2192 Kapashera Border",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Super Bazar",
+      "Palika Kendra"
+    ]
+  },
+  {
+    "rel": 10115146,
+    "ref": "624A",
+    "name": "624A: Anand Vihar ISBT -> Munirka",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Supreme Court",
+      "Patiala House"
+    ]
+  },
+  {
+    "rel": 10803128,
+    "ref": "957",
+    "name": "957: Rohini Sector 22",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Gole Market",
+      "Ramakrishna Ashram Marg"
+    ]
+  },
+  {
+    "rel": 13391955,
+    "ref": "966EX",
+    "name": "-",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Super Bazar",
+      "Kailash Building"
+    ]
+  },
+  {
+    "rel": 13394584,
+    "ref": "282",
+    "name": "282",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal Church Road",
+      "Kendriya Terminal"
+    ]
+  },
+  {
+    "rel": 19531242,
+    "ref": "19B",
+    "name": "Bus 19B: Jama Masjid",
+    "operator": "-",
+    "stops_in_box": 2,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office",
+      "Doctor Ram Manohar Lohia Hospital"
+    ]
+  },
+  {
+    "rel": 6634353,
+    "ref": "740EXT",
+    "name": "740Extra: Anand Vihar ISBT => Uttam Nagar Terminal",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 6634354,
+    "ref": "740EXT",
+    "name": "740Extra: Uttam Nagar Terminal => Anand Vihar ISBT",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 7918168,
+    "ref": "760",
+    "name": "760 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7918169,
+    "ref": "752",
+    "name": "752 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7918171,
+    "ref": "729",
+    "name": "729: Kapashera Border \u2192 Kashmere Gate",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7918172,
+    "ref": "723",
+    "name": "723: Manglapuri Terminal => Anand Vihar ISBT",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7918174,
+    "ref": "716",
+    "name": "716 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7918176,
+    "ref": "704",
+    "name": "704 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7918178,
+    "ref": "072",
+    "name": "072 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7918179,
+    "ref": "077",
+    "name": "077 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7918191,
+    "ref": "723",
+    "name": "723: Anand Vihar ISBT -> Manglapuri Terminal",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 7921434,
+    "ref": "994",
+    "name": "994 (2)",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921436,
+    "ref": "940",
+    "name": "940 (2)",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921437,
+    "ref": "930",
+    "name": "930 (2)",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921438,
+    "ref": "920",
+    "name": "920 (2)",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921439,
+    "ref": "910",
+    "name": "910 (2)",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921440,
+    "ref": "880",
+    "name": "880 (2)",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921441,
+    "ref": "858",
+    "name": "858 (2)",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921442,
+    "ref": "820",
+    "name": "820 (2)",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921445,
+    "ref": "616",
+    "name": "616 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921448,
+    "ref": "558",
+    "name": "558 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921450,
+    "ref": "481",
+    "name": "481 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921452,
+    "ref": "470",
+    "name": "470 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921458,
+    "ref": "381",
+    "name": "381 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921459,
+    "ref": "380",
+    "name": "380 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921463,
+    "ref": "342",
+    "name": "342 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921464,
+    "ref": "340",
+    "name": "340 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921467,
+    "ref": "300",
+    "name": "300 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921468,
+    "ref": "280",
+    "name": "280 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921470,
+    "ref": "265",
+    "name": "265 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921472,
+    "ref": "220",
+    "name": "220 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921474,
+    "ref": "196",
+    "name": "196 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921475,
+    "ref": "188",
+    "name": "188 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921478,
+    "ref": "047",
+    "name": "047 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921479,
+    "ref": "016",
+    "name": "016 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7921520,
+    "ref": "100EXT",
+    "name": "100EXT",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Doctor Ram Manohar Lohia Hospital"
+    ]
+  },
+  {
+    "rel": 7921522,
+    "ref": "091",
+    "name": "091 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Doctor Ram Manohar Lohia Hospital"
+    ]
+  },
+  {
+    "rel": 7921523,
+    "ref": "010",
+    "name": "010 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Doctor Ram Manohar Lohia Hospital"
+    ]
+  },
+  {
+    "rel": 7922641,
+    "ref": "EXPRESS",
+    "name": "EXPRESS (2)",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kasturba Gandhi Marg Crossing"
+    ]
+  },
+  {
+    "rel": 7922642,
+    "ref": "703A",
+    "name": "703A (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Firoz Shah Road"
+    ]
+  },
+  {
+    "rel": 7928459,
+    "ref": "445",
+    "name": "445: New Delhi Railway Station \u2192 Hamdard Nagar Terminal",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 7928460,
+    "ref": "430",
+    "name": "430 (2)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 7929056,
+    "ref": "522SPL",
+    "name": "522SPL: -> New Delhi Railway Station Gate Number 2",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Shivaji Park"
+    ]
+  },
+  {
+    "rel": 7965752,
+    "ref": "440",
+    "name": "440: Ambedkar Nagar Terminal -> New Delhi Railway Station Gate Number 2",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Shivaji Park"
+    ]
+  },
+  {
+    "rel": 8197603,
+    "ref": "729B",
+    "name": "729B: => Airport T-3",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Super Bazar"
+    ]
+  },
+  {
+    "rel": 8197606,
+    "ref": "RL-77B",
+    "name": "RL-77B: => Madhu Vihar",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Super Bazar"
+    ]
+  },
+  {
+    "rel": 8202258,
+    "ref": "780",
+    "name": "780: Indira Gandhi International Airport T2 => New Delhi Railway Station Gate Number 2",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Rail Bhawan Metro Station"
+    ]
+  },
+  {
+    "rel": 8208910,
+    "ref": "803",
+    "name": "803: => Madhu Vihar",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kasturba Gandhi Marg"
+    ]
+  },
+  {
+    "rel": 8208911,
+    "ref": "440A",
+    "name": "440A: => Minto Road",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kasturba Gandhi Marg"
+    ]
+  },
+  {
+    "rel": 8208912,
+    "ref": "310",
+    "name": "310: Jheel Terminal -> Indrapuri (Krishi Kunj)",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 8222918,
+    "ref": "944",
+    "name": "944: Kendriya Terminal => Sultanpuri",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal Church Road"
+    ]
+  },
+  {
+    "rel": 8222919,
+    "ref": "810",
+    "name": "810: Kendriya Terminal => Uttam Nagar",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Kendriya Terminal Church Road"
+    ]
+  },
+  {
+    "rel": 8238140,
+    "ref": "770",
+    "name": "770: => Delhi Secretariat",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Mandi House"
+    ]
+  },
+  {
+    "rel": 9306320,
+    "ref": "729",
+    "name": "729: Kapashera Border \u2192 Mori Gate Terminal",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  },
+  {
+    "rel": 10115148,
+    "ref": "307",
+    "name": "307: Trilokpuri 27 Block -> Kamla Market",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Lok Nayak Hospital"
+    ]
+  },
+  {
+    "rel": 10143379,
+    "ref": "309",
+    "name": "309: Kalyanpuri -> Anand Parvat",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Lok Nayak Hospital"
+    ]
+  },
+  {
+    "rel": 13153087,
+    "ref": "307",
+    "name": "307: Trilokpuri 27 Block -> Kamla Market",
+    "operator": "-",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "Lok Nayak Hospital"
+    ]
+  },
+  {
+    "rel": 14191707,
+    "ref": "890",
+    "name": "890: Kendriya Terminal",
+    "operator": "Delhi Transport Corporation",
+    "stops_in_box": 1,
+    "corridors": [],
+    "n_corridors": 0,
+    "stop_names": [
+      "New Delhi Post Office"
+    ]
+  }
+]

@@ -1,0 +1,31 @@
+{
+  "source": "web/public/data/@v1/buildings.json",
+  "output": "web/public/data/@v1/buildings.glb",
+  "height_rule_version": "0.1",
+  "groups": {
+    "observed": {
+      "footprints": 267,
+      "verts": 5590,
+      "tris": 7851
+    },
+    "estimated": {
+      "footprints": 2936,
+      "verts": 39290,
+      "tris": 53063
+    }
+  },
+  "total_footprints": 3203,
+  "total_verts": 44880,
+  "total_tris": 60914,
+  "glb_draco_bytes": 281048,
+  "glb_nodraco_bytes": 3378620,
+  "draco_ratio": 12.02,
+  "axis_roundtrip_ok": true,
+  "axis_dims": {
+    "X": 3989.0,
+    "Y": 4306.5,
+    "Z": 17.6
+  },
+  "bake_seconds": 0.6,
+  "blender": "5.2.0 LTS"
+}

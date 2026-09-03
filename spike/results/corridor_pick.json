@@ -1,0 +1,170 @@
+[
+  {
+    "name": "Baba Kharak Singh Marg",
+    "ways": 7,
+    "total_m": 3338.051214750329,
+    "longest_chain_m": 1046.7416194099335,
+    "chains": 4,
+    "stops_in_catchment": 7,
+    "classes": [
+      "secondary"
+    ],
+    "distinct_bus_refs": 75
+  },
+  {
+    "name": "Sansad Marg",
+    "ways": 20,
+    "total_m": 2884.9165951888745,
+    "longest_chain_m": 898.1406160370658,
+    "chains": 4,
+    "stops_in_catchment": 8,
+    "classes": [
+      "secondary",
+      "tertiary"
+    ],
+    "distinct_bus_refs": 21
+  },
+  {
+    "name": "Janpath",
+    "ways": 22,
+    "total_m": 5786.598881533806,
+    "longest_chain_m": 1060.100687025764,
+    "chains": 10,
+    "stops_in_catchment": 14,
+    "classes": [
+      "secondary"
+    ],
+    "distinct_bus_refs": 17
+  },
+  {
+    "name": "Ashoka Road",
+    "ways": 13,
+    "total_m": 4147.629387780733,
+    "longest_chain_m": 641.1409112811141,
+    "chains": 10,
+    "stops_in_catchment": 8,
+    "classes": [
+      "secondary"
+    ],
+    "distinct_bus_refs": 17
+  },
+  {
+    "name": "Barakhamba Road",
+    "ways": 7,
+    "total_m": 2154.511337893133,
+    "longest_chain_m": 1077.621344153038,
+    "chains": 2,
+    "stops_in_catchment": 6,
+    "classes": [
+      "secondary"
+    ],
+    "distinct_bus_refs": 15
+  },
+  {
+    "name": "Copernicus Marg",
+    "ways": 7,
+    "total_m": 2065.4091631090373,
+    "longest_chain_m": 1038.6356316677136,
+    "chains": 2,
+    "stops_in_catchment": 3,
+    "classes": [
+      "tertiary"
+    ],
+    "distinct_bus_refs": 8
+  },
+  {
+    "name": "Tolstoy Marg",
+    "ways": 11,
+    "total_m": 2557.5757285106038,
+    "longest_chain_m": 1289.4371306443902,
+    "chains": 2,
+    "stops_in_catchment": 4,
+    "classes": [
+      "secondary"
+    ],
+    "distinct_bus_refs": 7
+  },
+  {
+    "name": "Maulana Azad Road",
+    "ways": 4,
+    "total_m": 2304.044261063261,
+    "longest_chain_m": 580.7910620801636,
+    "chains": 4,
+    "stops_in_catchment": 7,
+    "classes": [
+      "secondary"
+    ],
+    "distinct_bus_refs": 5
+  },
+  {
+    "name": "Shahjahan Road",
+    "ways": 4,
+    "total_m": 1747.4535151219425,
+    "longest_chain_m": 883.2228228733023,
+    "chains": 2,
+    "stops_in_catchment": 2,
+    "classes": [
+      "secondary"
+    ],
+    "distinct_bus_refs": 4
+  },
+  {
+    "name": "Akbar Road",
+    "ways": 8,
+    "total_m": 3729.8070637318615,
+    "longest_chain_m": 637.5915208755456,
+    "chains": 8,
+    "stops_in_catchment": 2,
+    "classes": [
+      "secondary"
+    ],
+    "distinct_bus_refs": 4
+  },
+  {
+    "name": "Mandir Marg",
+    "ways": 5,
+    "total_m": 3310.58680229873,
+    "longest_chain_m": 1796.5024923531914,
+    "chains": 2,
+    "stops_in_catchment": 5,
+    "classes": [
+      "tertiary"
+    ],
+    "distinct_bus_refs": 4
+  },
+  {
+    "name": "Panchkuian Road",
+    "ways": 7,
+    "total_m": 2738.531892328159,
+    "longest_chain_m": 1374.9385191135284,
+    "chains": 2,
+    "stops_in_catchment": 2,
+    "classes": [
+      "secondary"
+    ],
+    "distinct_bus_refs": 3
+  },
+  {
+    "name": "Kartavya Path",
+    "ways": 5,
+    "total_m": 2346.2112593965435,
+    "longest_chain_m": 2346.211259396544,
+    "chains": 1,
+    "stops_in_catchment": 0,
+    "classes": [
+      "secondary",
+      "tertiary"
+    ],
+    "distinct_bus_refs": 0
+  },
+  {
+    "name": "Ranjit Singh Marg",
+    "ways": 0,
+    "total_m": 0,
+    "longest_chain_m": 0,
+    "chains": 0,
+    "stops_in_catchment": 0,
+    "classes": [],
+    "distinct_bus_refs": 0
+  }
+]

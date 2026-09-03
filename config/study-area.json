@@ -1,0 +1,276 @@
+{
+  "$comment": "SCOPE LOCK \u2014 LOCKED by Spike-0 on 2026-09-03. See docs/06-SPIKE-0-RESULTS.md for the evidence behind every value here. Frozen until every P0 acceptance criterion passes.",
+  "version": "1",
+  "transform_version": "0.1.0",
+  "locked_at": "2026-09-03",
+  "study_area": {
+    "id": "central-delhi-01",
+    "status": "LOCKED",
+    "bbox_wgs84": [
+      77.1975,
+      28.6039,
+      77.2385,
+      28.6401
+    ],
+    "measured_extent_m": [
+      3935,
+      4086
+    ],
+    "measured_area_km2": 16.08,
+    "crs_storage": "EPSG:4326",
+    "crs_projected": "EPSG:32643",
+    "local_origin_utm": {
+      "status": "DERIVED",
+      "easting": 716843.49,
+      "northing": 3168119.03,
+      "note": "CENTRE of the bbox in UTM 43N. Chosen over the SW corner so runtime coords are symmetric (about +/-2000 m), the camera orbits the true origin, and float32 precision headroom is maximised."
+    },
+    "up_axis": "Y",
+    "axis_mapping": "utm_easting - origin_e -> +X (east) ; elevation -> +Y (up) ; -(utm_northing - origin_n) -> +Z (south)",
+    "runtime_extent": {
+      "x": [
+        -1967.5,
+        1967.5
+      ],
+      "z": [
+        -2043,
+        2043
+      ]
+    },
+    "clip": "All geometry is clipped to the bbox. Overpass returns complete ways, which spilled up to 760 m outside the box before clipping. Buildings are kept or dropped whole by centroid (they are small, so no visible seam); ground polygons and all lines are cut at the boundary."
+  },
+  "tiles": {
+    "size_m": 1000,
+    "grid": [
+      4,
+      4
+    ],
+    "role": "SPATIAL INDEX ONLY \u2014 not an asset-splitting scheme. Spike-0 measured ~96k triangles of ordinary buildings for the whole box, so per-tile GLBs were dropped as over-engineering. Tiles remain the lookup key for entity picking and corridor metrics."
+  },
+  "corridors": [
+    {
+      "id": "baba-kharak-singh-marg",
+      "status": "LOCKED",
+      "label": "Baba Kharak Singh Marg",
+      "osm_name": "Baba Kharak Singh Marg",
+      "role": "transit-hero",
+      "layers": [
+        "roads",
+        "traffic",
+        "transit",
+        "weather"
+      ],
+      "evidence": {
+        "distinct_bus_refs": 75,
+        "stops_in_120m": 7,
+        "chains": 4,
+        "longest_chain_m": 1047
+      }
+    },
+    {
+      "id": "barakhamba-road",
+      "status": "LOCKED",
+      "label": "Barakhamba Road",
+      "osm_name": "Barakhamba Road",
+      "role": "commercial-congestion",
+      "layers": [
+        "roads",
+        "traffic",
+        "transit",
+        "weather"
+      ],
+      "evidence": {
+        "distinct_bus_refs": 15,
+        "stops_in_120m": 6,
+        "chains": 2,
+        "longest_chain_m": 1078
+      }
+    },
+    {
+      "id": "kartavya-path",
+      "status": "LOCKED",
+      "label": "Kartavya Path",
+      "osm_name": "Kartavya Path",
+      "role": "orientation-spine",
+      "layers": [
+        "roads",
+        "traffic",
+        "weather"
+      ],
+      "no_transit_reason": "A ceremonial boulevard \u2014 no bus route runs on it. Spike-0 measured 0 of 210 OSM bus route relations touching it. The bus-frequency scenario must visibly disable itself here with this reason stated, never silently return zero.",
+      "evidence": {
+        "distinct_bus_refs": 0,
+        "stops_in_120m": 0,
+        "chains": 1,
+        "longest_chain_m": 2346
+      }
+    }
+  ],
+  "corridor_alternate": {
+    "id": "janpath",
+    "osm_name": "Janpath",
+    "reason": "14 stops and 17 bus refs \u2014 the richest transit corridor by stop count, but fragments into 10 chains. Held as the V1.5 connector between Connaught Place and Kartavya Path."
+  },
+  "landmarks": {
+    "required": [
+      {
+        "id": "india-gate",
+        "status": "LOCKED",
+        "osm": "way/361709652",
+        "lonlat": [
+          77.2294919,
+          28.6129323
+        ],
+        "osm_height_m": null,
+        "serves": "kartavya-path"
+      },
+      {
+        "id": "old-parliament-house",
+        "status": "LOCKED",
+        "osm": "relation/6087635",
+        "lonlat": [
+          77.208192,
+          28.6171862
+        ],
+        "osm_height_m": 21,
+        "serves": "orientation west",
+        "note": "Circular colonnade. Replaces the proposed 'Sansad Bhavan', which does not exist in OSM under that name."
+      },
+      {
+        "id": "cp-central-park",
+        "status": "LOCKED",
+        "osm": "way/164675825",
+        "lonlat": [
+          77.2197083,
+          28.6328099
+        ],
+        "osm_height_m": null,
+        "serves": "both bus corridors",
+        "note": "Rajiv Chowk Central Park plus the colonnaded inner ring around it \u2014 modelled as a ring, not one building."
+      }
+    ],
+    "optional": [
+      {
+        "id": "rashtrapati-bhavan",
+        "osm": "relation/5354966",
+        "lonlat": [
+          77.1995283,
+          28.6143716
+        ],
+        "osm_height_m": 20
+      },
+      {
+        "id": "north-block",
+        "osm": "relation/5507630",
+        "lonlat": [
+          77.2057833,
+          28.6151215
+        ],
+        "osm_height_m": 30
+      },
+      {
+        "id": "south-block",
+        "osm": "relation/5507631",
+        "lonlat": [
+          77.2056557,
+          28.6129715
+        ],
+        "osm_height_m": 30
+      },
+      {
+        "id": "new-parliament-house",
+        "osm": "relation/12737019",
+        "lonlat": [
+          77.2102196,
+          28.6171196
+        ],
+        "osm_height_m": 39.6
+      },
+      {
+        "id": "jantar-mantar",
+        "osm": "way/223456559",
+        "lonlat": [
+          77.2165964,
+          28.6270993
+        ],
+        "osm_height_m": null
+      }
+    ]
+  },
+  "measured": {
+    "buildings_elements": 3445,
+    "buildings_usable_polygons": 3305,
+    "density_per_km2": 206,
+    "footprint_coverage_pct": 13.7,
+    "landuse_coverage_pct": 58.5,
+    "height_or_levels_tag_pct": 8.2,
+    "levels_median": 3,
+    "levels_p90": 13,
+    "levels_max": 26,
+    "rough_triangles_all_buildings": 96048,
+    "osm_bus_route_relations": 210,
+    "osm_distinct_bus_refs": 138,
+    "note": "Density is 206/km2, not the ~3000/km2 originally assumed. This is the real character of Lutyens' Delhi and it drove three scope changes \u2014 see docs/06-SPIKE-0-RESULTS.md."
+  },
+  "height_rule": {
+    "version": "0.1",
+    "storey_m": 3.5,
+    "order": [
+      "osm height tag -> observed",
+      "osm building:levels x storey_m -> observed",
+      "class default -> estimated",
+      "area override -> estimated"
+    ],
+    "class_levels": {
+      "commercial": 5,
+      "office": 5,
+      "retail": 4,
+      "apartments": 4,
+      "residential": 3,
+      "government": 3,
+      "public": 3,
+      "civic": 3,
+      "hotel": 6,
+      "school": 2,
+      "hospital": 4,
+      "house": 2,
+      "hut": 1,
+      "shed": 1,
+      "garage": 1,
+      "roof": 1,
+      "yes": 3
+    },
+    "area_overrides": [
+      {
+        "if_area_lt_m2": 50,
+        "levels": 1
+      },
+      {
+        "if_area_gt_m2": 8000,
+        "max_levels": 4
+      }
+    ],
+    "disclosure": "91.8% of buildings in this box get an estimated height. This rule is load-bearing and must be shown in the UI, not footnoted."
+  },
+  "budgets": {
+    "initial_transfer_mb": {
+      "target": 6,
+      "hard_gate": 15,
+      "note": "Target cut from 12 to 6 MB after Spike-0 measured the real geometry volume. The 15 MB PRD gate stays as the hard ceiling."
+    },
+    "first_meaningful_view_s": 5,
+    "interactive_s": 7,
+    "fps_floor": 30,
+    "fps_primary_device": 45,
+    "js_heap_mb": 400,
+    "draw_calls_default_view": 250,
+    "triangles_default_view_m": 3,
+    "buildings_glb_kb": 900,
+    "landmark_lod0_kb": 400,
+    "landmark_lod1_kb": 120,
+    "landmark_lod2_kb": 30,
+    "max_texture_px": 1024,
+    "texture_memory_mb": 64
+  },
+  "primary_benchmark_device": "Apple M1, 8 GB, macOS 26.5, Chrome \u2014 integrated GPU, matches the PRD 'ordinary laptop' target"
+}

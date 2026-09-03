@@ -9,9 +9,11 @@ How it is being built: `docs/` — start at [`docs/00-PLAN.md`](docs/00-PLAN.md)
 
 ## Status
 
-**Phase 0 complete.** Spike-0 ran, the bounds are locked, the pipeline produces the full dataset,
-and the web application is written. See [`docs/06-SPIKE-0-RESULTS.md`](docs/06-SPIKE-0-RESULTS.md)
-and [`docs/06-SPIKE-0-BAKEOFF.md`](docs/06-SPIKE-0-BAKEOFF.md) for the measurements.
+**Phase 0 complete and the app runs.** Spike-0 measured the bounds and forced three scope changes,
+the pipeline produces the full dataset, and the web application is verified end to end on the
+primary benchmark device. See [`docs/06-SPIKE-0-RESULTS.md`](docs/06-SPIKE-0-RESULTS.md),
+[`docs/06-SPIKE-0-BAKEOFF.md`](docs/06-SPIKE-0-BAKEOFF.md) and
+[`docs/07-RENDER-CORRECTNESS.md`](docs/07-RENDER-CORRECTNESS.md).
 
 | | |
 |---|---|
@@ -19,17 +21,19 @@ and [`docs/06-SPIKE-0-BAKEOFF.md`](docs/06-SPIKE-0-BAKEOFF.md) for the measureme
 | Projection | EPSG:32643 (UTM 43N), local origin at the box centre `716843.49 E, 3168119.03 N` |
 | Corridors | Baba Kharak Singh Marg (75 bus routes) · Barakhamba Road (15) · Kartavya Path (0, by nature) |
 | Buildings | 3,203 footprints, **8.2%** with a measured height — the rest estimated by rule v0.1 |
-| Transit | 171 stops, 3 routes selected from 210 OSM DTC route relations |
-| Whole dataset | **≈ 260 KB gzip** against a 6 MB target and a 15 MB hard gate |
+| Transit | 166 stops, 3 routes selected from 210 OSM DTC route relations |
+| Landmarks | 8 verified footprints; 6 massing, 2 open ground; 18 GLB LODs, all budget-gated |
+| Measured | **60 fps · 14 draw calls · 80,663 triangles · 0.71 MB gzip** (gate: 15 MB) |
+| Tests | 90/90 data invariants; FR-01 independent-failure confirmed by deleting layer files |
 
-### What is verified vs. what is not
+Verified by running: the OSM audit across three candidate boxes, the density and height audit,
+corridor bus-coverage scoring, the pipeline, the Blender bake and landmark export, Draco, the axis
+round-trip, clip bounds, the QA contact sheets, both scenarios end to end, all ten guided-story
+steps, click-to-inspect provenance, export contents, and the budget gate.
 
-Verified by running it: the OSM audit across three candidate boxes, the deep density/height audit,
-the corridor bus-coverage scoring, the full pipeline build, the headless Blender bake, Draco
-compression, the axis round-trip, and the clip bounds.
-
-**Not yet verified: the web application has never been run.** It is written but untypechecked and
-unrendered — see *Known blocker* below. Expect a first pass of compile and render fixes.
+**Still to do:** the Phase 4 landmark modelling sprint (all 6 buildable landmarks are correctly
+placed and scaled massing blocks today, not authored models), the 5-user moderated test, and the
+schedule decision deferred to the Phase 1 gate.
 
 ## Layout
 
@@ -55,30 +59,12 @@ Landmarks need one extra fetch first, because India Gate is tagged `historic=mon
 
     python3 pipeline/fetch_landmarks.py && make data && make assets
 
-## Known blocker — a wedged shell
+## Before the first run
 
-Renaming the original project directory (its name ended in a space, which breaks npm scripts,
-Blender `--python` argv and Vercel) left the session's working directory pointing at a path that is
-now **a file, not a directory**. Every shell spawn fails with `ENOTDIR … posix_spawn '/bin/zsh'`,
-so nothing could be run after that point.
+Landmarks need one fetch, because India Gate is tagged `historic=monument` rather than `building`
+and the relation-backed footprints need stitching. `make data` does it for you:
 
-To clear it, from any terminal — this cannot be done from inside the wedged session, because the
-only tool that can remove a file is the shell that will not start:
-
-    bash /Users/pradyumnawasthi/delhi-pulse-twin/unwedge.sh
-
-The script inspects before it removes, refuses to delete anything non-empty (pass `--force` only
-after looking at what it found), recreates the old path as an empty directory so any shell still
-holding that working directory can spawn again, and verifies the result. Then:
-
-    cd /Users/pradyumnawasthi/delhi-pulse-twin && make check
-
-### Before the first run, landmarks need one fetch
-
-`landmarks.json` is not generated yet, so the landmark layer will report `unavailable` — which is
-the correct independent-failure behaviour, not a crash. To populate it:
-
-    python3 pipeline/fetch_landmarks.py && make data && make assets
+    make setup && make data && make assets && make check && make dev
 
 ## The two things this project is careful about
 

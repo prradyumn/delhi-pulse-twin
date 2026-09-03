@@ -1,10 +1,11 @@
 # 07 — Render correctness: the rules every new layer must follow
 
-Found by auditing the geometry code before its first run, on 2026-09-03. Four of these would have
-produced a city that renders **invisible or unlit**, with no error in the console — the worst class
-of bug, because it looks like a data problem and sends you back to the pipeline.
+Found on 2026-09-03 — most by auditing the geometry before its first run, the worst one by looking
+at the render afterwards. Several of these produce a city that is **invisible or unlit with nothing
+in the console**, which is the worst class of bug: it looks like a data problem and sends you back
+through the pipeline hunting for data that was there all along.
 
-Recording them here because they are not one-off fixes: every future layer builds geometry the same
+Recording them here because they are not one-off fixes. Every future layer builds geometry the same
 way and will hit the same traps.
 
 ## Rule 1 — Winding decides visibility, so normalise every ring
@@ -95,9 +96,10 @@ polygon could paint over a lake.
 | y | Layer |
 |---|---|
 | −0.35 | base plate (fills gaps in OSM landuse so they read as ground, not void) |
-| −0.30 … −0.11 | ground cover, largest polygon first, stacked by 0.00035 so small gardens win |
+| −0.30 … −0.14 | ground cover, largest polygon first; the step is **normalised by polygon count**, because clipping splits polygons and a fixed step let a big enough dataset climb out of the band |
+| −0.10 | landmark plazas (`kind: open`) |
 | **−0.08 / −0.06** | water areas / waterway lines — **must clear the ground band** |
-| +0.02 … +0.06 | roads, stacked by class so a primary reads over a service road |
+| +0.012 … +0.03 | road kerb casing, then the carriageway on top, both stacked by class |
 | +0.16 | rail and metro |
 | +0.55 | corridor traffic overlay |
 | 0 … h | buildings and landmark massing |
@@ -128,12 +130,18 @@ requirement that layers fail independently. It now renders an explicit unavailab
   playback could park the clock at a value the control could not represent. It now wraps inside the
   control's own window.
 
-## What is still unverified
+## Verified
 
-None of this has been executed — see the blocker note in [`../README.md`](../README.md). These fixes
-come from reading the code and working the vector algebra by hand, which catches sign and ordering
-errors well and catches nothing about API drift, bundler behaviour or actual frame time. Expect a
-further pass once `make check` can run.
+All of the above now runs. Measured on the primary benchmark device (Apple M1 / 8 GB, Chrome):
+**60 fps, 14 draw calls, 80,663 triangles, 0.71 MB gzip including the bundle**, 90/90 data
+invariants, and FR-01 confirmed by deleting `corridors.json` and `ground.json` from the build — the
+app stayed up at 60 fps with the other seven layers, the Scenario Lab showed its unavailable state,
+and Data Status named both failures.
+
+Worth noting what the hand audit did and did not catch. Working the vector algebra by hand found six
+of these outright. It did **not** catch the earcut winding, because that one depended on a library's
+actual behaviour rather than on arithmetic — only the render found it. Static reasoning and a
+screenshot catch different classes of bug, and this project needed both.
 
 
 ---

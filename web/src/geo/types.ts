@@ -26,6 +26,7 @@ export interface Manifest {
   assets: Record<string, { path: string; bytes: number; sha256: string }>;
   total_uncompressed_bytes: number;
   attribution: string[];
+  /** the only providers this build may contact; empty means fully offline */
   health: { live_adapters: string[]; note: string };
 }
 
@@ -78,6 +79,11 @@ export interface ScenarioModel {
 export interface WeatherData {
   provenance: Provenance;
   baseline: { temp_c: number; rh_pct: number; wind_ms: number; rain_mm_h: number; band: string; label: string };
+  /** pinned air-quality figures, so exposure works with every live feed disabled */
+  air_baseline?: {
+    pm2_5: number; pm10: number; no2: number; so2: number; o3: number; co: number;
+    source_time: string; provider: string;
+  };
   rain_bands: { id: string; label: string; mm_h: number; imd?: string }[];
 }
 export interface Payload<T> { kind: string; provenance: Provenance; features: T }

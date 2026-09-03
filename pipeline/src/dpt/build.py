@@ -465,6 +465,11 @@ def weather():
         "baseline": {"temp_c": 31.4, "rh_pct": 68, "wind_ms": 2.1,
                      "rain_mm_h": 0.0, "band": "none",
                      "label": "Weekday morning, 08:30 IST, dry"},
+        "air_baseline": {
+            "_note": "Pinned so the exposure feature works with every live feed disabled, which the scope lock requires. Replaced by the live Open-Meteo reading whenever that adapter succeeds.",
+            "pm2_5": 71.2, "pm10": 73.1, "no2": 100.4, "so2": 53.1, "o3": 20.0, "co": 865.0,
+            "source_time": "2026-09-03T20:30+05:30",
+            "provider": "Open-Meteo Air Quality (CAMS), retrieved 2026-09-03"},
         "rain_bands": [
             {"id": "none", "label": "Dry", "mm_h": 0.0},
             {"id": "light", "label": "Light", "mm_h": 1.5, "imd": "< 2.5 mm/h"},
@@ -495,6 +500,26 @@ def weather():
             "moderate":   {"primary": 0.84, "secondary": 0.80, "tertiary": 0.76},
             "heavy":      {"primary": 0.68, "secondary": 0.62, "tertiary": 0.56},
             "very_heavy": {"primary": 0.52, "secondary": 0.45, "tertiary": 0.38}},
+        "exposure_model": {
+            "version": "0.1",
+            "_what": "Inhaled dose of PM2.5 for a journey along a corridor. The CONCENTRATION is observed (live measurement); everything below is a declared heuristic converting it into a dose.",
+            "_formula": "dose_ug = concentration_ug_m3 * ventilation_m3_per_min * minutes * penetration",
+            "ventilation_m3_per_min": {
+                "_note": "Minute ventilation by activity. Mid-range adult values from exposure-science literature; individual rates vary widely with age, fitness and effort.",
+                "sitting": 0.011, "standing": 0.013, "walking": 0.022, "cycling": 0.042},
+            "penetration": {
+                "_note": "Fraction of outdoor PM2.5 actually breathed in each setting. A car on recirculation filters some; a bus with open windows barely any; on foot you breathe the street.",
+                "outdoor": 1.0, "bus": 0.90, "car_recirculating": 0.50, "metro_underground": 0.65},
+            "roadside_enrichment": {
+                "_note": "Kerbside PM2.5 runs above the city background because you are standing next to the tailpipes. A declared multiplier applied to waiting at a roadside stop, NOT a measurement at that stop.",
+                "waiting_at_stop": 1.25, "walking_footway": 1.15, "in_traffic": 1.20},
+            "who_guideline_ug_m3": {
+                "pm2_5_24h": 15, "pm2_5_annual": 5, "pm10_24h": 45,
+                "_source": "WHO global air quality guidelines 2021"},
+            "reference": {
+                "_note": "For scale only. A cigarette is roughly 12 mg of inhaled PM2.5 by the widely used Berkeley Earth equivalence; used here to make a microgram figure legible, not as a clinical claim.",
+                "cigarette_equivalent_ug": 12000}
+        },
         "msi_weights": {"speed_penalty": 0.45, "transit_pressure": 0.30, "weather_impact": 0.25},
         "wait_proxy": "half the headway, assuming evenly spaced arrivals",
         "transit_pressure_normalisation": "1 - (buses per hour / 12), clamped to 0-1. 12 buses/hour is treated as comfortable. A declared normalisation, not an observed crowding measure.",
@@ -541,7 +566,14 @@ def main():
         "attribution": ["© OpenStreetMap contributors (ODbL 1.0)",
                         "Bus routes from OpenStreetMap route relations, operator Delhi Transport Corporation",
                         "Weather baseline authored for this prototype"],
-        "health": {"live_adapters": [], "note": "No live provider is required. Every layer here is bundled."},
+        "health": {
+            "live_adapters": [k for k, v in C.get("live_adapters", {}).items()
+                              if v is True and not k.startswith("_")],
+            "note": "No live provider is REQUIRED. Every layer in this manifest is bundled and the "
+                    "guided demo completes with all adapters disabled. Anything listed here is "
+                    "additive: the app only contacts a provider named in this list, so a build "
+                    "without a key never fires a request that cannot succeed.",
+        },
     }
     write_json("manifest.json", man, minify=False)
     SNAP.mkdir(parents=True, exist_ok=True)

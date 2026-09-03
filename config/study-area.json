@@ -284,5 +284,12 @@
     "max_texture_px": 1024,
     "texture_memory_mb": 64
   },
-  "primary_benchmark_device": "Apple M1, 8 GB, macOS 26.5, Chrome \u2014 integrated GPU, matches the PRD 'ordinary laptop' target"
+  "primary_benchmark_device": "Apple M1, 8 GB, macOS 26.5, Chrome \u2014 integrated GPU, matches the PRD 'ordinary laptop' target",
+  "live_adapters": {
+    "_note": "Which live providers this build is allowed to contact. The scope lock requires the demo to work with all of them false. Keyless adapters can default on; anything needing a key or a proxy stays off until the deployment actually has one \u2014 otherwise the app fires a request that 404s and logs a console error for every user.",
+    "open_meteo_air_quality": true,
+    "open_meteo_weather": true,
+    "otd_vehicle_positions": false,
+    "_otd_note": "Set true only on a deployment where OTD_API_KEY is configured and web/api/vehicles.ts is deployed as a function. See docs/08-LIVE-DATA.md."
+  }
 }

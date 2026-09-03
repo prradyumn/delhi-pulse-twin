@@ -307,3 +307,44 @@ h3.sub:first-child { margin-top: 0; padding-top: 0; border-top: none; }
   text-transform: uppercase; color: var(--text-3);
 }
 @media (max-width: 1100px) { #places { left: 12px; top: 300px; } }
+
+/* ---------------------------------------------------------------- exposure lab */
+#exposure { top: 66px; right: 12px; width: 360px; max-height: calc(100vh - 190px); overflow-y: auto; }
+
+.pmhead {
+  border-left: 3px solid var(--accent); padding: 10px 0 10px 12px;
+  background: rgba(255, 255, 255, 0.035);
+}
+.pmnum { font-family: var(--mono); font-size: 15px; color: var(--text-2); }
+.pmnum b { font-size: 30px; font-weight: 600; color: var(--text); letter-spacing: -0.02em;
+           font-variant-numeric: tabular-nums; }
+.pmwho { font-size: 12.5px; color: var(--text-2); margin-top: 3px; }
+
+.exrow {
+  display: grid; grid-template-columns: 54px 1fr auto auto; gap: 9px; align-items: center;
+  padding: 6px 0; border-bottom: 1px solid var(--line);
+}
+.exrow:last-of-type { border-bottom: none; }
+.ex-mode { font-size: 12.5px; color: var(--text); }
+.ex-bar { height: 8px; background: rgba(255, 255, 255, 0.07); border-radius: 1px; overflow: hidden; }
+.ex-bar i { display: block; height: 100%; background: linear-gradient(90deg, #e2a453, #c4562f); }
+.ex-dose { font-family: var(--mono); font-size: 12.5px; font-weight: 600;
+           font-variant-numeric: tabular-nums; }
+.ex-min { font-family: var(--mono); font-size: 10.5px; color: var(--text-3); min-width: 48px;
+          text-align: right; }
+.ex-none { grid-column: 2 / -1; font-size: 11.5px; color: var(--text-3); }
+
+.insight {
+  font-size: 12.5px; line-height: 1.55; color: var(--text-2);
+  background: rgba(89, 195, 200, 0.08); border-left: 2px solid var(--accent);
+  padding: 9px 11px; margin: 9px 0;
+}
+.insight strong { color: var(--accent); }
+
+/* feed status in the masthead */
+.feed { display: inline-flex; align-items: center; gap: 5px; }
+.feed .led { width: 7px; height: 7px; border-radius: 50%; background: var(--text-3); }
+.feed[data-state="live"] .led { background: #5fce8a; box-shadow: 0 0 6px rgba(95, 206, 138, 0.7); }
+.feed[data-state="stale"] .led { background: var(--estimated); }
+.feed[data-state="fallback"] .led { background: var(--estimated); }
+.feed[data-state="unavailable"] .led { background: var(--warn); }

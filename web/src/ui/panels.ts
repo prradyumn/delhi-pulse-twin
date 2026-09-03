@@ -12,6 +12,9 @@ export function masthead(m: Manifest) {
   const clock = el("span", { class: "stat" });
   const fps = el("span", { class: "stat" });
   const moving = el("span", { class: "stat" });
+  const feed = el("span", { class: "chip feed", "data-state": "idle" },
+    el("i", { class: "led" }), el("span", { class: "feed-label", text: "no live feed" }));
+  const airBtn = el("button", { class: "chip", text: "Air & exposure" });
   const statusBtn = el("button", { class: "chip", text: "Data status" });
   const placesBtn = el("button", { class: "chip", text: "Places" });
   const storyBtn = el("button", { class: "btn", text: "Guided story" });
@@ -22,8 +25,7 @@ export function masthead(m: Manifest) {
       el("span", { text: `${m.study_area.id} · ${m.dataset_version} · transform ${m.transform_version}` })),
     el("div", { class: "spacer" }),
     clock, moving, fps,
-    el("span", { class: "chip", text: `${m.health.live_adapters.length} live feeds` }),
-    placesBtn, statusBtn, storyBtn);
+    feed, airBtn, placesBtn, statusBtn, storyBtn);
 
   const render = () => {
     const s = store.get();
@@ -35,13 +37,32 @@ export function masthead(m: Manifest) {
                     el("b", { text: String(s.busesOnRoad) }), " buses · ",
                     el("b", { text: String(s.trains) }), " trains · ",
                     el("b", { text: String(s.walkers) }), " walking");
+      if (s.liveBuses) {
+        moving.append(" · ", el("b", { text: String(s.liveBuses),
+                                       style: "color:#5fce8a" }), " LIVE");
+      }
     }
     clear(fps);
-    const ok = s.fps >= 30;
-    fps.append(el("b", { text: String(s.fps), style: ok ? "" : "color:var(--warn)" }), " fps");
+    // frame time is what the budget gates on; fps can be capped by the browser or the display
+    const ok = s.frameMs > 0 ? s.frameMs < 16.7 : s.fps >= 30;
+    fps.append(el("b", { text: s.frameMs > 0 ? s.frameMs.toFixed(1) : "—",
+                         style: ok ? "" : "color:var(--warn)" }),
+               " ms/frame · ",
+               el("b", { text: String(s.fps) }), " fps");
+    fps.setAttribute("title",
+      "Frame time is the cost of this app's own render call. Frames per second is how often the "
+      + "browser presents them, which the environment can cap independently.");
   };
   store.on(render); render();
-  return { node, statusBtn, placesBtn, storyBtn };
+  /** Called by the live adapter. The chip is the only place the app claims anything is live, so
+   *  it names the source and its age rather than showing a bare green dot. */
+  function setFeed(state: string, label: string, title: string) {
+    feed.setAttribute("data-state", state);
+    feed.setAttribute("title", title);
+    const l = feed.querySelector(".feed-label");
+    if (l) l.textContent = label;
+  }
+  return { node, statusBtn, placesBtn, storyBtn, airBtn, setFeed };
 }
 
 /* ------------------------------------------------------------------ layer rail */

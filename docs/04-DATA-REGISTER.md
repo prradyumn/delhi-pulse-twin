@@ -13,14 +13,15 @@ Statuses: `UNVERIFIED` → `CLEARED` (terms read, attribution drafted, redistrib
 | D2 | Building heights (where untagged) | Rule-based, derived in-house | n/a | n/a | ours | "estimated heights, rule v0.1" | **estimated** | Rule must be published in the UI; record real-tag coverage % from Spike-0 |
 | D3 | Bus routes & stops | Delhi OTD GTFS **static** | UNVERIFIED | registration likely required | must confirm before shipping the file | required | observed (schedule) | OTD warns stop times are constant-speed estimates — this is why replay is `replay` |
 | D4 | Bus vehicle movement | Derived deterministic replay from D3 | n/a | n/a | ours | "simulated replay from schedule" | **replay** | Must never be presented as live positions |
-| D5 | Bus vehicle positions, live | Delhi OTD GTFS-Realtime | UNVERIFIED | private key, authorised users only | almost certainly not | required | observed | **Out of MVP.** V1.5 at the earliest |
+| D5 | Bus vehicle positions, live | Delhi OTD GTFS-Realtime | **BUILT, AWAITING KEY** | private key, authorised users only | not redistributed; proxied live | in-app | observed | Adapter, protobuf reader and edge proxy are written. Gated off in `live_adapters` until a key exists — see `docs/08-LIVE-DATA.md` |
 | D6 | Metro lines & stations | OSM | UNVERIFIED | open | ODbL | required | observed (geometry) | Geographic context only. No live-train claim, ever |
 | D7 | Weather baseline | Bundled snapshot, one pinned day | n/a | n/a | ours | timestamped | observed at snapshot time | The launch-critical weather path |
-| D8 | Weather live | Open-Meteo | UNVERIFIED | no key needed | check terms | required | observed | Callable direct from client behind an adapter; no secret, no backend |
+| D8 | Weather live | Open-Meteo | **CLEARED — IN USE** | no key needed | not redistributed; read live | in-app | observed | Direct from the client behind an adapter. Observed rain rate drives the rainfall control |
 | D9 | Corridor traffic speeds | Bundled heuristic / replay, 3 corridors | n/a | n/a | ours | "estimated, heuristic v0.1" | **estimated** | The MVP traffic path. First-class, not a fallback |
 | D10 | Traffic live | TomTom | UNVERIFIED | API key | caching may be restricted | required | observed | **Out of MVP** — the key forces a serverless proxy (NFR: secrets stay server-side) |
 | D11 | Planning / land use | DDA GIS | UNVERIFIED | portal access ≠ bulk rights | unknown | required | observed | **Excluded from P0** by the PRD. Do not start |
 | D12 | Landmark reference imagery | — | — | — | **do not redistribute** | — | — | Reference for modelling only. No photo texture ships. Acceptance criterion #9 |
+| D14 | Air quality live | Open-Meteo Air Quality (Copernicus CAMS) | **CLEARED — IN USE** | no key needed | not redistributed; read live | in-app: "Air quality from Open-Meteo, based on Copernicus CAMS" | observed | The first live observed *measurement* in the product. ~11 km grid, so ONE value for the whole box — no spatial layer is possible and none is drawn |
 | D13 | Elevation | — | — | — | — | — | — | Not required; the pilot presentation is flat |
 
 ## Provenance record — required fields on every dataset

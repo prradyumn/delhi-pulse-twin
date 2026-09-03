@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd web && npm install && npm run build",
+  "outputDirectory": "web/dist",
+  "functions": {
+    "web/api/vehicles.ts": {
+      "runtime": "edge"
+    }
+  },
+  "_note": "OTD_API_KEY must be set as a Vercel environment variable. Without it /api/vehicles returns 501 and the app runs on deterministic bus replay, which is the scope-locked default: no live provider is ever required."
+}

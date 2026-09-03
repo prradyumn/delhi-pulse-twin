@@ -20,6 +20,10 @@ import { PedestrianLayer } from "./layers/pedestrians";
 import { RoofDetailLayer, StreetscapeLayer, BuildingPartsLayer } from "./layers/detail";
 import { BusLayer } from "./layers/buses";
 import { placePicker, type Place } from "./ui/places";
+import { exposureLab, type ExposureState } from "./ui/exposureLab";
+import { fetchLive, bandFromRain, type AirReading } from "./data/adapters/openMeteo";
+import { LiveBusLayer } from "./layers/liveBuses";
+import type { ExposureModel } from "./scenario/exposure";
 import * as load from "./geo/load";
 import { store, type RainBand } from "./state/store";
 import { corridorMetrics, type CorridorMetrics } from "./scenario/engine";
@@ -33,7 +37,7 @@ import type { Manifest, ScenarioModel, WeatherData } from "./geo/types";
 const LAYER_ORDER = [
   "ground", "water", "streetscape", "roads", "corridors",
   "buildings", "buildingparts", "roofdetail", "landmarks",
-  "trees", "rail", "transit", "traffic", "buses", "metro", "pedestrians",
+  "trees", "rail", "transit", "traffic", "buses", "livebuses", "metro", "pedestrians",
 ];
 
 function fatal(title: string, detail: string) {
@@ -93,7 +97,8 @@ async function boot() {
   const buses = new BusLayer(transit.routes);
   const traffic = new TrafficLayer(corridors.corridors);
   const roofDetail = new RoofDetailLayer(buildings.buildings);
-  for (const l of [roofDetail, traffic, buses]) {
+  const liveBuses = new LiveBusLayer(m);
+  for (const l of [roofDetail, traffic, buses, liveBuses]) {
     registry.add(l);
     try {
       registry.reports.set(l.id, await l.build());
@@ -177,6 +182,8 @@ async function boot() {
   function recompute() {
     baseline = metricsFor("none", 1);
     lab.setMetrics(baseline, frozenScenario);
+    // the exposure panel reads the same metrics: wait and travel time are what set the dose
+    exposure.setMetrics(frozenScenario ?? baseline);
     paintCorridors();
     refreshMotion();
   }
@@ -235,12 +242,22 @@ async function boot() {
     },
   });
 
+  const exposure = exposureLab(
+    corridors.corridors,
+    (model as unknown as { exposure_model?: ExposureModel })?.exposure_model ?? null,
+    (id) => { store.set({ activeCorridor: id }); recompute(); flyToCorridor(id); });
+  mast.airBtn.addEventListener("click", () => {
+    exposure.toggle();
+    if (exposure.isOpen()) exposure.setMetrics(baseline);
+  });
+
   const tbar = timeBar(weather,
     (min) => { store.set({ timeMin: min }); },
     (playing) => { store.set({ playing }); },
     (b) => { store.set({ rain: b }); });
 
-  document.body.append(mast.node, rail0.node, leg.node, det.node, lab.node, tbar.node);
+  document.body.append(mast.node, rail0.node, leg.node, det.node, lab.node,
+                       exposure.node, tbar.node);
   rail0.update(reports);
   recompute();
 
@@ -418,6 +435,11 @@ async function boot() {
     }
     if (e.key === "Escape") { det.hide(); buildings.highlight(null); }
     if (e.key === "r" || e.key === "R") flyTo([1500, 1400, 2000], [0, 0, 0]);
+    if ((e.key === "a" || e.key === "A") && !(e.target instanceof HTMLInputElement)) {
+      e.preventDefault();
+      exposure.toggle();
+      if (exposure.isOpen()) exposure.setMetrics(frozenScenario ?? baseline);
+    }
     if ((e.key === "p" || e.key === "P") && !(e.target instanceof HTMLInputElement)) {
       e.preventDefault(); picker.toggle();
     }
@@ -453,7 +475,109 @@ async function boot() {
                   trains: metro.trainCount(), walkers: pedestrians.walkerCount() });
     }
     stage.render();
-  }, (fps) => store.set({ fps }));
+  }, (fps, frameMs) => store.set({ fps, frameMs }));
+
+  // ---------------------------------------------------------------- live feed
+  //
+  // Started AFTER the scene is rendering and the loop is running. The scope lock says the demo
+  // must work with every external provider disabled, so this can only ever add to a scene that
+  // already stands on its own — it never gates boot, and a failure is a reported status.
+  /** The manifest is the authority on what may be contacted. A build without a key must not fire
+   *  a request that can only 404 — it logs a console error for every user and claims a capability
+   *  the deployment does not have. */
+  const allowed = (name: string) => m.health.live_adapters.includes(name);
+
+  const snapshotAir: AirReading | null = weather?.air_baseline
+    ? {
+        pm2_5: weather.air_baseline.pm2_5, pm10: weather.air_baseline.pm10,
+        no2: weather.air_baseline.no2, so2: weather.air_baseline.so2,
+        o3: weather.air_baseline.o3, co: weather.air_baseline.co,
+        source_time: weather.air_baseline.source_time,
+        state: "fallback", provider: weather.air_baseline.provider,
+      }
+    : null;
+
+  const snapshotState: ExposureState = {
+    air: snapshotAir, forecast: [], fromSnapshot: true,
+    snapshotNote: "The live Open-Meteo reading has not arrived, so this is the pinned figure from "
+                  + "2026-09-03. Every number derived from it is as old as it is.",
+  };
+  exposure.setAir(snapshotState);
+  mast.setFeed("fallback", "pinned snapshot",
+    "No live provider contacted yet. Air quality is the pinned snapshot in weather/baseline.json.");
+
+  /** Real buses supersede replay: showing both would put invented vehicles next to real ones on
+   *  the same street, which is the one thing this product must not do. */
+  function reconcileBuses(state: string, count: number) {
+    const live = state === "live" || state === "stale";
+    buses.setVisible(!live && (store.get().layers.buses ?? true));
+    liveBuses.setVisible(live);
+    const rep = registry.reports.get("livebuses");
+    if (rep) {
+      rep.status = live ? "ready" : state === "unavailable" ? "unavailable" : "empty";
+      rep.features = count;
+      rep.provenance = liveBuses.provenance(liveBuses.feed!);
+      rail0.update(LAYER_ORDER.map((id) => registry.reports.get(id))
+        .filter((r): r is LayerReport => Boolean(r)));
+    }
+    store.set({ liveBuses: live ? count : 0 });
+  }
+
+  let liveTimer = 0;
+  let busTimer = 0;
+  async function pollBuses() {
+    const f = await liveBuses.refresh();
+    reconcileBuses(f.state, liveBuses.liveCount());
+    if (f.state === "live" || f.state === "stale") {
+      mast.setFeed(f.state, `${liveBuses.liveCount()} live buses`,
+        `${f.provider} · feed ${Math.round(f.ageSeconds ?? 0)} s old · `
+        + `${f.inBox} of ${f.vehicles.length} vehicles inside the study box`);
+    }
+  }
+  reconcileBuses(liveBuses.feed?.state ?? "unconfigured", liveBuses.liveCount());
+  if (allowed("otd_vehicle_positions")) {
+    void pollBuses();
+    busTimer = window.setInterval(pollBuses, 20 * 1000);
+  }
+
+  async function pollLive() {
+    const bundle = await fetchLive();
+    if (bundle.air) {
+      exposure.setAir({
+        air: bundle.air, forecast: bundle.forecast, fromSnapshot: false, snapshotNote: "",
+      });
+      const age = bundle.air.state;
+      if (!liveBuses.hasLive()) mast.setFeed(age, age === "live" ? "air quality live" : "air quality stale",
+        `${bundle.air.provider} · reading for ${bundle.air.source_time} · `
+        + `one value for the whole study area (the source grid is ~11 km)`);
+      registry.reports.set("airquality", {
+        id: "airquality", label: "Air quality (live)", status: "ready",
+        provenance: null, features: 1, bytes: 0, ms: 0, drawCalls: 0, triangles: 0,
+      });
+    } else {
+      // stay on the snapshot and say so, rather than showing nothing
+      exposure.setAir(snapshotState);
+      mast.setFeed("unavailable", "live feed down",
+        `Open-Meteo unavailable: ${bundle.errors.join("; ") || "unknown"}. `
+        + "Showing the pinned snapshot. Nothing else in the app depends on it.");
+    }
+    // the observed rain rate can drive the same control the bundled scenario uses
+    if (bundle.weather && store.get().scenario === null) {
+      const band = bandFromRain(bundle.weather.rain_mm);
+      if (band !== store.get().rain) store.set({ rain: band });
+    }
+  }
+  if (allowed("open_meteo_air_quality") || allowed("open_meteo_weather")) {
+    void pollLive();
+    liveTimer = window.setInterval(pollLive, 10 * 60 * 1000);
+  } else {
+    mast.setFeed("idle", "offline build",
+      "This build lists no live adapters, so no provider is contacted at all.");
+  }
+  window.addEventListener("beforeunload", () => {
+    clearInterval(liveTimer);
+    if (busTimer) clearInterval(busTimer);
+  });
 
   // ---------------------------------------------------------------- onboarding
   document.body.append(onboarding(m, () => {}, () => applyStep(0)));
@@ -461,7 +585,9 @@ async function boot() {
   // expose a tiny handle for the budget/QA harness
   (window as unknown as Record<string, unknown>).__twin = {
     reports, totals: () => registry.totals(), manifest: m,
-    fps: () => store.get().fps, ready: true,
+    fps: () => store.get().fps,
+    frameMs: () => store.get().frameMs,
+    ready: true,
   };
 }
 

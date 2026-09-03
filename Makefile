@@ -1,4 +1,4 @@
-.PHONY: help setup spike data test assets qa-render dev build preview budget check clean
+.PHONY: help setup spike data test assets qa qa-shots qa-render dev build preview budget check clean
 
 PY := .venv/bin/python
 BLENDER := /Applications/Blender.app/Contents/MacOS/Blender
@@ -13,6 +13,7 @@ help:
 	@echo "  qa-render  headless contact-sheet renders for visual review"
 	@echo "  dev        web app dev server"
 	@echo "  build      typecheck + production build"
+	@echo "  qa         browser QA: renders, frame time, scenarios, FR-01 degradation"
 	@echo "  budget     fail if any asset or transfer budget is breached"
 	@echo "  check      data + build + budget, in that order"
 
@@ -66,11 +67,18 @@ build:
 preview:
 	cd web && npm run preview
 
+qa:
+	cd web && npm run build && node tools/qa.mjs
+
+qa-shots:
+	cd web && npm run build && node tools/qa.mjs --shots
+
 budget:
 	cd web && node tools/budget.mjs
 
 check: data build
 	cd web && node tools/budget.mjs --dist
+	cd web && node tools/qa.mjs
 
 clean:
 	rm -rf web/dist web/node_modules/.vite

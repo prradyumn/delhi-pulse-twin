@@ -35,10 +35,14 @@ export interface AppState {
   compare: boolean;
   storyStep: number | null;
   fps: number;
+  /** ms spent in our own step+render — the number the budget is about */
+  frameMs: number;
   /** live instanced counts, shown in the masthead */
   vehicles: number;
   busesOnRoad: number;
   trains: number;
+  /** live vehicles placed from the OTD feed; 0 when unconfigured */
+  liveBuses: number;
   walkers: number;
 }
 
@@ -48,7 +52,7 @@ export const initialState: AppState = {
   layers: { ground: true, water: true, streetscape: true, roads: true, corridors: true,
             buildings: true, buildingparts: true, roofdetail: true, landmarks: true,
             trees: true, rail: true, transit: true, traffic: true, buses: true,
-            metro: true, pedestrians: true },
+            metro: true, pedestrians: true, livebuses: true },
   revealEstimated: false,
   selectedId: null,
   activeCorridor: null,
@@ -59,9 +63,11 @@ export const initialState: AppState = {
   compare: false,
   storyStep: null,
   fps: 0,
+  frameMs: 0,
   vehicles: 0,
   busesOnRoad: 0,
   trains: 0,
+  liveBuses: 0,
   walkers: 0,
 };
 

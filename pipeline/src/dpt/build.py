@@ -8,6 +8,7 @@ from shapely.geometry import Polygon, LineString, Point
 from shapely.ops import unary_union, linemerge
 from dpt.core import cfg, Proj, osm, write_json, provenance, osm_prov, OUT, SNAP
 from dpt.heights import resolve as resolve_height
+from dpt.rsheight import HeightRaster
 from dpt import detail
 
 C = cfg(); P = Proj(C)
@@ -89,6 +90,16 @@ def buildings():
     # should not be swallowed by a rounding error on the boundary.
     lm_polys = landmark_polys(modelled_only=True)
     suppressed = collections.Counter()
+    # Satellite heights, if they have been fetched. Absent is a supported state: the build falls
+    # back to the class rule and says so, the same way every runtime layer degrades to a reported
+    # status rather than failing.
+    rs = HeightRaster.load_if_present()
+    ORIGIN = (C["study_area"]["local_origin_utm"]["easting"],
+              C["study_area"]["local_origin_utm"]["northing"])
+    rs_reasons = collections.Counter()
+    if rs is None:
+        print("  no satellite height raster — run pipeline/fetch_building_heights.py; "
+              "falling back to the class rule for every unmeasured building")
     for el in osm("buildings"):
         p = poly_of(el)
         if p is None:
@@ -108,8 +119,6 @@ def buildings():
             suppressed[hit] += 1
             continue
         t = el.get("tags", {})
-        h, mode, basis = resolve_height(t, p.area, RULE)
-        modes[mode] += 1; bases[basis] += 1
         # simplify lightly: 0.5 m tolerance removes surveyor noise, keeps corners
         s = p.simplify(0.5, preserve_topology=True)
         if s.is_empty or s.geom_type != "Polygon":
@@ -117,15 +126,27 @@ def buildings():
         ring = [[round(x, 2), round(z, 2)] for x, z in list(s.exterior.coords)[:-1]]
         if len(ring) < 3:
             continue
+        # the satellite lookup needs the ring, so it comes after simplification — and it uses the
+        # SAME ring that ships, so the sampled pixels are the ones under the rendered footprint
+        rs_h = None
+        if rs is not None:
+            rs_h, _px, why = rs.height_for(ring, ORIGIN)
+            rs_reasons[why] += 1
+        h, mode, basis = resolve_height(t, p.area, RULE, rs_h)
+        modes[mode] += 1; bases[basis] += 1
         feats.append({
             "id": f"b/{el['type'][0]}{el['id']}",
-            "r": ring, "h": h, "m": 0 if mode == "observed" else 1,
+            # 0 observed (an OSM tag), 2 remote_sensed (satellite), 1 estimated (class rule)
+            "r": ring, "h": h,
+            "m": 0 if mode == "observed" else (2 if mode == "remote_sensed" else 1),
             "c": t.get("building", "yes"),
             "n": t.get("name") or None,
         })
     report["buildings"] = {"count": len(feats), "modes": dict(modes),
                            "dropped_outside_box": dropped,
                            "suppressed_under_landmarks": dict(suppressed),
+                           "satellite_gate": dict(rs_reasons),
+                           "satellite_raster": (rs.meta if rs else None),
                            "top_bases": dict(bases.most_common(6))}
     print(f"  {len(feats):,} kept, {dropped:,} dropped as outside the locked box")
     if suppressed:
@@ -137,7 +158,22 @@ def buildings():
         "height_rule_version": RULE["version"],
         "provenance": osm_prov(dataset="OSM buildings, box central-delhi-01",
             limitations=[
-                f"{modes['estimated']} of {len(feats)} heights ({100*modes['estimated']/max(len(feats),1):.1f}%) are estimated by height rule v{RULE['version']}, not observed.",
+                f"Heights: {modes['observed']} observed from an OSM tag, "
+                f"{modes.get('remote_sensed', 0)} measured from satellite (Open Buildings 2.5D, "
+                f"published MAE 1.5 m), {modes['estimated']} "
+                f"({100*modes['estimated']/max(len(feats),1):.1f}%) still estimated by class rule "
+                f"v{RULE['version']}.",
+                "Satellite heights are the median of building pixels inside the footprint, accepted "
+                "only where the raster sees a building there: at least 8 pixels covering 35% of the "
+                "footprint at 3 m or more. Scored against the 234 buildings where an OSM height also "
+                "exists, it has MAE 6.47 m and bias -2.6 m, against the class rule's 10.16 m and "
+                "-7.3 m on the same buildings.",
+                "Above 45 m the satellite under-reads by 12-18 m: it derives from Sentinel-2 and "
+                "saturates on towers. No correction is applied, because the sample showing the bias "
+                "is 28 buildings and fitting to it would be inventing precision.",
+                "An OSM tag outranks the satellite because they describe different years. Four "
+                "footprints tagged 91 m stand on ground the 2023 imagery sees as empty — towers "
+                "built after the flyover.",
                 "Footprints simplified at 0.5 m tolerance.",
                 f"{sum(suppressed.values())} footprint(s) inside an authored hero-landmark model are excluded from this layer, because OSM maps some monuments twice — India Gate's arch is also way/1078065894, a 40 m building. Without the exclusion the two render through each other.",
                 "Courtyard holes in footprints are not modelled in V1."]),

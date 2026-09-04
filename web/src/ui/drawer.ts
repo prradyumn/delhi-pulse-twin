@@ -55,22 +55,35 @@ export function drawer(onClose: () => void) {
       const { b, rule } = sel;
       title.textContent = b.n ?? "Building";
       const estimated = b.m === 1;
+      const remote = b.m === 2;
       add(body, 
         el("div", { class: "kv" },
           el("dt", { text: "Name" }), el("dd", { text: b.n ?? "unnamed" }),
           el("dt", { text: "Class" }), el("dd", { text: `building=${b.c}` }),
           el("dt", { text: "Height" }),
           el("dd", { class: "num" }, `${n1(b.h)} m `,
-             el("span", { class: `badge ${estimated ? "est" : "base"}`,
-                          text: estimated ? "estimated" : "measured" })),
+             el("span", { class: `badge ${estimated ? "est" : remote ? "sim" : "base"}`,
+                          text: estimated ? "estimated" : remote ? "satellite" : "OSM tag" })),
           el("dt", { text: "Storeys" }), el("dd", { class: "num", text: `≈ ${(b.h / rule.storey_m).toFixed(1)} at ${rule.storey_m} m` }),
           el("dt", { text: "Footprint" }), el("dd", { class: "num", text: `${b.r.length} vertices` }),
           el("dt", { text: "OSM id" }), el("dd", { class: "num", text: b.id.replace("b/", "") })),
         estimated
           ? el("div", { class: "disabled-reason" },
-              `This height was not measured. Rule v${rule.version} assigned ${rule.class_levels[b.c] ?? rule.class_levels["yes"]} storeys for building=${b.c}, at ${rule.storey_m} m each. ${rule.disclosure}`)
+              `This height was not measured. Rule v${rule.version} assigned `
+              + `${rule.class_levels[b.c] ?? rule.class_levels["yes"]} storeys for building=${b.c}, `
+              + `at ${rule.storey_m} m each — the satellite raster did not see a building here, `
+              + `which happens on footprints smaller than its 4 m resolution and on anything built `
+              + `after the 2023 imagery.`)
+          : remote
+          ? el("p", { class: "note", style: "margin-top:10px" },
+              "Measured from satellite: the median of the building pixels inside this footprint in "
+              + "Google Open Buildings 2.5D, published mean absolute error 1.5 m. Scored against "
+              + "the buildings in this box that also carry an OSM height, it beats the class rule "
+              + "it replaced by 36%. Above 45 m it under-reads by 12–18 m.")
           : el("p", { class: "note", style: "margin-top:10px",
-                      text: "This height comes from an OSM height or building:levels tag, not from the rule." }),
+                      text: "This height comes from an OSM height or building:levels tag — somebody "
+                          + "recorded it on the ground. That outranks the satellite, because the "
+                          + "two describe different years." }),
         provBlock(sel.prov, "footprint geometry"));
       return;
     }

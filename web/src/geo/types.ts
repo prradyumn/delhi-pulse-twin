@@ -46,7 +46,10 @@ export interface HeightRule {
   area_overrides: unknown[]; disclosure: string;
 }
 
-export interface Building { id: string; r: [number, number][]; h: number; m: 0 | 1; c: string; n: string | null }
+/** `m` is height provenance: 0 tagged in OSM, 2 measured from satellite, 1 estimated by class
+ *  rule. Three states since height rule v0.2 — collapsing a 1.5 m-MAE measurement into the same
+ *  bucket as an authored guess would discard the whole point of measuring it. */
+export interface Building { id: string; r: [number, number][]; h: number; m: 0 | 1 | 2; c: string; n: string | null }
 export interface Road {
   id: string; p: [number, number][]; k: string; n: string | null;
   corridor: string | null; lanes: number | null; oneway: boolean; len: number;

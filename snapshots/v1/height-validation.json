@@ -1,0 +1,173 @@
+{
+  "scored_footprints": 3117,
+  "with_osm_height": 241,
+  "skipped_too_few_pixels": 79,
+  "statistic_comparison": {
+    "median>1": {
+      "n": 241,
+      "mae_m": 6.73,
+      "bias_m": -3.01,
+      "median_abs_err_m": 3.5,
+      "within_3m_pct": 47.7,
+      "within_6m_pct": 71.4
+    },
+    "p75>1": {
+      "n": 241,
+      "mae_m": 6.86,
+      "bias_m": -0.79,
+      "median_abs_err_m": 3.0,
+      "within_3m_pct": 52.7,
+      "within_6m_pct": 73.9
+    },
+    "p90>1": {
+      "n": 241,
+      "mae_m": 7.13,
+      "bias_m": 0.47,
+      "median_abs_err_m": 3.0,
+      "within_3m_pct": 51.9,
+      "within_6m_pct": 72.2
+    },
+    "max": {
+      "n": 241,
+      "mae_m": 8.18,
+      "bias_m": 3.07,
+      "median_abs_err_m": 4.0,
+      "within_3m_pct": 42.3,
+      "within_6m_pct": 66.0
+    },
+    "mean>1": {
+      "n": 241,
+      "mae_m": 6.91,
+      "bias_m": -4.15,
+      "median_abs_err_m": 3.67,
+      "within_3m_pct": 40.2,
+      "within_6m_pct": 69.3
+    }
+  },
+  "chosen_statistic": "median>1",
+  "rule_mae_m": 10.31,
+  "satellite_mae_m": 6.73,
+  "stratified": {
+    "0-8": {
+      "n": 42,
+      "rule_mae_m": 3.58,
+      "median>1": {
+        "mae_m": 2.07,
+        "bias_m": -1.12
+      },
+      "p75>1": {
+        "mae_m": 2.19,
+        "bias_m": -0.07
+      },
+      "p90>1": {
+        "mae_m": 2.39,
+        "bias_m": 0.87
+      },
+      "max": {
+        "mae_m": 3.73,
+        "bias_m": 3.08
+      },
+      "mean>1": {
+        "mae_m": 1.98,
+        "bias_m": -1.22
+      }
+    },
+    "8-15": {
+      "n": 98,
+      "rule_mae_m": 3.34,
+      "median>1": {
+        "mae_m": 4.11,
+        "bias_m": -0.07
+      },
+      "p75>1": {
+        "mae_m": 4.39,
+        "bias_m": 1.8
+      },
+      "p90>1": {
+        "mae_m": 4.61,
+        "bias_m": 2.88
+      },
+      "max": {
+        "mae_m": 5.79,
+        "bias_m": 5.17
+      },
+      "mean>1": {
+        "mae_m": 4.01,
+        "bias_m": -0.77
+      }
+    },
+    "15-25": {
+      "n": 52,
+      "rule_mae_m": 5.57,
+      "median>1": {
+        "mae_m": 6.43,
+        "bias_m": -2.95
+      },
+      "p75>1": {
+        "mae_m": 6.04,
+        "bias_m": -1.61
+      },
+      "p90>1": {
+        "mae_m": 5.94,
+        "bias_m": -0.69
+      },
+      "max": {
+        "mae_m": 6.29,
+        "bias_m": 1.48
+      },
+      "mean>1": {
+        "mae_m": 6.77,
+        "bias_m": -4.07
+      }
+    },
+    "25-45": {
+      "n": 20,
+      "rule_mae_m": 18.73,
+      "median>1": {
+        "mae_m": 9.07,
+        "bias_m": -0.17
+      },
+      "p75>1": {
+        "mae_m": 10.2,
+        "bias_m": 2.9
+      },
+      "p90>1": {
+        "mae_m": 11.38,
+        "bias_m": 4.88
+      },
+      "max": {
+        "mae_m": 13.43,
+        "bias_m": 8.68
+      },
+      "mean>1": {
+        "mae_m": 9.22,
+        "bias_m": -2.87
+      }
+    },
+    "45-200": {
+      "n": 29,
+      "rule_mae_m": 46.33,
+      "median>1": {
+        "mae_m": 21.26,
+        "bias_m": -17.78
+      },
+      "p75>1": {
+        "mae_m": 21.16,
+        "bias_m": -11.67
+      },
+      "p90>1": {
+        "mae_m": 21.71,
+        "bias_m": -9.19
+      },
+      "max": {
+        "mae_m": 22.52,
+        "bias_m": -5.03
+      },
+      "mean>1": {
+        "mae_m": 22.47,
+        "bias_m": -20.79
+      }
+    }
+  },
+  "_note": "MAE against OSM height/building:levels tags in this box. That sample is selection-biased towards tall and notable buildings, so the stratified table is the honest read, not the overall figure."
+}

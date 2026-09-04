@@ -225,11 +225,12 @@
     "note": "Density is 206/km2, not the ~3000/km2 originally assumed. This is the real character of Lutyens' Delhi and it drove three scope changes \u2014 see docs/06-SPIKE-0-RESULTS.md."
   },
   "height_rule": {
-    "version": "0.1",
+    "version": "0.2",
     "storey_m": 3.5,
     "order": [
       "osm height tag -> observed",
       "osm building:levels x storey_m -> observed",
+      "satellite median building height (Open Buildings 2.5D) -> remote_sensed",
       "class default -> estimated",
       "area override -> estimated"
     ],
@@ -262,7 +263,53 @@
         "max_levels": 4
       }
     ],
-    "disclosure": "91.8% of buildings in this box get an estimated height. This rule is load-bearing and must be shown in the UI, not footnoted."
+    "disclosure": "Height provenance is shown in the UI in three states, not two: observed from an OSM tag, measured from satellite, or estimated by class rule. v0.1 left 91.8% of the box on an authored guess; v0.2 puts most of it on a measurement with a published 1.5 m MAE, and the remaining estimated share is named in the buildings layer provenance rather than footnoted.",
+    "remote_sensed": {
+      "dataset": "Google Research Open Buildings 2.5D Temporal v1, band building_height",
+      "year": 2023,
+      "licence": "CC-BY 4.0 and ODbL 1.0",
+      "attribution": "Building heights (c) Google Research Open Buildings 2.5D Temporal, derived from Copernicus Sentinel-2",
+      "published_mae_m": 1.5,
+      "effective_resolution_m": 4.0,
+      "statistic": "median of footprint pixels above 1 m",
+      "gate": {
+        "min_pixels": 8,
+        "min_footprint_coverage": 0.35,
+        "min_credible_height_m": 3.0
+      },
+      "_why_median": "Five statistics were scored against the 241 buildings in this box holding a real OSM height tag, stratified by height band. The median of positive pixels has the flattest bias across 0-45 m, where 213 of them sit. Chosen for low bias rather than lowest MAE: in a 3D city, systematic bias distorts the skyline and misplaces every shadow, while scatter averages out over 3,000 buildings.",
+      "measured_against_osm": {
+        "n": 234,
+        "satellite_mae_m": 6.47,
+        "satellite_bias_m": -2.64,
+        "rule_v0_1_mae_m": 10.16,
+        "rule_v0_1_bias_m": -7.31,
+        "_bias_by_band_m": {
+          "0-8": {
+            "rule": 3.31,
+            "sat": -0.79
+          },
+          "8-15": {
+            "rule": 1.04,
+            "sat": -0.07
+          },
+          "15-25": {
+            "rule": -5.57,
+            "sat": -2.95
+          },
+          "25-45": {
+            "rule": -18.73,
+            "sat": -0.17
+          },
+          "45+": {
+            "rule": -45.23,
+            "sat": -15.21
+          }
+        },
+        "_caveat": "The OSM height sample is selection-biased towards tall and notable buildings (its p90 is 45.5 m, which is not central Delhi), so the per-band table is the honest read and the overall figure flatters both estimators."
+      },
+      "known_limitation": "Above 45 m this under-reads by 12-18 m. Sentinel-2 derived heights saturate on towers. Uncorrected on purpose: the sample showing the bias is 28 buildings."
+    }
   },
   "budgets": {
     "initial_transfer_mb": {

@@ -3,7 +3,8 @@
     "count": 3196,
     "modes": {
       "observed": 261,
-      "estimated": 2935
+      "remote_sensed": 2564,
+      "estimated": 371
     },
     "dropped_outside_box": 102,
     "suppressed_under_landmarks": {
@@ -11,13 +12,46 @@
       "india-gate": 1,
       "new-parliament-house": 5
     },
+    "satellite_gate": {
+      "ok": 2798,
+      "low_coverage": 144,
+      "below_credible_height": 175,
+      "too_few_pixels": 79
+    },
+    "satellite_raster": {
+      "dataset": "Google Research Open Buildings 2.5D Temporal v1",
+      "band": "building_height",
+      "year": 2023,
+      "licence": "CC-BY 4.0 and ODbL 1.0",
+      "attribution": "Building heights \u00a9 Google Research Open Buildings 2.5D Temporal, derived from Copernicus Sentinel-2",
+      "published_mae_m": 1.5,
+      "source_resolution_m": 0.5,
+      "effective_resolution_m": 4.0,
+      "crs": "EPSG:32643",
+      "origin": [
+        714875.5,
+        3170162.5
+      ],
+      "pixel": [
+        0.5,
+        -0.5
+      ],
+      "shape": [
+        8173,
+        7871
+      ],
+      "valid_px": 64329683,
+      "above_zero_px": 19612162,
+      "max_m": 96.0,
+      "note": "Height above ground in metres, not elevation. Fetched by HTTP range request over the internally-tiled source GeoTIFFs; only the study box was downloaded."
+    },
     "top_bases": {
-      "rule:class=yes": 2701,
+      "open-buildings-2.5d:median": 2564,
+      "rule:class=yes": 314,
       "osm:building:levels": 242,
-      "rule:area<50": 131,
+      "rule:area<50": 40,
       "osm:height": 19,
-      "rule:class=house": 17,
-      "rule:class=roof": 13
+      "rule:class=roof": 5
     }
   },
   "roads": {

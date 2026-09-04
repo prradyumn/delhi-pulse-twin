@@ -24,6 +24,9 @@ export const PALETTE = {
    *  of guessed heights in this box is impossible to miss */
   revealObserved:  c(0x9fb0a6),
   revealEstimated: c(0xc99a4e),
+  /** measured from satellite: between the two, because it IS between them — a real measurement
+   *  with a 1.5 m published error, but not somebody standing in front of the building */
+  revealRemote:    c(0x6f97b3),
 
   rail:  c(0x57534e),
   metro: c(0x4a6e8a),

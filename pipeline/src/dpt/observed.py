@@ -135,8 +135,85 @@ def headways(events: list[dict]) -> dict:
                           "difference is what bunching costs a passenger."}
 
 
+def derived_speeds(records, min_dt=10, max_dt=180, max_kmh=90.0) -> dict:
+    """Speed from successive positions of the same vehicle, because the feed's own speed is dead.
+
+    MEASURED: `Position.speed` is populated on 100% of Delhi's vehicle records and is **always
+    exactly 0.0**. The field exists, so an integration that trusts the spec would have "speed data"
+    and would report 0 km/h across the whole city. It carries no information at all.
+
+    What the feed does carry, at 100%, is position, timestamp and a stable vehicle id, polled every
+    30 s. Differencing consecutive fixes for one vehicle recovers a real speed. That is DERIVED
+    rather than observed and is labelled so, but it rests on observed positions instead of on a
+    diurnal curve somebody authored.
+
+    Guards, each for a specific way this goes wrong:
+      - same vehicle AND same trip, or a vehicle starting its next run teleports across the city
+      - dt within [min_dt, max_dt]: a 10 s gap makes GPS jitter look like speed, and an hour-long
+        gap averages away everything that happened in between
+      - great-circle distance, not planar, because Delhi spans enough longitude to matter
+      - anything above max_kmh is a bad fix rather than a fast bus, and is dropped and counted
+    """
+    by_veh = collections.defaultdict(list)
+    for r in records:
+        vid = r.get("vehicle_id") or r.get("entity_id")
+        ts = r.get("timestamp") if r.get("timestamp") is not None else r.get("_feed_time")
+        if vid and ts is not None and r.get("lat") is not None:
+            by_veh[vid].append((int(ts), r["lat"], r["lon"], r.get("trip_id"), r.get("route_id")))
+
+    kmh, by_hour, by_route = [], collections.defaultdict(list), collections.defaultdict(list)
+    pairs = dropped_dt = dropped_fast = dropped_trip = 0
+    for vid, fixes in by_veh.items():
+        fixes.sort()
+        for (t0, la0, lo0, tr0, _r0), (t1, la1, lo1, tr1, r1) in zip(fixes, fixes[1:]):
+            if tr0 != tr1:
+                dropped_trip += 1
+                continue
+            dt = t1 - t0
+            if dt < min_dt or dt > max_dt:
+                dropped_dt += 1
+                continue
+            dlat = math.radians(la1 - la0)
+            dlon = math.radians(lo1 - lo0)
+            a = (math.sin(dlat / 2) ** 2
+                 + math.cos(math.radians(la0)) * math.cos(math.radians(la1))
+                 * math.sin(dlon / 2) ** 2)
+            metres = 2 * 6371000 * math.asin(min(1.0, math.sqrt(a)))
+            v = (metres / dt) * 3.6
+            pairs += 1
+            if v > max_kmh:
+                dropped_fast += 1
+                continue
+            kmh.append(v)
+            by_route[r1].append(v)
+            by_hour[datetime.datetime.fromtimestamp(
+                t1, datetime.timezone(datetime.timedelta(hours=5, minutes=30))).hour].append(v)
+
+    if not kmh:
+        return {"samples": 0, "note": "no usable consecutive position pairs"}
+    kmh.sort()
+    q = lambda p: kmh[min(len(kmh) - 1, int(p * len(kmh)))]
+    moving = [v for v in kmh if v >= 2.0]
+    return {
+        "samples": len(kmh), "pairs_considered": pairs,
+        "dropped_trip_change": dropped_trip, "dropped_bad_dt": dropped_dt,
+        "dropped_implausible": dropped_fast,
+        "median_kmh": round(statistics.median(kmh), 1),
+        "p10_kmh": round(q(0.10), 1), "p90_kmh": round(q(0.90), 1),
+        "stopped_share": round(sum(1 for v in kmh if v < 2.0) / len(kmh), 3),
+        "median_when_moving_kmh": round(statistics.median(moving), 1) if moving else None,
+        "by_hour_kmh": {str(h): round(statistics.median(v), 1)
+                        for h, v in sorted(by_hour.items()) if len(v) >= 20},
+        "_mode": "derived from observed positions",
+        "_bias_note": "A bus is a BIASED probe for traffic speed: it stops at stops, pulls in and "
+                      "out of the kerb, and may use a bus lane. `median_when_moving_kmh` excludes "
+                      "fixes below 2 km/h, which removes dwell but not the rest of the bias. Treat "
+                      "it as a lower bound on general traffic speed, not a measurement of it.",
+    }
+
+
 def speeds(records) -> dict:
-    """Observed speed distribution, excluding dwell. Buses are a biased traffic probe; declared."""
+    """The feed's OWN speed field. Kept to demonstrate that it is dead — see derived_speeds."""
     vals, by_hour = [], collections.defaultdict(list)
     used = skipped_dwell = skipped_missing = 0
     for r in records:
@@ -216,7 +293,8 @@ def analyse(ndjson: pathlib.Path, box_only: bool = False) -> dict:
         "distinct_routes": len(routes),
         "arrival_events": len(ev),
         "headways": headways(ev),
-        "speeds": speeds(recs),
+        "feed_speed_field": speeds(recs),
+        "speeds": derived_speeds(recs),
         "bunching": bunching(recs),
         "_mode": "observed",
         "_provenance": "Delhi Open Transit Data GTFS-Realtime VehiclePositions, recorded by "

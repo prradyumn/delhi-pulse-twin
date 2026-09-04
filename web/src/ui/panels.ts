@@ -135,8 +135,9 @@ export function legend(metroLines: { name: string; colour: string }[] = []) {
       text: "Corridor colour is estimated from a declared time-of-day heuristic, not observed speeds." }));
 
     if (store.get().revealEstimated) {
-      body.append(swatch(hex(PALETTE.revealObserved), "Height measured in OSM"));
-      body.append(swatch(hex(PALETTE.revealEstimated), "Height estimated by rule v0.1"));
+      body.append(swatch(hex(PALETTE.revealObserved), "Height tagged in OSM"));
+      body.append(swatch(hex(PALETTE.revealRemote), "Height measured from satellite"));
+      body.append(swatch(hex(PALETTE.revealEstimated), "Height estimated by class rule"));
     } else {
       body.append(swatch(hex(PALETTE.buildingObserved), "Buildings"));
     }

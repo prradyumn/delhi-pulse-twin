@@ -218,9 +218,20 @@ def main() -> int:
             now = datetime.datetime.now().astimezone()
             try:
                 h, vs, nbytes = poll(a.key)
-            except (urllib.error.URLError, urllib.error.HTTPError, ValueError, OSError) as e:
+            except KeyboardInterrupt:
+                raise
+            except Exception as e:                                   # noqa: BLE001
+                # Deliberately broad. A recorder meant to run for eleven hours must survive every
+                # transient a public endpoint can produce, and the first real run died four
+                # minutes in on http.client.IncompleteRead — a truncated response, which is an
+                # HTTPException and so slipped past a tuple of URLError/OSError/ValueError.
+                # Enumerating exception types here is a losing game; the loop counts the failure,
+                # sleeps and carries on.
                 cov["errors"] += 1
-                print(f"  {now:%H:%M:%S}  poll failed: {e}")
+                cov.setdefault("error_kinds", {})
+                cov["error_kinds"][type(e).__name__] = \
+                    cov["error_kinds"].get(type(e).__name__, 0) + 1
+                print(f"  {now:%H:%M:%S}  poll failed: {type(e).__name__}: {e}")
                 if a.once:
                     save_coverage(); return 1
                 time.sleep(a.interval); continue

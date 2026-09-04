@@ -12,6 +12,7 @@ export class BuildingsLayer implements Layer {
   buildings: Building[] = [];
   heightRuleVersion = "?";
   estimatedCount = 0;
+  remoteCount = 0;
   /** one mesh per spatial tile; `feats` maps that mesh's vertex-feature indices back to buildings */
   private tiles: { mesh: THREE.Mesh; vfeat: Uint32Array; feats: Building[] }[] = [];
   private reveal = false;
@@ -31,6 +32,7 @@ export class BuildingsLayer implements Layer {
     this.buildings = res.data.features;
     this.heightRuleVersion = res.data.height_rule_version;
     this.estimatedCount = this.buildings.filter((b) => b.m === 1).length;
+    this.remoteCount = this.buildings.filter((b) => b.m === 2).length;
 
     // One material, shared across every tile: per-tile meshes cost draw calls, not shader
     // programs. The building class travels as a vertex attribute precisely so this stays ONE
@@ -87,10 +89,12 @@ export class BuildingsLayer implements Layer {
     return ((h >>> 0) % 1000) / 1000;
   }
 
-  private colorOf(m: 0 | 1, h: number, i = 0): THREE.Color {
+  private colorOf(m: 0 | 1 | 2, h: number, i = 0): THREE.Color {
     const c = this.reveal
-      ? (m === 0 ? PALETTE.revealObserved : PALETTE.revealEstimated)
-      : (m === 0 ? PALETTE.buildingObserved : PALETTE.buildingEstimated);
+      ? (m === 0 ? PALETTE.revealObserved
+         : m === 2 ? PALETTE.revealRemote : PALETTE.revealEstimated)
+      // outside reveal mode a satellite height is treated as measured, because it is one
+      : (m === 1 ? PALETTE.buildingEstimated : PALETTE.buildingObserved);
     // taller stock reads slightly lighter, which gives the skyline depth without a texture
     const lift = 1 + Math.min(h / 90, 1) * 0.14;
     const out = c.clone().multiplyScalar(lift);

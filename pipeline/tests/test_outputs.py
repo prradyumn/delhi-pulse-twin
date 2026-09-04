@@ -101,20 +101,49 @@ if b:
           "buildings: height_rule_version does not match config")
     bad_h = [f["id"] for f in feats if not (1.0 <= f["h"] <= 300)]
     check(not bad_h, f"buildings: {len(bad_h)} implausible heights, e.g. {bad_h[:3]}")
-    bad_m = [f["id"] for f in feats if f["m"] not in (0, 1)]
+    # three modes since height rule v0.2: 0 observed from an OSM tag, 2 measured from satellite,
+    # 1 estimated by class rule
+    bad_m = [f["id"] for f in feats if f["m"] not in (0, 1, 2)]
     check(not bad_m, f"buildings: {len(bad_m)} bad height-mode flags")
     short = [f["id"] for f in feats if len(f["r"]) < 3]
     check(not short, f"buildings: {len(short)} rings with fewer than 3 vertices")
     dup = len(feats) - len({f["id"] for f in feats})
     check(dup == 0, f"buildings: {dup} duplicate ids")
 
+    obs = sum(1 for f in feats if f["m"] == 0)
+    rs = sum(1 for f in feats if f["m"] == 2)
     est = sum(1 for f in feats if f["m"] == 1)
     pct = 100 * est / max(len(feats), 1)
+    check(obs + rs + est == len(feats),
+          f"buildings: mode counts {obs}+{rs}+{est} do not sum to {len(feats)}")
+
+    # The OSM-tagged share is what Spike-0 measured, and it is the only one of the three that
+    # should be stable: it is a property of the extract, not of our estimators. Before v0.2 this
+    # was inferred as 100 - estimated, which stopped being true the moment a third mode existed —
+    # the check now reads the observed count directly, which is what it always meant.
     measured = CONFIG["measured"]["height_or_levels_tag_pct"]
-    # the estimated share must stay consistent with what Spike-0 measured; a big move means the
-    # rule or the extract changed and the disclosure copy is now wrong
-    check(abs((100 - pct) - measured) < 3.0,
-          f"buildings: {pct:.1f}% estimated implies {100 - pct:.1f}% tagged, but config records {measured}%")
+    obs_pct = 100 * obs / max(len(feats), 1)
+    check(abs(obs_pct - measured) < 3.0,
+          f"buildings: {obs_pct:.1f}% carry an OSM height tag, but config records {measured}%")
+
+    rule = CONFIG["height_rule"]
+    if rule["version"] != "0.1":
+        # v0.2 exists to get the box off an authored guess. If the satellite tier silently stops
+        # contributing — raster missing, gate too strict, coordinates wrong — the build still
+        # succeeds and every height quietly reverts to the rule. This is the check that notices.
+        check(rs > len(feats) * 0.5,
+              f"buildings: height rule v{rule['version']} declares a satellite tier but only "
+              f"{rs} of {len(feats)} heights came from it — the raster or the gate is broken")
+        check(pct < 20.0,
+              f"buildings: {pct:.1f}% of heights still come from the class rule under "
+              f"v{rule['version']}; v0.1 was 91.8% and the point of v0.2 is that most are measured")
+        rsm = rule.get("remote_sensed", {})
+        check(bool(rsm.get("attribution")) and bool(rsm.get("licence")),
+              "height_rule.remote_sensed must carry the dataset licence and attribution")
+        m = rsm.get("measured_against_osm", {})
+        check(m.get("satellite_mae_m", 99) < m.get("rule_v0_1_mae_m", 0),
+              "height_rule records a satellite MAE no better than the rule it replaced — if that "
+              "is really so, the satellite tier should not be above the rule")
     print(f"  buildings: {len(feats):,} features, {pct:.1f}% estimated heights")
 
 # ---------------------------------------------------------------- corridors

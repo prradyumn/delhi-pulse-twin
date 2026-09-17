@@ -1,0 +1,318 @@
+{
+  "kind": "metro",
+  "count": 4,
+  "provenance": {
+    "provider": "OpenStreetMap contributors",
+    "dataset": "OSM subway route relations for the four DMRC lines crossing the box",
+    "license": "ODbL 1.0 (https://www.openstreetmap.org/copyright)",
+    "attribution": "\u00a9 OpenStreetMap contributors",
+    "retrieved_at": "2026-09-03",
+    "source_time": null,
+    "refresh_cadence": "manual re-extract; pinned for the demo",
+    "bounds": [
+      77.1975,
+      28.6039,
+      77.2385,
+      28.6401
+    ],
+    "crs": "EPSG:32643 + local origin",
+    "mode": "observed",
+    "transform_version": "0.1.0",
+    "limitations": [
+      "Line paths and colours are observed OSM data; the colours are DMRC's own.",
+      "Only the longest continuous piece inside the study box is kept, so a line may appear to end at the boundary.",
+      "Station positions come from stop/platform members within 90 m of the kept path; the two platforms of one station are collapsed to a single stop.",
+      "No timetable exists in this data. Train movement is replay from an assumed headway and dwell, never a live position."
+    ]
+  },
+  "features": [
+    {
+      "id": "metro/447209",
+      "name": "Blue Line",
+      "colour": "#4169E1",
+      "osm": "relation/447209",
+      "path": [
+        [
+          1967.5,
+          -415.3
+        ],
+        [
+          1576.7,
+          -427.3
+        ],
+        [
+          1386.0,
+          -438.8
+        ],
+        [
+          1302.2,
+          -470.3
+        ],
+        [
+          668.5,
+          -871.8
+        ],
+        [
+          248.0,
+          -1133.2
+        ],
+        [
+          -3.5,
+          -1281.5
+        ],
+        [
+          -471.6,
+          -1589.3
+        ],
+        [
+          -957.3,
+          -1891.8
+        ],
+        [
+          -1151.4,
+          -2017.2
+        ],
+        [
+          -1201.0,
+          -2043.2
+        ]
+      ],
+      "path_len": 3628.4,
+      "station_at": [
+        391.0,
+        1421.8,
+        2038.7,
+        3341.2
+      ],
+      "stations": 4
+    },
+    {
+      "id": "metro/447210",
+      "name": "Yellow Line",
+      "colour": "#FFDF00",
+      "osm": "relation/447210",
+      "path": [
+        [
+          334.2,
+          -2043.2
+        ],
+        [
+          153.1,
+          -1336.7
+        ],
+        [
+          131.8,
+          -1240.2
+        ],
+        [
+          96.8,
+          -1136.4
+        ],
+        [
+          72.7,
+          -1081.3
+        ],
+        [
+          -195.7,
+          -643.5
+        ],
+        [
+          -222.0,
+          -580.0
+        ],
+        [
+          -222.4,
+          -419.4
+        ],
+        [
+          -232.8,
+          -381.6
+        ],
+        [
+          -387.0,
+          -98.4
+        ],
+        [
+          -492.8,
+          68.9
+        ],
+        [
+          -509.6,
+          106.9
+        ],
+        [
+          -543.3,
+          689.0
+        ],
+        [
+          -606.4,
+          2043.2
+        ]
+      ],
+      "path_len": 4280.6,
+      "station_at": [
+        877.5,
+        2102.4,
+        2924.9,
+        3632.3
+      ],
+      "stations": 4
+    },
+    {
+      "id": "metro/2535797",
+      "name": "Violet Line",
+      "colour": "#553592",
+      "osm": "relation/2535797",
+      "path": [
+        [
+          1967.5,
+          -442.9
+        ],
+        [
+          1911.9,
+          -420.6
+        ],
+        [
+          1820.0,
+          -406.8
+        ],
+        [
+          1576.5,
+          -416.4
+        ],
+        [
+          1253.0,
+          -434.2
+        ],
+        [
+          197.8,
+          -469.9
+        ],
+        [
+          160.2,
+          -463.9
+        ],
+        [
+          148.3,
+          -454.1
+        ],
+        [
+          138.9,
+          -438.9
+        ],
+        [
+          126.8,
+          -401.8
+        ],
+        [
+          122.1,
+          -229.0
+        ],
+        [
+          104.3,
+          154.3
+        ],
+        [
+          93.2,
+          198.9
+        ],
+        [
+          83.4,
+          219.8
+        ],
+        [
+          69.9,
+          238.4
+        ],
+        [
+          32.4,
+          262.3
+        ],
+        [
+          -446.2,
+          508.1
+        ],
+        [
+          -481.2,
+          539.6
+        ],
+        [
+          -500.4,
+          584.6
+        ],
+        [
+          -528.1,
+          634.6
+        ],
+        [
+          -535.7,
+          689.5
+        ],
+        [
+          -534.3,
+          754.8
+        ],
+        [
+          -527.0,
+          807.5
+        ],
+        [
+          -516.5,
+          838.0
+        ],
+        [
+          -496.2,
+          868.6
+        ],
+        [
+          679.5,
+          1855.5
+        ],
+        [
+          951.2,
+          2043.2
+        ]
+      ],
+      "path_len": 5379.2,
+      "station_at": [
+        396.6,
+        2059.6,
+        3326.4
+      ],
+      "stations": 3
+    },
+    {
+      "id": "metro/2535798",
+      "name": "Airport Express Line",
+      "colour": "#FF8C00",
+      "osm": "relation/2535798",
+      "path": [
+        [
+          -1967.5,
+          -63.6
+        ],
+        [
+          -344.0,
+          -926.8
+        ],
+        [
+          -264.9,
+          -999.1
+        ],
+        [
+          -228.0,
+          -1053.6
+        ],
+        [
+          324.2,
+          -2043.2
+        ]
+      ],
+      "path_len": 3145.0,
+      "station_at": [
+        1471.5
+      ],
+      "stations": 1
+    }
+  ]
+}

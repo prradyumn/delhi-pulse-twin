@@ -1,0 +1,77 @@
+{
+  "generated_at": "2026-09-03T22:57:27",
+  "landmarks": {
+    "india-gate": {
+      "source": "parametric",
+      "lods": [
+        0,
+        1,
+        2
+      ],
+      "height_m": 42.0,
+      "required": true
+    },
+    "rashtrapati-bhavan": {
+      "source": "parametric",
+      "lods": [
+        0,
+        1,
+        2
+      ],
+      "height_m": 20.0,
+      "required": false
+    },
+    "north-block": {
+      "source": "parametric",
+      "lods": [
+        0,
+        1,
+        2
+      ],
+      "height_m": 30.0,
+      "required": false
+    },
+    "south-block": {
+      "source": "parametric",
+      "lods": [
+        0,
+        1,
+        2
+      ],
+      "height_m": 30.0,
+      "required": false
+    },
+    "old-parliament-house": {
+      "source": "parametric",
+      "lods": [
+        0,
+        1,
+        2
+      ],
+      "height_m": 21.0,
+      "required": true
+    },
+    "new-parliament-house": {
+      "source": "parametric",
+      "lods": [
+        0,
+        1,
+        2
+      ],
+      "height_m": 39.6,
+      "required": false
+    },
+    "cp-central-park": {
+      "source": "open_ground",
+      "lods": [],
+      "height_m": null,
+      "required": false
+    },
+    "jantar-mantar": {
+      "source": "open_ground",
+      "lods": [],
+      "height_m": null,
+      "required": false
+    }
+  }
+}

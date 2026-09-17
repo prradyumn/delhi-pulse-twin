@@ -91,7 +91,7 @@ either adapter existed:
 - `web/src/data/adapters/gtfsRealtime.ts` — the adapter, including a **hand-written GTFS-Realtime
   protobuf reader**. Six fields do not justify pulling in `gtfs-realtime-bindings` plus
   `protobufjs` in a project whose argument is that it runs from bundled data.
-- `web/api/vehicles.ts` — Vercel edge function. Returns **501 when unconfigured**, which the client
+- `api/vehicles.ts` — Vercel edge function. Returns **501 when unconfigured**, which the client
   treats as a normal resting state.
 - `web/src/layers/liveBuses.ts` — renders real vehicles in a distinct brighter body, and
   **switches the replay layer off when live positions arrive**, because showing both would put

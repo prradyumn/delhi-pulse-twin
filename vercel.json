@@ -1,11 +1,23 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd web && npm install && npm run build",
+  "framework": null,
+  "installCommand": "cd web && npm ci",
+  "buildCommand": "cd web && npm run build",
   "outputDirectory": "web/dist",
-  "functions": {
-    "web/api/vehicles.ts": {
-      "runtime": "edge"
+  "_functions": "api/vehicles.ts declares `export const config = { runtime: 'edge' }` itself, so it needs no entry here. It MUST live in api/ at the project root: Vercel only discovers functions under api/ or pages/api/, and a functions glob pointing anywhere else is the documented 'Incorrect Function Glob Pattern' error. It sat in web/api/ until 2026-09-17, where it was never deployed at all.",
+  "_env": "Set OTD_API_KEY in the Vercel project to enable live bus positions. Without it /api/vehicles answers 200 with an `unconfigured` body and the app runs on deterministic replay, which is the scope-locked default: no live provider is ever required.",
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/data/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=86400" }
+      ]
     }
-  },
-  "_note": "OTD_API_KEY must be set as a Vercel environment variable. Without it /api/vehicles returns 501 and the app runs on deterministic bus replay, which is the scope-locked default: no live provider is ever required."
+  ]
 }

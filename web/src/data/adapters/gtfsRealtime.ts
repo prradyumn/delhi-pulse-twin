@@ -5,7 +5,7 @@
  * `docs/02-ARCHITECTURE.md` before either existed:
  *
  * 1. **It needs a key**, and the NFR says secrets stay server-side. So the browser never sees the
- *    key: it calls our own `/api/vehicles`, which is the Vercel function in `web/api/vehicles.ts`.
+ *    key: it calls our own `/api/vehicles`, which is the Vercel function in `api/vehicles.ts`.
  * 2. **It would be CORS-blocked anyway.** `otd.delhi.gov.in` sends no CORS headers, so a direct
  *    browser fetch cannot work regardless of the key. The proxy is not optional.
  *

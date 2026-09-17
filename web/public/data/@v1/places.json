@@ -1,0 +1,3548 @@
+{
+  "kind": "places",
+  "count": 352,
+  "provenance": {
+    "provider": "OpenStreetMap contributors",
+    "dataset": "OSM named places, POIs, stations and districts",
+    "license": "ODbL 1.0 (https://www.openstreetmap.org/copyright)",
+    "attribution": "\u00a9 OpenStreetMap contributors",
+    "retrieved_at": "2026-09-03",
+    "source_time": null,
+    "refresh_cadence": "manual re-extract; pinned for the demo",
+    "bounds": [
+      77.1975,
+      28.6039,
+      77.2385,
+      28.6401
+    ],
+    "crs": "EPSG:32643 + local origin",
+    "mode": "observed",
+    "transform_version": "0.1.0",
+    "limitations": [
+      "Names and positions are observed OSM data. Framing distances are authored for this viewer.",
+      "Presence in this list reflects OSM coverage, not importance."
+    ]
+  },
+  "features": [
+    {
+      "id": "place/n11936504779",
+      "name": "Alexander Sergeyevich Pushkin",
+      "cat": "attraction",
+      "x": 1297.94,
+      "z": -378.54,
+      "osm": "node/11936504779",
+      "dist": 340,
+      "kind": "artwork"
+    },
+    {
+      "id": "place/w1184982373",
+      "name": "Ashok Stambh",
+      "cat": "attraction",
+      "x": -765.12,
+      "z": 556.68,
+      "osm": "way/1184982373",
+      "dist": 340,
+      "kind": "artwork"
+    },
+    {
+      "id": "place/w499889060",
+      "name": "Baba Baghel Sikh Museum",
+      "cat": "attraction",
+      "x": -884.81,
+      "z": -424.91,
+      "osm": "way/499889060",
+      "dist": 340,
+      "kind": "museum"
+    },
+    {
+      "id": "place/n9446453030",
+      "name": "Battle of Basantar",
+      "cat": "attraction",
+      "x": 1485.36,
+      "z": 1202.39,
+      "osm": "node/9446453030",
+      "dist": 340,
+      "kind": "artwork"
+    },
+    {
+      "id": "place/n9444277686",
+      "name": "Battle of Haji Pir",
+      "cat": "attraction",
+      "x": 1501.86,
+      "z": 794.68,
+      "osm": "node/9444277686",
+      "dist": 340,
+      "kind": "artwork"
+    },
+    {
+      "id": "place/n9444277681",
+      "name": "Battle of Point 4875",
+      "cat": "attraction",
+      "x": 1306.94,
+      "z": 849.18,
+      "osm": "node/9444277681",
+      "dist": 340,
+      "kind": "artwork"
+    },
+    {
+      "id": "place/n12898731871",
+      "name": "Bhagwan Bharat",
+      "cat": "attraction",
+      "x": -765.22,
+      "z": -1176.46,
+      "osm": "node/12898731871",
+      "dist": 340,
+      "kind": "artwork"
+    },
+    {
+      "id": "place/n12901223724",
+      "name": "Charkha",
+      "cat": "attraction",
+      "x": -104.87,
+      "z": -1042.1,
+      "osm": "node/12901223724",
+      "dist": 340,
+      "kind": "artwork"
+    },
+    {
+      "id": "place/n11816144233",
+      "name": "Charriot temple",
+      "cat": "attraction",
+      "x": 78.52,
+      "z": 1189.82,
+      "osm": "node/11816144233",
+      "dist": 340,
+      "kind": "artwork"
+    },
+    {
+      "id": "place/n9446471206",
+      "name": "Joint Operations in Indian Armed Forces",
+      "cat": "attraction",
+      "x": 1298.25,
+      "z": 1126.19,
+      "osm": "node/9446471206",
+      "dist": 340,
+      "kind": "artwork"
+    },
+    {
+      "id": "place/n13757275711",
+      "name": "Lady Hardinge",
+      "cat": "attraction",
+      "x": -383.36,
+      "z": -1304.45,
+      "osm": "node/13757275711",
+      "dist": 340,
+      "kind": "artwork"
+    },
+    {
+      "id": "place/n5658411221",
+      "name": "Madame Tussaud\u2019s Museum",
+      "cat": "attraction",
+      "x": -120.93,
+      "z": -982.63,
+      "osm": "node/5658411221",
+      "dist": 340,
+      "kind": "museum"
+    },
+    {
+      "id": "place/n7043098989",
+      "name": "Museum of Musical Instruments",
+      "cat": "attraction",
+      "x": 1290.02,
+      "z": -274.83,
+      "osm": "node/7043098989",
+      "dist": 340,
+      "kind": "museum"
+    },
+    {
+      "id": "place/w485053609",
+      "name": "National Charkha Museum",
+      "cat": "attraction",
+      "x": -29.87,
+      "z": -1030.52,
+      "osm": "way/485053609",
+      "dist": 340,
+      "kind": "museum"
+    },
+    {
+      "id": "place/n2962182563",
+      "name": "National Children Museum",
+      "cat": "attraction",
+      "x": 1947.19,
+      "z": -1234.49,
+      "osm": "node/2962182563",
+      "dist": 340,
+      "kind": "museum"
+    },
+    {
+      "id": "place/r17080654",
+      "name": "National Museum",
+      "cat": "attraction",
+      "x": 149.73,
+      "z": 1148.16,
+      "osm": "relation/17080654",
+      "dist": 340,
+      "kind": "museum"
+    },
+    {
+      "id": "place/n13565242209",
+      "name": "National Philatelic Museum",
+      "cat": "attraction",
+      "x": -527.76,
+      "z": -47.93,
+      "osm": "node/13565242209",
+      "dist": 340,
+      "kind": "museum"
+    },
+    {
+      "id": "place/n6796761498",
+      "name": "Pandara Market",
+      "cat": "attraction",
+      "x": 1143.37,
+      "z": 1695.45,
+      "osm": "node/6796761498",
+      "dist": 340,
+      "kind": "attraction"
+    },
+    {
+      "id": "place/w80926784",
+      "name": "Parliament Museum",
+      "cat": "attraction",
+      "x": -1044.19,
+      "z": 374.2,
+      "osm": "way/80926784",
+      "dist": 340,
+      "kind": "museum"
+    },
+    {
+      "id": "place/w164675825",
+      "name": "Rajiv Chowk Central Park",
+      "cat": "attraction",
+      "x": 145.15,
+      "z": -1200.98,
+      "osm": "way/164675825",
+      "dist": 340,
+      "kind": "attraction"
+    },
+    {
+      "id": "place/n12020245241",
+      "name": "Sardar Vallabhbhai Patel",
+      "cat": "attraction",
+      "x": -516.41,
+      "z": -149.83,
+      "osm": "node/12020245241",
+      "dist": 340,
+      "kind": "artwork"
+    },
+    {
+      "id": "place/n12898829071",
+      "name": "Shaheed Bhagat Singh",
+      "cat": "attraction",
+      "x": -977.54,
+      "z": -1110.34,
+      "osm": "node/12898829071",
+      "dist": 340,
+      "kind": "artwork"
+    },
+    {
+      "id": "place/w44186073",
+      "name": "Vigyan Bhavan",
+      "cat": "attraction",
+      "x": 285.34,
+      "z": 1220.72,
+      "osm": "way/44186073",
+      "dist": 340,
+      "kind": "museum"
+    },
+    {
+      "id": "place/r18957611",
+      "name": "Aga Khan Hall",
+      "cat": "building",
+      "x": 1762.05,
+      "z": -87.15,
+      "osm": "relation/18957611",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w354735461",
+      "name": "Anusandhan Bhawan",
+      "cat": "building",
+      "x": -581.17,
+      "z": 399.99,
+      "osm": "way/354735461",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w351619555",
+      "name": "Anuvrat Bhawan",
+      "cat": "building",
+      "x": 1861.95,
+      "z": -919.89,
+      "osm": "way/351619555",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/w344737247",
+      "name": "Arunachal",
+      "cat": "building",
+      "x": 646.04,
+      "z": -791.18,
+      "osm": "way/344737247",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/w665147723",
+      "name": "Ashirwad Old Age",
+      "cat": "building",
+      "x": -1692.62,
+      "z": -832.2,
+      "osm": "way/665147723",
+      "dist": 380,
+      "kind": "social_facility"
+    },
+    {
+      "id": "place/w351571430",
+      "name": "Babar Road Community Centre",
+      "cat": "building",
+      "x": 1524.29,
+      "z": -872.02,
+      "osm": "way/351571430",
+      "dist": 380,
+      "kind": "community_centre"
+    },
+    {
+      "id": "place/w352306179",
+      "name": "Banga Bhawan",
+      "cat": "building",
+      "x": 762.53,
+      "z": -451.32,
+      "osm": "way/352306179",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1137810754",
+      "name": "Bank Extension Counter",
+      "cat": "building",
+      "x": 1786.53,
+      "z": -540.88,
+      "osm": "way/1137810754",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w351561090",
+      "name": "Barakhamba Road Fire Station",
+      "cat": "building",
+      "x": 503.5,
+      "z": -1119.18,
+      "osm": "way/351561090",
+      "dist": 380,
+      "kind": "fire_station"
+    },
+    {
+      "id": "place/w351571428",
+      "name": "Barakhamba Tower",
+      "cat": "building",
+      "x": 641.21,
+      "z": -967.04,
+      "osm": "way/351571428",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w351561001",
+      "name": "Bible House",
+      "cat": "building",
+      "x": -323.78,
+      "z": -381.78,
+      "osm": "way/351561001",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1409391578",
+      "name": "Block 1",
+      "cat": "building",
+      "x": 494.84,
+      "z": -1309.82,
+      "osm": "way/1409391578",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1409391576",
+      "name": "Block 2",
+      "cat": "building",
+      "x": 512.88,
+      "z": -1328.71,
+      "osm": "way/1409391576",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1409391582",
+      "name": "Block 3",
+      "cat": "building",
+      "x": 534.55,
+      "z": -1333.89,
+      "osm": "way/1409391582",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w348203520",
+      "name": "CPIML Parliamentary Office",
+      "cat": "building",
+      "x": -94.88,
+      "z": 1349.41,
+      "osm": "way/348203520",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/r7173895",
+      "name": "Catholic Bishops' Conference of India Centre",
+      "cat": "building",
+      "x": -1190.01,
+      "z": -646.49,
+      "osm": "relation/7173895",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/w351571378",
+      "name": "Central government employees residential complex",
+      "cat": "building",
+      "x": 763.58,
+      "z": 126.71,
+      "osm": "way/351571378",
+      "dist": 380,
+      "kind": "apartments"
+    },
+    {
+      "id": "place/w352447776",
+      "name": "Chandralok Building",
+      "cat": "building",
+      "x": 156.36,
+      "z": -275.84,
+      "osm": "way/352447776",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1175626047",
+      "name": "Choudhary Building",
+      "cat": "building",
+      "x": 206.16,
+      "z": -1448.5,
+      "osm": "way/1175626047",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1175626049",
+      "name": "Connaught House",
+      "cat": "building",
+      "x": 352.55,
+      "z": -1239.84,
+      "osm": "way/1175626049",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/r5505143",
+      "name": "Constitutional Club of India",
+      "cat": "building",
+      "x": -437.31,
+      "z": 216.07,
+      "osm": "relation/5505143",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w351571437",
+      "name": "DCM Building",
+      "cat": "building",
+      "x": 761.87,
+      "z": -883.39,
+      "osm": "way/351571437",
+      "dist": 380,
+      "kind": "commercial"
+    },
+    {
+      "id": "place/w103176781",
+      "name": "DLF Centre",
+      "cat": "building",
+      "x": -99.79,
+      "z": -698.59,
+      "osm": "way/103176781",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/w351571388",
+      "name": "Dakshineshwar Apartment",
+      "cat": "building",
+      "x": 892.87,
+      "z": -409.52,
+      "osm": "way/351571388",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/r19374224",
+      "name": "Darbhanga House",
+      "cat": "building",
+      "x": 550.84,
+      "z": 1679.05,
+      "osm": "relation/19374224",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w131408841",
+      "name": "Defence Research & Development Organisation",
+      "cat": "building",
+      "x": -1295.32,
+      "z": 1351.62,
+      "osm": "way/131408841",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1488063431",
+      "name": "Delhi Metro Rail Corporation Headquarters",
+      "cat": "building",
+      "x": 739.25,
+      "z": -1095.97,
+      "osm": "way/1488063431",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/w1359806265",
+      "name": "Delhi Police Headquarters",
+      "cat": "building",
+      "x": -561.3,
+      "z": -348.99,
+      "osm": "way/1359806265",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/w351619714",
+      "name": "Delhi SLDC",
+      "cat": "building",
+      "x": 942.68,
+      "z": -1911.07,
+      "osm": "way/351619714",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w352247190",
+      "name": "Dental Council of India",
+      "cat": "building",
+      "x": 1660.77,
+      "z": -1322.86,
+      "osm": "way/352247190",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w374904577",
+      "name": "Director's Bungalow",
+      "cat": "building",
+      "x": 1877.11,
+      "z": -561.36,
+      "osm": "way/374904577",
+      "dist": 380,
+      "kind": "detached"
+    },
+    {
+      "id": "place/w351839031",
+      "name": "Diwan Shree Apartments",
+      "cat": "building",
+      "x": 986.2,
+      "z": -335.98,
+      "osm": "way/351839031",
+      "dist": 380,
+      "kind": "apartments"
+    },
+    {
+      "id": "place/w349791108",
+      "name": "Doctor Meghnad Saha Science Block",
+      "cat": "building",
+      "x": -1620.07,
+      "z": -1681.8,
+      "osm": "way/349791108",
+      "dist": 380,
+      "kind": "school"
+    },
+    {
+      "id": "place/w164676031",
+      "name": "Dunkin'",
+      "cat": "building",
+      "x": 497.3,
+      "z": -674.7,
+      "osm": "way/164676031",
+      "dist": 380,
+      "kind": "fast_food"
+    },
+    {
+      "id": "place/w281984544",
+      "name": "Electric Sub Station",
+      "cat": "building",
+      "x": -334.25,
+      "z": 499.04,
+      "osm": "way/281984544",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w351583015",
+      "name": "Embassy of Nepal",
+      "cat": "building",
+      "x": 1186.06,
+      "z": -442.34,
+      "osm": "way/351583015",
+      "dist": 380,
+      "kind": "diplomatic"
+    },
+    {
+      "id": "place/w351551908",
+      "name": "Federation of Indian Chambers of Commerce and Industry Federation House",
+      "cat": "building",
+      "x": 1322.52,
+      "z": -607.38,
+      "osm": "way/351551908",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w611101894",
+      "name": "G-Block",
+      "cat": "building",
+      "x": -115.05,
+      "z": -1203.7,
+      "osm": "way/611101894",
+      "dist": 380,
+      "kind": "commercial"
+    },
+    {
+      "id": "place/w350517872",
+      "name": "G.S. Sabharwal House",
+      "cat": "building",
+      "x": -676.28,
+      "z": -1749.58,
+      "osm": "way/350517872",
+      "dist": 380,
+      "kind": "commercial"
+    },
+    {
+      "id": "place/w1354558638",
+      "name": "Ganga",
+      "cat": "building",
+      "x": -1319.19,
+      "z": -128.03,
+      "osm": "way/1354558638",
+      "dist": 380,
+      "kind": "apartments"
+    },
+    {
+      "id": "place/w1393736853",
+      "name": "Ganga Ben Kutir",
+      "cat": "building",
+      "x": -69.2,
+      "z": -1064.78,
+      "osm": "way/1393736853",
+      "dist": 380,
+      "kind": "public"
+    },
+    {
+      "id": "place/w997761543",
+      "name": "Gopaldas Bhawan",
+      "cat": "building",
+      "x": 491.74,
+      "z": -1049.17,
+      "osm": "way/997761543",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/w442156778",
+      "name": "Handloom Haat",
+      "cat": "building",
+      "x": 64.25,
+      "z": -636.53,
+      "osm": "way/442156778",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1136942136",
+      "name": "Hannah Sen Cottage",
+      "cat": "building",
+      "x": 1690.12,
+      "z": -606.49,
+      "osm": "way/1136942136",
+      "dist": 380,
+      "kind": "detached"
+    },
+    {
+      "id": "place/w1306328978",
+      "name": "Harsha Bhawan",
+      "cat": "building",
+      "x": 354.55,
+      "z": -1178.98,
+      "osm": "way/1306328978",
+      "dist": 380,
+      "kind": "commercial"
+    },
+    {
+      "id": "place/w351561037",
+      "name": "Hindi Bhawan",
+      "cat": "building",
+      "x": 1933.36,
+      "z": -979.18,
+      "osm": "way/351561037",
+      "dist": 380,
+      "kind": "public"
+    },
+    {
+      "id": "place/w103176778",
+      "name": "Indian Bank",
+      "cat": "building",
+      "x": -155.35,
+      "z": -830.17,
+      "osm": "way/103176778",
+      "dist": 380,
+      "kind": "bank"
+    },
+    {
+      "id": "place/w839844479",
+      "name": "Indian Coast Guard headquarters",
+      "cat": "building",
+      "x": 1811.89,
+      "z": 820.67,
+      "osm": "way/839844479",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w927750076",
+      "name": "Indira Gandhi Bhawan",
+      "cat": "building",
+      "x": 1788.91,
+      "z": -988.63,
+      "osm": "way/927750076",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/n11806603451",
+      "name": "International Centre for Sikh Studies",
+      "cat": "building",
+      "x": -1203.38,
+      "z": 272.6,
+      "osm": "node/11806603451",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1393463456",
+      "name": "Jain Nishi Mandir",
+      "cat": "building",
+      "x": -779.16,
+      "z": -1200.42,
+      "osm": "way/1393463456",
+      "dist": 380,
+      "kind": "temple"
+    },
+    {
+      "id": "place/w369650195",
+      "name": "Jaipur House",
+      "cat": "building",
+      "x": 1626.45,
+      "z": 1287.99,
+      "osm": "way/369650195",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w103176779",
+      "name": "Janpath Bhawan",
+      "cat": "building",
+      "x": 62.43,
+      "z": -745.58,
+      "osm": "way/103176779",
+      "dist": 380,
+      "kind": "retail"
+    },
+    {
+      "id": "place/w352733869",
+      "name": "Jeevan Bharti",
+      "cat": "building",
+      "x": 28.46,
+      "z": -838.59,
+      "osm": "way/352733869",
+      "dist": 380,
+      "kind": "commercial"
+    },
+    {
+      "id": "place/r5262898",
+      "name": "Jeevan Tara",
+      "cat": "building",
+      "x": -400.12,
+      "z": -170.26,
+      "osm": "relation/5262898",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/w1193078528",
+      "name": "Juggernaut",
+      "cat": "building",
+      "x": 774.15,
+      "z": -837.01,
+      "osm": "way/1193078528",
+      "dist": 380,
+      "kind": "restaurant"
+    },
+    {
+      "id": "place/w164676032",
+      "name": "Kailash Building",
+      "cat": "building",
+      "x": 416.05,
+      "z": -834.73,
+      "osm": "way/164676032",
+      "dist": 380,
+      "kind": "commercial"
+    },
+    {
+      "id": "place/w351561086",
+      "name": "Kamladevi Bhawan",
+      "cat": "building",
+      "x": 1840.02,
+      "z": -929.18,
+      "osm": "way/351561086",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/n1870814931",
+      "name": "Kerala House",
+      "cat": "building",
+      "x": -163.71,
+      "z": -131.58,
+      "osm": "node/1870814931",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w488558528",
+      "name": "Langar Hall",
+      "cat": "building",
+      "x": -806.85,
+      "z": -462.08,
+      "osm": "way/488558528",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w360259497",
+      "name": "Le M\u00e9ridien",
+      "cat": "building",
+      "x": -22.41,
+      "z": 354.84,
+      "osm": "way/360259497",
+      "dist": 380,
+      "kind": "hotel"
+    },
+    {
+      "id": "place/w351418905",
+      "name": "Lexus",
+      "cat": "building",
+      "x": 135.56,
+      "z": 425.68,
+      "osm": "way/351418905",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1180651668",
+      "name": "Lok Sabha",
+      "cat": "building",
+      "x": -781.56,
+      "z": 517.9,
+      "osm": "way/1180651668",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1137810753",
+      "name": "Main Building",
+      "cat": "building",
+      "x": 1785.66,
+      "z": -505.11,
+      "osm": "way/1137810753",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1409391594",
+      "name": "Mayur Bhawan",
+      "cat": "building",
+      "x": 608.37,
+      "z": -1251.16,
+      "osm": "way/1409391594",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/r13985485",
+      "name": "Meghdoot 3",
+      "cat": "building",
+      "x": 1305.02,
+      "z": -220.94,
+      "osm": "relation/13985485",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1231653920",
+      "name": "Mess",
+      "cat": "building",
+      "x": 1654.33,
+      "z": -284.78,
+      "osm": "way/1231653920",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w369659754",
+      "name": "NDMC Primary School",
+      "cat": "building",
+      "x": 1911.61,
+      "z": 1896.59,
+      "osm": "way/369659754",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w351418828",
+      "name": "Nagar Palika Coeducational Day Boarding Middle School",
+      "cat": "building",
+      "x": -585.28,
+      "z": -627.07,
+      "osm": "way/351418828",
+      "dist": 380,
+      "kind": "school"
+    },
+    {
+      "id": "place/r5263005",
+      "name": "National Green Tribunal",
+      "cat": "building",
+      "x": 1240.86,
+      "z": 345.13,
+      "osm": "relation/5263005",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1228213540",
+      "name": "New Delhi House",
+      "cat": "building",
+      "x": 494.01,
+      "z": -906.63,
+      "osm": "way/1228213540",
+      "dist": 380,
+      "kind": "commercial"
+    },
+    {
+      "id": "place/w1488491504",
+      "name": "New Jharkhand Bhawan",
+      "cat": "building",
+      "x": -933.88,
+      "z": -1351.08,
+      "osm": "way/1488491504",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/r7174141",
+      "name": "Nirman Bhawan",
+      "cat": "building",
+      "x": -259.75,
+      "z": 1213.37,
+      "osm": "relation/7174141",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/r20377692",
+      "name": "Niti Bhawan",
+      "cat": "building",
+      "x": -538.44,
+      "z": 20.67,
+      "osm": "relation/20377692",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/w1024439952",
+      "name": "North Complex",
+      "cat": "building",
+      "x": 1498.62,
+      "z": 836.73,
+      "osm": "way/1024439952",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w349791278",
+      "name": "Old Auto Workshop",
+      "cat": "building",
+      "x": -1375.68,
+      "z": -1993.62,
+      "osm": "way/349791278",
+      "dist": 380,
+      "kind": "public"
+    },
+    {
+      "id": "place/w1466173464",
+      "name": "Onkar Deep Building",
+      "cat": "building",
+      "x": -65.47,
+      "z": -1142.8,
+      "osm": "way/1466173464",
+      "dist": 380,
+      "kind": "commercial"
+    },
+    {
+      "id": "place/w352218127",
+      "name": "Oriental Building",
+      "cat": "building",
+      "x": 178.88,
+      "z": -738.3,
+      "osm": "way/352218127",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w349791079",
+      "name": "Palika Nilay",
+      "cat": "building",
+      "x": -1146.02,
+      "z": -1768.7,
+      "osm": "way/349791079",
+      "dist": 380,
+      "kind": "apartments"
+    },
+    {
+      "id": "place/w1393210302",
+      "name": "Palika Place",
+      "cat": "building",
+      "x": -922.4,
+      "z": -1811.23,
+      "osm": "way/1393210302",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1393210304",
+      "name": "Palika Place Annexe",
+      "cat": "building",
+      "x": -870.84,
+      "z": -1768.82,
+      "osm": "way/1393210304",
+      "dist": 380,
+      "kind": "commercial"
+    },
+    {
+      "id": "place/w351561049",
+      "name": "Palika Suvidha Kendra",
+      "cat": "building",
+      "x": 1564.56,
+      "z": -858.77,
+      "osm": "way/351561049",
+      "dist": 380,
+      "kind": "public"
+    },
+    {
+      "id": "place/w351603841",
+      "name": "Patiala House Court",
+      "cat": "building",
+      "x": 1662.25,
+      "z": 702.37,
+      "osm": "way/351603841",
+      "dist": 380,
+      "kind": "courthouse"
+    },
+    {
+      "id": "place/w1466173465",
+      "name": "Phelps Building",
+      "cat": "building",
+      "x": -70.15,
+      "z": -1163.75,
+      "osm": "way/1466173465",
+      "dist": 380,
+      "kind": "commercial"
+    },
+    {
+      "id": "place/w351374286",
+      "name": "Police Station Connaught Place",
+      "cat": "building",
+      "x": -388.75,
+      "z": -863.49,
+      "osm": "way/351374286",
+      "dist": 380,
+      "kind": "police"
+    },
+    {
+      "id": "place/w722443698",
+      "name": "Porsche",
+      "cat": "building",
+      "x": -450.37,
+      "z": -824.81,
+      "osm": "way/722443698",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/r5251171",
+      "name": "Postal Directorate",
+      "cat": "building",
+      "x": -495.88,
+      "z": -45.96,
+      "osm": "relation/5251171",
+      "dist": 380,
+      "kind": "post_office"
+    },
+    {
+      "id": "place/w488544850",
+      "name": "Pragati Bhawan",
+      "cat": "building",
+      "x": -657.71,
+      "z": -327.92,
+      "osm": "way/488544850",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w348480740",
+      "name": "President Estate 6",
+      "cat": "building",
+      "x": -1622.29,
+      "z": -50.94,
+      "osm": "way/348480740",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w349791088",
+      "name": "Primary Block",
+      "cat": "building",
+      "x": -1576.44,
+      "z": -1668.46,
+      "osm": "way/349791088",
+      "dist": 380,
+      "kind": "school"
+    },
+    {
+      "id": "place/w1306311535",
+      "name": "Public Health Department Office",
+      "cat": "building",
+      "x": -6.43,
+      "z": -927.93,
+      "osm": "way/1306311535",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/w351561009",
+      "name": "Rajendra Bhawan",
+      "cat": "building",
+      "x": 1882.04,
+      "z": -908.33,
+      "osm": "way/351561009",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/w1180652243",
+      "name": "Rajya Sabha",
+      "cat": "building",
+      "x": -785.03,
+      "z": 596.23,
+      "osm": "way/1180652243",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w488537409",
+      "name": "Rams inn",
+      "cat": "building",
+      "x": -384.68,
+      "z": -1043.72,
+      "osm": "way/488537409",
+      "dist": 380,
+      "kind": "hotel"
+    },
+    {
+      "id": "place/w1466151118",
+      "name": "Roll Call Shelter",
+      "cat": "building",
+      "x": -257.21,
+      "z": -1205.43,
+      "osm": "way/1466151118",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/w598010349",
+      "name": "Rouse Avenue Court",
+      "cat": "building",
+      "x": 1575.57,
+      "z": -1133.33,
+      "osm": "way/598010349",
+      "dist": 380,
+      "kind": "courthouse"
+    },
+    {
+      "id": "place/w665147381",
+      "name": "Sabji Mandi",
+      "cat": "building",
+      "x": -1804.2,
+      "z": -797.43,
+      "osm": "way/665147381",
+      "dist": 380,
+      "kind": "shed"
+    },
+    {
+      "id": "place/w1354558633",
+      "name": "Saraswati",
+      "cat": "building",
+      "x": -1393.61,
+      "z": -104.19,
+      "osm": "way/1354558633",
+      "dist": 380,
+      "kind": "apartments"
+    },
+    {
+      "id": "place/w569747465",
+      "name": "Saraswati Bhawan",
+      "cat": "building",
+      "x": 354.5,
+      "z": -1222.47,
+      "osm": "way/569747465",
+      "dist": 380,
+      "kind": "commercial"
+    },
+    {
+      "id": "place/w351374284",
+      "name": "Sardar Patel Bhawan",
+      "cat": "building",
+      "x": -538.39,
+      "z": -247.17,
+      "osm": "way/351374284",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/r19134618",
+      "name": "Secondary Block",
+      "cat": "building",
+      "x": -1602.61,
+      "z": -1630.62,
+      "osm": "relation/19134618",
+      "dist": 380,
+      "kind": "school"
+    },
+    {
+      "id": "place/w369637830",
+      "name": "Shangri-La Hotel",
+      "cat": "building",
+      "x": 573.61,
+      "z": 44.63,
+      "osm": "way/369637830",
+      "dist": 380,
+      "kind": "hotel"
+    },
+    {
+      "id": "place/w1466151117",
+      "name": "Shivaji Stadium Time Keeper Booth",
+      "cat": "building",
+      "x": -269.2,
+      "z": -1117.77,
+      "osm": "way/1466151117",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/w1024439953",
+      "name": "South Complex",
+      "cat": "building",
+      "x": 1485.73,
+      "z": 1160.44,
+      "osm": "way/1024439953",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1175626042",
+      "name": "Speedbird House",
+      "cat": "building",
+      "x": 391.79,
+      "z": -1237.3,
+      "osm": "way/1175626042",
+      "dist": 380,
+      "kind": "commercial"
+    },
+    {
+      "id": "place/r15879906",
+      "name": "Statesman House",
+      "cat": "building",
+      "x": 426.13,
+      "z": -932.08,
+      "osm": "relation/15879906",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/w1466161521",
+      "name": "Super Bazar Compound",
+      "cat": "building",
+      "x": 496.43,
+      "z": -1219.53,
+      "osm": "way/1466161521",
+      "dist": 380,
+      "kind": "retail"
+    },
+    {
+      "id": "place/w1438583473",
+      "name": "Swarna Jayanti Sadan Deluxe",
+      "cat": "building",
+      "x": -1568.99,
+      "z": -148.62,
+      "osm": "way/1438583473",
+      "dist": 380,
+      "kind": "apartments"
+    },
+    {
+      "id": "place/w351560985",
+      "name": "Teachers' Accomodation and Postgraduate Hostel",
+      "cat": "building",
+      "x": 1716.62,
+      "z": -636.87,
+      "osm": "way/351560985",
+      "dist": 380,
+      "kind": "residential"
+    },
+    {
+      "id": "place/w164676033",
+      "name": "The American Center",
+      "cat": "building",
+      "x": 427.55,
+      "z": -787.34,
+      "osm": "way/164676033",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1237416218",
+      "name": "The Connaught",
+      "cat": "building",
+      "x": -494.74,
+      "z": -1177.47,
+      "osm": "way/1237416218",
+      "dist": 380,
+      "kind": "hotel"
+    },
+    {
+      "id": "place/w348480803",
+      "name": "The Elisabeth Gauba School",
+      "cat": "building",
+      "x": -1478.85,
+      "z": -648.72,
+      "osm": "way/348480803",
+      "dist": 380,
+      "kind": "school"
+    },
+    {
+      "id": "place/w344737253",
+      "name": "The Hans",
+      "cat": "building",
+      "x": 731.22,
+      "z": -743.49,
+      "osm": "way/344737253",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w317310823",
+      "name": "The Park",
+      "cat": "building",
+      "x": -194.56,
+      "z": -762.53,
+      "osm": "way/317310823",
+      "dist": 380,
+      "kind": "hotel"
+    },
+    {
+      "id": "place/w168874776",
+      "name": "The Taj Mahal Hotel",
+      "cat": "building",
+      "x": 572.22,
+      "z": 1900.37,
+      "osm": "way/168874776",
+      "dist": 380,
+      "kind": "hotel"
+    },
+    {
+      "id": "place/w351551917",
+      "name": "Undergraduate Hostel and Mess",
+      "cat": "building",
+      "x": 1805.47,
+      "z": -604.96,
+      "osm": "way/351551917",
+      "dist": 380,
+      "kind": "dormitory"
+    },
+    {
+      "id": "place/w268273213",
+      "name": "United States-India Educational Foundation",
+      "cat": "building",
+      "x": 852.54,
+      "z": -384.05,
+      "osm": "way/268273213",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w835059508",
+      "name": "VFS Global",
+      "cat": "building",
+      "x": 305.61,
+      "z": -778.18,
+      "osm": "way/835059508",
+      "dist": 380,
+      "kind": "visa"
+    },
+    {
+      "id": "place/w348200543",
+      "name": "Vice President's House",
+      "cat": "building",
+      "x": 571.5,
+      "z": 1212.82,
+      "osm": "way/348200543",
+      "dist": 380,
+      "kind": "house"
+    },
+    {
+      "id": "place/r19285914",
+      "name": "Vidyut Bhawan",
+      "cat": "building",
+      "x": 659.54,
+      "z": -1214.22,
+      "osm": "relation/19285914",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w351852409",
+      "name": "Willingdon Cottage",
+      "cat": "building",
+      "x": 1720.75,
+      "z": -573.61,
+      "osm": "way/351852409",
+      "dist": 380,
+      "kind": "detached"
+    },
+    {
+      "id": "place/w488544849",
+      "name": "YMCA Conference Hall",
+      "cat": "building",
+      "x": -661.74,
+      "z": -451.49,
+      "osm": "way/488544849",
+      "dist": 380,
+      "kind": "conference_centre"
+    },
+    {
+      "id": "place/w351374291",
+      "name": "YMCA Cultural Centre Building",
+      "cat": "building",
+      "x": -498.45,
+      "z": -534.23,
+      "osm": "way/351374291",
+      "dist": 380,
+      "kind": "community_centre"
+    },
+    {
+      "id": "place/w351870488",
+      "name": "YMCA Education Center",
+      "cat": "building",
+      "x": -574.13,
+      "z": -497.81,
+      "osm": "way/351870488",
+      "dist": 380,
+      "kind": "prep_school"
+    },
+    {
+      "id": "place/w488544848",
+      "name": "YMCA National Headquarters",
+      "cat": "building",
+      "x": -629.54,
+      "z": -479.02,
+      "osm": "way/488544848",
+      "dist": 380,
+      "kind": "office"
+    },
+    {
+      "id": "place/r14956111",
+      "name": "YMCA Tourist Hotel",
+      "cat": "building",
+      "x": -425.4,
+      "z": -588.4,
+      "osm": "relation/14956111",
+      "dist": 380,
+      "kind": "guest_house"
+    },
+    {
+      "id": "place/w1354558622",
+      "name": "Yamuna",
+      "cat": "building",
+      "x": -1257.59,
+      "z": -172.52,
+      "osm": "way/1354558622",
+      "dist": 380,
+      "kind": "apartments"
+    },
+    {
+      "id": "place/w1280168589",
+      "name": "Yoga Hall",
+      "cat": "building",
+      "x": 1633.54,
+      "z": -272.08,
+      "osm": "way/1280168589",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w1175626053",
+      "name": "Yogeshwar Building",
+      "cat": "building",
+      "x": 388.94,
+      "z": -1271.56,
+      "osm": "way/1175626053",
+      "dist": 380,
+      "kind": "commercial"
+    },
+    {
+      "id": "place/w488558499",
+      "name": "Yusuf Sadan",
+      "cat": "building",
+      "x": -1001.98,
+      "z": -632.06,
+      "osm": "way/488558499",
+      "dist": 380,
+      "kind": "yes"
+    },
+    {
+      "id": "place/w361184675",
+      "name": "Abhimanch",
+      "cat": "civic",
+      "x": 1649.02,
+      "z": -318.72,
+      "osm": "way/361184675",
+      "dist": 460,
+      "kind": "theatre"
+    },
+    {
+      "id": "place/n5338584665",
+      "name": "Akshara",
+      "cat": "civic",
+      "x": -1447.81,
+      "z": -414.02,
+      "osm": "node/5338584665",
+      "dist": 460,
+      "kind": "theatre"
+    },
+    {
+      "id": "place/n8151246340",
+      "name": "Arvind Medicare",
+      "cat": "civic",
+      "x": -113.42,
+      "z": -1014.49,
+      "osm": "node/8151246340",
+      "dist": 460,
+      "kind": "hospital"
+    },
+    {
+      "id": "place/n6657891769",
+      "name": "Bahumukh",
+      "cat": "civic",
+      "x": 1604.25,
+      "z": -286.81,
+      "osm": "node/6657891769",
+      "dist": 460,
+      "kind": "theatre"
+    },
+    {
+      "id": "place/w295808332",
+      "name": "British Council Division",
+      "cat": "civic",
+      "x": 404.63,
+      "z": -555.84,
+      "osm": "way/295808332",
+      "dist": 460,
+      "kind": "library"
+    },
+    {
+      "id": "place/n7138493258",
+      "name": "Central Hospital (Northern Railways)",
+      "cat": "civic",
+      "x": -89.25,
+      "z": -1615.36,
+      "osm": "node/7138493258",
+      "dist": 460,
+      "kind": "hospital"
+    },
+    {
+      "id": "place/w138946123",
+      "name": "College of Nursing",
+      "cat": "civic",
+      "x": -1629.45,
+      "z": -199.95,
+      "osm": "way/138946123",
+      "dist": 460,
+      "kind": "college"
+    },
+    {
+      "id": "place/n12898800881",
+      "name": "Delhi Public Library",
+      "cat": "civic",
+      "x": -1397.29,
+      "z": -1431.46,
+      "osm": "node/12898800881",
+      "dist": 460,
+      "kind": "library"
+    },
+    {
+      "id": "place/w34404757",
+      "name": "Dr. Ram Manohar Lohia Hospital",
+      "cat": "civic",
+      "x": -1695.21,
+      "z": -418.78,
+      "osm": "way/34404757",
+      "dist": 460,
+      "kind": "hospital"
+    },
+    {
+      "id": "place/n2699335584",
+      "name": "General Library",
+      "cat": "civic",
+      "x": -896.38,
+      "z": -1934.78,
+      "osm": "node/2699335584",
+      "dist": 460,
+      "kind": "library"
+    },
+    {
+      "id": "place/n8151246349",
+      "name": "General Williams Hospital",
+      "cat": "civic",
+      "x": 16.98,
+      "z": -530.16,
+      "osm": "node/8151246349",
+      "dist": 460,
+      "kind": "hospital"
+    },
+    {
+      "id": "place/n10945664767",
+      "name": "Guru Harkrishan Polyclinic Bangla Sahib",
+      "cat": "civic",
+      "x": -869.65,
+      "z": -512.46,
+      "osm": "node/10945664767",
+      "dist": 460,
+      "kind": "hospital"
+    },
+    {
+      "id": "place/w289405078",
+      "name": "Guru Nanak Eye Hospital",
+      "cat": "civic",
+      "x": 1358.64,
+      "z": -1832.53,
+      "osm": "way/289405078",
+      "dist": 460,
+      "kind": "hospital"
+    },
+    {
+      "id": "place/n14076163807",
+      "name": "Jayprakash Infotech",
+      "cat": "civic",
+      "x": -590.44,
+      "z": 1397.35,
+      "osm": "node/14076163807",
+      "dist": 460,
+      "kind": "hospital"
+    },
+    {
+      "id": "place/n7138493193",
+      "name": "Kalawati Saran Children's Hospital",
+      "cat": "civic",
+      "x": -705.93,
+      "z": -1512.85,
+      "osm": "node/7138493193",
+      "dist": 460,
+      "kind": "hospital"
+    },
+    {
+      "id": "place/w581751465",
+      "name": "Kamani Auditorium",
+      "cat": "civic",
+      "x": 1295.07,
+      "z": -148.83,
+      "osm": "way/581751465",
+      "dist": 460,
+      "kind": "theatre"
+    },
+    {
+      "id": "place/w351551936",
+      "name": "Krishna Kumar Birla Auditorium",
+      "cat": "civic",
+      "x": 1284.82,
+      "z": -551.06,
+      "osm": "way/351551936",
+      "dist": 460,
+      "kind": "theatre"
+    },
+    {
+      "id": "place/w44263455",
+      "name": "Lady Hardinge Medical College",
+      "cat": "civic",
+      "x": -541.0,
+      "z": -1455.02,
+      "osm": "way/44263455",
+      "dist": 460,
+      "kind": "college"
+    },
+    {
+      "id": "place/n7138534287",
+      "name": "Lady Hardinge Medical College & Associated Hospitals",
+      "cat": "civic",
+      "x": -522.42,
+      "z": -1335.84,
+      "osm": "node/7138534287",
+      "dist": 460,
+      "kind": "hospital"
+    },
+    {
+      "id": "place/w585974875",
+      "name": "Lady Irwin College",
+      "cat": "civic",
+      "x": 1886.67,
+      "z": -557.02,
+      "osm": "way/585974875",
+      "dist": 460,
+      "kind": "college"
+    },
+    {
+      "id": "place/w581751467",
+      "name": "Little Theatre Group",
+      "cat": "civic",
+      "x": 1291.01,
+      "z": -116.81,
+      "osm": "way/581751467",
+      "dist": 460,
+      "kind": "theatre"
+    },
+    {
+      "id": "place/n7138493196",
+      "name": "Maulana Azad Institute of Dental Sciences",
+      "cat": "civic",
+      "x": 1826.87,
+      "z": -1713.88,
+      "osm": "node/7138493196",
+      "dist": 460,
+      "kind": "hospital"
+    },
+    {
+      "id": "place/w1478512471",
+      "name": "Meghdoot",
+      "cat": "civic",
+      "x": 1282.74,
+      "z": -235.07,
+      "osm": "way/1478512471",
+      "dist": 460,
+      "kind": "theatre"
+    },
+    {
+      "id": "place/w138946134",
+      "name": "Moraji Desai National Institute Of Yoga",
+      "cat": "civic",
+      "x": -1035.64,
+      "z": -397.51,
+      "osm": "way/138946134",
+      "dist": 460,
+      "kind": "college"
+    },
+    {
+      "id": "place/n7274125614",
+      "name": "Muktadhara Auditorium",
+      "cat": "civic",
+      "x": -1295.96,
+      "z": -992.83,
+      "osm": "node/7274125614",
+      "dist": 460,
+      "kind": "theatre"
+    },
+    {
+      "id": "place/w1162855904",
+      "name": "Open Air Theatre",
+      "cat": "civic",
+      "x": 1802.59,
+      "z": -1240.83,
+      "osm": "way/1162855904",
+      "dist": 460,
+      "kind": "theatre"
+    },
+    {
+      "id": "place/n11936527684",
+      "name": "Palika Library",
+      "cat": "civic",
+      "x": 1523.36,
+      "z": -862.92,
+      "osm": "node/11936527684",
+      "dist": 460,
+      "kind": "library"
+    },
+    {
+      "id": "place/w714990512",
+      "name": "Parliament Library",
+      "cat": "civic",
+      "x": -1043.35,
+      "z": 381.39,
+      "osm": "way/714990512",
+      "dist": 460,
+      "kind": "library"
+    },
+    {
+      "id": "place/w1121220741",
+      "name": "Rabindra Rangshala",
+      "cat": "civic",
+      "x": -1935.0,
+      "z": -1778.18,
+      "osm": "way/1121220741",
+      "dist": 460,
+      "kind": "theatre"
+    },
+    {
+      "id": "place/w708502968",
+      "name": "Sammukh",
+      "cat": "civic",
+      "x": 1611.5,
+      "z": -367.26,
+      "osm": "way/708502968",
+      "dist": 460,
+      "kind": "theatre"
+    },
+    {
+      "id": "place/w351619686",
+      "name": "Shankar Lal Murli Dhar Auditorium",
+      "cat": "civic",
+      "x": 1450.11,
+      "z": -591.49,
+      "osm": "way/351619686",
+      "dist": 460,
+      "kind": "theatre"
+    },
+    {
+      "id": "place/n5799061867",
+      "name": "The Attic",
+      "cat": "civic",
+      "x": -87.38,
+      "z": -891.07,
+      "osm": "node/5799061867",
+      "dist": 460,
+      "kind": "theatre"
+    },
+    {
+      "id": "place/w80418112",
+      "name": "Zakir Husain Delhi College",
+      "cat": "civic",
+      "x": 1115.11,
+      "z": -1982.67,
+      "osm": "way/80418112",
+      "dist": 460,
+      "kind": "college"
+    },
+    {
+      "id": "place/n13008734918",
+      "name": "iHub",
+      "cat": "civic",
+      "x": 422.83,
+      "z": -773.0,
+      "osm": "node/13008734918",
+      "dist": 460,
+      "kind": "library"
+    },
+    {
+      "id": "place/n13447426287",
+      "name": "Ashok Place",
+      "cat": "district",
+      "x": -1118.93,
+      "z": -522.87,
+      "osm": "node/13447426287",
+      "dist": 1500,
+      "kind": "neighbourhood"
+    },
+    {
+      "id": "place/n6666318646",
+      "name": "Central Vista",
+      "cat": "district",
+      "x": 69.52,
+      "z": 946.91,
+      "osm": "node/6666318646",
+      "dist": 1500,
+      "kind": "suburb"
+    },
+    {
+      "id": "place/n561299050",
+      "name": "Connaught Place",
+      "cat": "district",
+      "x": 115.23,
+      "z": -1085.07,
+      "osm": "node/561299050",
+      "dist": 1500,
+      "kind": "suburb"
+    },
+    {
+      "id": "place/n6351658123",
+      "name": "Cornwallis Colony",
+      "cat": "district",
+      "x": 1640.6,
+      "z": 1820.69,
+      "osm": "node/6351658123",
+      "dist": 1500,
+      "kind": "neighbourhood"
+    },
+    {
+      "id": "place/n13447649959",
+      "name": "Kashmiri Market",
+      "cat": "district",
+      "x": 526.83,
+      "z": -1287.83,
+      "osm": "node/13447649959",
+      "dist": 1500,
+      "kind": "neighbourhood"
+    },
+    {
+      "id": "place/n12896403099",
+      "name": "Palika Niketan",
+      "cat": "district",
+      "x": -928.24,
+      "z": -1641.45,
+      "osm": "node/12896403099",
+      "dist": 1500,
+      "kind": "neighbourhood"
+    },
+    {
+      "id": "place/n3746071223",
+      "name": "Pandara Park",
+      "cat": "district",
+      "x": 1148.22,
+      "z": 1666.97,
+      "osm": "node/3746071223",
+      "dist": 1500,
+      "kind": "neighbourhood"
+    },
+    {
+      "id": "place/n2729066792",
+      "name": "Raisina Hill",
+      "cat": "district",
+      "x": -1348.28,
+      "z": 895.36,
+      "osm": "node/2729066792",
+      "dist": 1500,
+      "kind": "suburb"
+    },
+    {
+      "id": "place/n7837031930",
+      "name": "Rakab Ganj",
+      "cat": "district",
+      "x": -1384.08,
+      "z": 285.18,
+      "osm": "node/7837031930",
+      "dist": 1500,
+      "kind": "neighbourhood"
+    },
+    {
+      "id": "place/w1393241553",
+      "name": "Sector 4",
+      "cat": "district",
+      "x": -856.65,
+      "z": -1057.42,
+      "osm": "way/1393241553",
+      "dist": 1500,
+      "kind": "neighbourhood"
+    },
+    {
+      "id": "place/n6161987875",
+      "name": "Shankar Market",
+      "cat": "district",
+      "x": 537.25,
+      "z": -1336.48,
+      "osm": "node/6161987875",
+      "dist": 1500,
+      "kind": "neighbourhood"
+    },
+    {
+      "id": "place/w164786646",
+      "name": "Akashavani Bhavan",
+      "cat": "government",
+      "x": -721.33,
+      "z": 61.64,
+      "osm": "way/164786646",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w369638066",
+      "name": "Andhra Bhavan",
+      "cat": "government",
+      "x": 748.51,
+      "z": 542.08,
+      "osm": "way/369638066",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n14081654467",
+      "name": "Anti Malaria Operation",
+      "cat": "government",
+      "x": -85.6,
+      "z": -1110.59,
+      "osm": "node/14081654467",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n438049081",
+      "name": "BSNL Headquarters",
+      "cat": "government",
+      "x": 165.8,
+      "z": 7.91,
+      "osm": "node/438049081",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n5812229055",
+      "name": "Baroda House",
+      "cat": "government",
+      "x": 1091.78,
+      "z": 420.53,
+      "osm": "node/5812229055",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n7837031919",
+      "name": "Central Board of Indirect Taxes and Customs (CBIC)",
+      "cat": "government",
+      "x": -1228.48,
+      "z": 714.26,
+      "osm": "node/7837031919",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w289747630",
+      "name": "Comptroller and Auditor General of India",
+      "cat": "government",
+      "x": 1435.12,
+      "z": -1218.43,
+      "osm": "way/289747630",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w111696903",
+      "name": "Delhi Sikh Gurdwara Management Committee (DSGMC)",
+      "cat": "government",
+      "x": -1233.47,
+      "z": 302.12,
+      "osm": "way/111696903",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n13447627566",
+      "name": "Department Of Food Safety, Govt Of Delhi",
+      "cat": "government",
+      "x": 594.88,
+      "z": -1270.13,
+      "osm": "node/13447627566",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n12951095155",
+      "name": "Department of Food Safety, Government of NCT of Delhi",
+      "cat": "government",
+      "x": 611.05,
+      "z": -1266.8,
+      "osm": "node/12951095155",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n13447627567",
+      "name": "Directorate Of Income Tax",
+      "cat": "government",
+      "x": 594.88,
+      "z": -1270.13,
+      "osm": "node/13447627567",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w351869120",
+      "name": "Doordarshan Bhawan",
+      "cat": "government",
+      "x": 1432.38,
+      "z": -211.63,
+      "osm": "way/351869120",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n4540598194",
+      "name": "FDA Building New Delhi",
+      "cat": "government",
+      "x": 1666.69,
+      "z": -1190.84,
+      "osm": "node/4540598194",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w1271156427",
+      "name": "Garvi Gujarat Bhawan",
+      "cat": "government",
+      "x": 480.17,
+      "z": 1527.24,
+      "osm": "way/1271156427",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w351418857",
+      "name": "Haryana Bhawan",
+      "cat": "government",
+      "x": 1397.66,
+      "z": 60.24,
+      "osm": "way/351418857",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/r5263011",
+      "name": "Hyderabad House",
+      "cat": "government",
+      "x": 979.05,
+      "z": 648.22,
+      "osm": "relation/5263011",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n12951095157",
+      "name": "Income Tax Department, Government of India",
+      "cat": "government",
+      "x": 617.67,
+      "z": -1262.56,
+      "osm": "node/12951095157",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n7533843985",
+      "name": "Indian Council for Historical Research",
+      "cat": "government",
+      "x": 1197.82,
+      "z": -276.3,
+      "osm": "node/7533843985",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n13447627565",
+      "name": "Insolvency And Bankruptcy Board Of India",
+      "cat": "government",
+      "x": 594.88,
+      "z": -1270.13,
+      "osm": "node/13447627565",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n12951095156",
+      "name": "Insolvency and Bankruptcy Board of India",
+      "cat": "government",
+      "x": 614.32,
+      "z": -1264.44,
+      "osm": "node/12951095156",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/r18988433",
+      "name": "Jaisalmer House",
+      "cat": "government",
+      "x": 741.14,
+      "z": 1545.69,
+      "osm": "relation/18988433",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w292202727",
+      "name": "Jamnagar House",
+      "cat": "government",
+      "x": 940.08,
+      "z": 1436.01,
+      "osm": "way/292202727",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n5839530085",
+      "name": "Kerala House (",
+      "cat": "government",
+      "x": -134.92,
+      "z": -102.02,
+      "osm": "node/5839530085",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w44186077",
+      "name": "Krishi Bhavan",
+      "cat": "government",
+      "x": -430.84,
+      "z": 667.57,
+      "osm": "way/44186077",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n10233596700",
+      "name": "Mahatma Gandhi Institue of Education for Peace and sustainable development",
+      "cat": "government",
+      "x": 1213.85,
+      "z": -249.0,
+      "osm": "node/10233596700",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n7116238985",
+      "name": "Ministry of Defence",
+      "cat": "government",
+      "x": -1070.92,
+      "z": 1017.37,
+      "osm": "node/7116238985",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n5832837196",
+      "name": "Ministry of External Affairs",
+      "cat": "government",
+      "x": -1173.44,
+      "z": 1027.66,
+      "osm": "node/5832837196",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n5841372886",
+      "name": "Ministry of Finance",
+      "cat": "government",
+      "x": -1240.71,
+      "z": 823.09,
+      "osm": "node/5841372886",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n5832837287",
+      "name": "Ministry of Home Affairs",
+      "cat": "government",
+      "x": -1123.42,
+      "z": 822.49,
+      "osm": "node/5832837287",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w370760528",
+      "name": "Ministry of Home Affairs - NDMC",
+      "cat": "government",
+      "x": -368.79,
+      "z": -642.6,
+      "osm": "way/370760528",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/r9962998",
+      "name": "Ministry of Labour & Employment",
+      "cat": "government",
+      "x": -610.93,
+      "z": 302.99,
+      "osm": "relation/9962998",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/r5507689",
+      "name": "National Archives of India",
+      "cat": "government",
+      "x": -24.92,
+      "z": 745.32,
+      "osm": "relation/5507689",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w361263274",
+      "name": "National Buildings Organisation",
+      "cat": "government",
+      "x": -189.78,
+      "z": 1145.36,
+      "osm": "way/361263274",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w370760526",
+      "name": "New Delhi Municipal Corporation (NDMC)",
+      "cat": "government",
+      "x": -270.12,
+      "z": -704.34,
+      "osm": "way/370760526",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/r12737019",
+      "name": "New Parliament House",
+      "cat": "government",
+      "x": -750.52,
+      "z": 555.18,
+      "osm": "relation/12737019",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/r5507630",
+      "name": "North Block",
+      "cat": "government",
+      "x": -1180.28,
+      "z": 784.64,
+      "osm": "relation/5507630",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w351571418",
+      "name": "Northern Railway Headquarters",
+      "cat": "government",
+      "x": 1164.06,
+      "z": 568.36,
+      "osm": "way/351571418",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n7533838685",
+      "name": "Old Maharashtra Sadan",
+      "cat": "government",
+      "x": 1411.3,
+      "z": 135.88,
+      "osm": "node/7533838685",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/r6087635",
+      "name": "Old Parliament House",
+      "cat": "government",
+      "x": -948.94,
+      "z": 551.46,
+      "osm": "relation/6087635",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w406245960",
+      "name": "Palika Kendra",
+      "cat": "government",
+      "x": -290.31,
+      "z": -680.51,
+      "osm": "way/406245960",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w164786775",
+      "name": "Parivahan Bhavan",
+      "cat": "government",
+      "x": -738.99,
+      "z": 332.35,
+      "osm": "way/164786775",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w80921407",
+      "name": "Parliament Complex",
+      "cat": "government",
+      "x": -866.82,
+      "z": 388.55,
+      "osm": "way/80921407",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w169829164",
+      "name": "Press Trust of India - PTI",
+      "cat": "government",
+      "x": -698.99,
+      "z": 242.59,
+      "osm": "way/169829164",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n5832848285",
+      "name": "Prime Minister's Office",
+      "cat": "government",
+      "x": -1324.68,
+      "z": 1013.7,
+      "osm": "node/5832848285",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w44186074",
+      "name": "Project Monitoring Group",
+      "cat": "government",
+      "x": 385.09,
+      "z": 1237.85,
+      "osm": "way/44186074",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n7533840385",
+      "name": "Punjab Bhawan",
+      "cat": "government",
+      "x": 1397.18,
+      "z": -36.04,
+      "osm": "node/7533840385",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n10264397115",
+      "name": "Rail Bhavan",
+      "cat": "government",
+      "x": -633.65,
+      "z": 692.76,
+      "osm": "node/10264397115",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w1377360330",
+      "name": "Registrar General and Census Commissioner",
+      "cat": "government",
+      "x": 690.29,
+      "z": 1857.81,
+      "osm": "way/1377360330",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w370560419",
+      "name": "Reserve Bank of India - RBI",
+      "cat": "government",
+      "x": -616.25,
+      "z": 133.34,
+      "osm": "way/370560419",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w1393241234",
+      "name": "Shaheed Bhagat Singh Place",
+      "cat": "government",
+      "x": -1041.44,
+      "z": -1114.58,
+      "osm": "way/1393241234",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/r5262900",
+      "name": "Shastri Bhawan",
+      "cat": "government",
+      "x": -238.44,
+      "z": 661.38,
+      "osm": "relation/5262900",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/r5507631",
+      "name": "South Block",
+      "cat": "government",
+      "x": -1188.37,
+      "z": 1023.15,
+      "osm": "relation/5507631",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n2327524031",
+      "name": "Tourism Office",
+      "cat": "government",
+      "x": 156.43,
+      "z": -755.49,
+      "osm": "node/2327524031",
+      "dist": 420,
+      "kind": "information"
+    },
+    {
+      "id": "place/w317310821",
+      "name": "Udyog Bhavan",
+      "cat": "government",
+      "x": -452.23,
+      "z": 1186.22,
+      "osm": "way/317310821",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w369645695",
+      "name": "Vanijya Bhawan",
+      "cat": "government",
+      "x": 763.18,
+      "z": 1186.26,
+      "osm": "way/369645695",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/r5509029",
+      "name": "Vayu Bhavan",
+      "cat": "government",
+      "x": -653.66,
+      "z": 1163.97,
+      "osm": "relation/5509029",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n5839514213",
+      "name": "\u0915\u0947\u0930\u0932 \u092d\u0935\u0928",
+      "cat": "government",
+      "x": -164.68,
+      "z": -147.21,
+      "osm": "node/5839514213",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n5273106401",
+      "name": "\u0928\u092f\u093e \u092e\u0939\u093e\u0930\u093e\u0937\u094d\u091f\u094d\u0930 \u0938\u0926\u0928",
+      "cat": "government",
+      "x": 1075.75,
+      "z": 398.5,
+      "osm": "node/5273106401",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n5839528387",
+      "name": "\u092d\u093e\u0930\u0924 \u0938\u0902\u091a\u093e\u0930 \u0928\u093f\u0917\u092e \u0932\u093f\u092e\u093f\u091f\u0947\u0921",
+      "cat": "government",
+      "x": -386.99,
+      "z": 3.04,
+      "osm": "node/5839528387",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n4927146058",
+      "name": "\u0935\u093f\u0926\u0947\u0936 \u092e\u0902\u0924\u094d\u0930\u093e\u0932\u092f",
+      "cat": "government",
+      "x": -19.49,
+      "z": 1175.75,
+      "osm": "node/4927146058",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n5839953786",
+      "name": "\u0936\u0939\u0930\u0940 \u0935\u093f\u0915\u093e\u0938 \u092e\u0902\u0924\u094d\u0930\u093e\u0932\u092f",
+      "cat": "government",
+      "x": -311.33,
+      "z": 1207.34,
+      "osm": "node/5839953786",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n5839528388",
+      "name": "\u0938\u0902\u091a\u093e\u0930 \u092d\u0935\u0928",
+      "cat": "government",
+      "x": -390.36,
+      "z": 7.06,
+      "osm": "node/5839528388",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/n5839953985",
+      "name": "\u0938\u094d\u0935\u093e\u0938\u094d\u0925\u094d\u092f \u0914\u0930 \u092a\u0930\u093f\u0935\u093e\u0930 \u0915\u0932\u094d\u092f\u093e\u0923 \u092e\u0902\u0924\u094d\u0930\u093e\u0932\u092f",
+      "cat": "government",
+      "x": -183.53,
+      "z": 1248.89,
+      "osm": "node/5839953985",
+      "dist": 420,
+      "kind": "government"
+    },
+    {
+      "id": "place/w500411689",
+      "name": "Agrasen ki Baoli",
+      "cat": "heritage",
+      "x": 677.58,
+      "z": -466.15,
+      "osm": "way/500411689",
+      "dist": 320,
+      "kind": "archaeological_site"
+    },
+    {
+      "id": "place/w1024434128",
+      "name": "Amar Jawan Jyoti",
+      "cat": "heritage",
+      "x": 1491.22,
+      "z": 996.69,
+      "osm": "way/1024434128",
+      "dist": 320,
+      "kind": "memorial"
+    },
+    {
+      "id": "place/n2932773051",
+      "name": "Dargah Hazrat Khwaja Mir Dard",
+      "cat": "heritage",
+      "x": 1053.78,
+      "z": -2008.78,
+      "osm": "node/2932773051",
+      "dist": 320,
+      "kind": "cemetery"
+    },
+    {
+      "id": "place/w278577239",
+      "name": "Gole Market",
+      "cat": "heritage",
+      "x": -1236.75,
+      "z": -1279.13,
+      "osm": "way/278577239",
+      "dist": 320,
+      "kind": "building"
+    },
+    {
+      "id": "place/w361709652",
+      "name": "India Gate",
+      "cat": "heritage",
+      "x": 1142.9,
+      "z": 984.27,
+      "osm": "way/361709652",
+      "dist": 320,
+      "kind": "monument"
+    },
+    {
+      "id": "place/w1137558567",
+      "name": "Jai Prakash Yantra",
+      "cat": "heritage",
+      "x": -153.6,
+      "z": -525.99,
+      "osm": "way/1137558567",
+      "dist": 320,
+      "kind": "monument"
+    },
+    {
+      "id": "place/w359770137",
+      "name": "Jaipur Column",
+      "cat": "heritage",
+      "x": -1567.96,
+      "z": 888.59,
+      "osm": "way/359770137",
+      "dist": 320,
+      "kind": "monument"
+    },
+    {
+      "id": "place/w223456559",
+      "name": "Jantar Mantar",
+      "cat": "heritage",
+      "x": -147.4,
+      "z": -562.42,
+      "osm": "way/223456559",
+      "dist": 320,
+      "kind": "archaeological_site"
+    },
+    {
+      "id": "place/n5839943689",
+      "name": "Lal Bahadur Shastri Memorial",
+      "cat": "heritage",
+      "x": 111.17,
+      "z": 1490.36,
+      "osm": "node/5839943689",
+      "dist": 320,
+      "kind": "memorial"
+    },
+    {
+      "id": "place/n11007213869",
+      "name": "Mahatma Gandhi",
+      "cat": "heritage",
+      "x": -871.19,
+      "z": 471.04,
+      "osm": "node/11007213869",
+      "dist": 320,
+      "kind": "memorial"
+    },
+    {
+      "id": "place/n2323525225",
+      "name": "Misra Yantra",
+      "cat": "heritage",
+      "x": -162.55,
+      "z": -304.13,
+      "osm": "node/2323525225",
+      "dist": 320,
+      "kind": "monument"
+    },
+    {
+      "id": "place/w839844477",
+      "name": "National War Memorial",
+      "cat": "heritage",
+      "x": 1490.71,
+      "z": 997.31,
+      "osm": "way/839844477",
+      "dist": 320,
+      "kind": "memorial"
+    },
+    {
+      "id": "place/w1024427218",
+      "name": "Netaji Subhash Chandra Bose's canopy",
+      "cat": "heritage",
+      "x": 1303.96,
+      "z": 991.41,
+      "osm": "way/1024427218",
+      "dist": 320,
+      "kind": "monument"
+    },
+    {
+      "id": "place/n9443637634",
+      "name": "Param Yodha Sthal",
+      "cat": "heritage",
+      "x": 1307.76,
+      "z": 750.2,
+      "osm": "node/9443637634",
+      "dist": 320,
+      "kind": "monument"
+    },
+    {
+      "id": "place/n11920861769",
+      "name": "Pope John-Paul II.",
+      "cat": "heritage",
+      "x": -1119.83,
+      "z": -633.31,
+      "osm": "node/11920861769",
+      "dist": 320,
+      "kind": "memorial"
+    },
+    {
+      "id": "place/w500413797",
+      "name": "Ram Yantra",
+      "cat": "heritage",
+      "x": -150.74,
+      "z": -501.91,
+      "osm": "way/500413797",
+      "dist": 320,
+      "kind": "monument"
+    },
+    {
+      "id": "place/r5354966",
+      "name": "Rashtrapati Bhavan",
+      "cat": "heritage",
+      "x": -1790.48,
+      "z": 879.02,
+      "osm": "relation/5354966",
+      "dist": 320,
+      "kind": "castle"
+    },
+    {
+      "id": "place/w223456540",
+      "name": "Samrat Yantra",
+      "cat": "heritage",
+      "x": -146.55,
+      "z": -554.76,
+      "osm": "way/223456540",
+      "dist": 320,
+      "kind": "monument"
+    },
+    {
+      "id": "place/n14048279760",
+      "name": "Shri Somnath Mandir",
+      "cat": "heritage",
+      "x": 739.26,
+      "z": -526.84,
+      "osm": "node/14048279760",
+      "dist": 320,
+      "kind": "wayside_shrine"
+    },
+    {
+      "id": "place/n308887236",
+      "name": "Teen Murti Haifa War Memorial",
+      "cat": "heritage",
+      "x": -1833.42,
+      "z": 1950.77,
+      "osm": "node/308887236",
+      "dist": 320,
+      "kind": "memorial"
+    },
+    {
+      "id": "place/w1218426672",
+      "name": "Uprashtrapati Bhavan",
+      "cat": "heritage",
+      "x": -1375.78,
+      "z": 663.11,
+      "osm": "way/1218426672",
+      "dist": 320,
+      "kind": "castle"
+    },
+    {
+      "id": "place/w558600791",
+      "name": "A-Block",
+      "cat": "market",
+      "x": -26.91,
+      "z": -1207.13,
+      "osm": "way/558600791",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w558600790",
+      "name": "B-Block",
+      "cat": "market",
+      "x": 52.85,
+      "z": -1349.04,
+      "osm": "way/558600790",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w1386085767",
+      "name": "Bhagat Singh Market",
+      "cat": "market",
+      "x": -1033.53,
+      "z": -1202.67,
+      "osm": "way/1386085767",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w558600789",
+      "name": "C-Block",
+      "cat": "market",
+      "x": 207.52,
+      "z": -1371.31,
+      "osm": "way/558600789",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w558894841",
+      "name": "D-Block",
+      "cat": "market",
+      "x": 285.93,
+      "z": -1326.49,
+      "osm": "way/558894841",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w558894840",
+      "name": "E-Block",
+      "cat": "market",
+      "x": 321.32,
+      "z": -1190.47,
+      "osm": "way/558894840",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w558894839",
+      "name": "F-Block",
+      "cat": "market",
+      "x": 240.74,
+      "z": -1046.75,
+      "osm": "way/558894839",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w558894844",
+      "name": "G Block",
+      "cat": "market",
+      "x": -111.39,
+      "z": -1205.62,
+      "osm": "way/558894844",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w558894843",
+      "name": "H-Block",
+      "cat": "market",
+      "x": 27.38,
+      "z": -1418.67,
+      "osm": "way/558894843",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w442156777",
+      "name": "Janpath New Mini Market",
+      "cat": "market",
+      "x": 2.02,
+      "z": -786.5,
+      "osm": "way/442156777",
+      "dist": 480,
+      "kind": "marketplace"
+    },
+    {
+      "id": "place/w1493860109",
+      "name": "Janpath Old Mini Market",
+      "cat": "market",
+      "x": 73.7,
+      "z": -782.99,
+      "osm": "way/1493860109",
+      "dist": 480,
+      "kind": "marketplace"
+    },
+    {
+      "id": "place/w558894842",
+      "name": "K-Block",
+      "cat": "market",
+      "x": 234.3,
+      "z": -1458.53,
+      "osm": "way/558894842",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w1386084972",
+      "name": "Kali Bari Marg Market",
+      "cat": "market",
+      "x": -1271.09,
+      "z": -591.38,
+      "osm": "way/1386084972",
+      "dist": 480,
+      "kind": "marketplace"
+    },
+    {
+      "id": "place/w558600788",
+      "name": "L-Block",
+      "cat": "market",
+      "x": 346.63,
+      "z": -1387.81,
+      "osm": "way/558600788",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w558600786",
+      "name": "M-Block",
+      "cat": "market",
+      "x": 404.84,
+      "z": -1190.43,
+      "osm": "way/558600786",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w1251947669",
+      "name": "Mohan Singh Place",
+      "cat": "market",
+      "x": -212.59,
+      "z": -960.47,
+      "osm": "way/1251947669",
+      "dist": 480,
+      "kind": "marketplace"
+    },
+    {
+      "id": "place/w558600787",
+      "name": "N-Block",
+      "cat": "market",
+      "x": 270.19,
+      "z": -978.19,
+      "osm": "way/558600787",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w1393736849",
+      "name": "Palika Bazar",
+      "cat": "market",
+      "x": 64.51,
+      "z": -966.15,
+      "osm": "way/1393736849",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w284185494",
+      "name": "Panchkuian Furniture Mart",
+      "cat": "market",
+      "x": -1185.19,
+      "z": -966.9,
+      "osm": "way/284185494",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/w1386089095",
+      "name": "Ramakrishna Ashram Marg Market",
+      "cat": "market",
+      "x": -1080.66,
+      "z": -1766.42,
+      "osm": "way/1386089095",
+      "dist": 480,
+      "kind": null
+    },
+    {
+      "id": "place/n6539894855",
+      "name": "Barakhambha Road",
+      "cat": "station",
+      "x": 669.32,
+      "z": -873.43,
+      "osm": "node/6539894855",
+      "dist": 400,
+      "kind": "station"
+    },
+    {
+      "id": "place/n5453646586",
+      "name": "Central Secretariat",
+      "cat": "station",
+      "x": -546.26,
+      "z": 688.9,
+      "osm": "node/5453646586",
+      "dist": 400,
+      "kind": "station"
+    },
+    {
+      "id": "place/n9584236507",
+      "name": "Janpath",
+      "cat": "station",
+      "x": 119.22,
+      "z": -229.13,
+      "osm": "node/9584236507",
+      "dist": 400,
+      "kind": "station"
+    },
+    {
+      "id": "place/n6539894856",
+      "name": "Mandi House",
+      "cat": "station",
+      "x": 1576.77,
+      "z": -429.65,
+      "osm": "node/6539894856",
+      "dist": 400,
+      "kind": "station"
+    },
+    {
+      "id": "place/n7018886726",
+      "name": "Patel Chowk",
+      "cat": "station",
+      "x": -389.77,
+      "z": -99.72,
+      "osm": "node/7018886726",
+      "dist": 400,
+      "kind": "station"
+    },
+    {
+      "id": "place/n6539894851",
+      "name": "Rajiv Chowk",
+      "cat": "station",
+      "x": 106.65,
+      "z": -1188.77,
+      "osm": "node/6539894851",
+      "dist": 400,
+      "kind": "station"
+    },
+    {
+      "id": "place/n6539894850",
+      "name": "Ramakrishna Ashram Marg",
+      "cat": "station",
+      "x": -956.3,
+      "z": -1893.86,
+      "osm": "node/6539894850",
+      "dist": 400,
+      "kind": "station"
+    },
+    {
+      "id": "place/n7018886727",
+      "name": "Seva Teerth",
+      "cat": "station",
+      "x": -580.76,
+      "z": 1395.3,
+      "osm": "node/7018886727",
+      "dist": 400,
+      "kind": "station"
+    },
+    {
+      "id": "place/n1988513598",
+      "name": "Shivaji Bridge",
+      "cat": "station",
+      "x": 824.38,
+      "z": -1284.81,
+      "osm": "node/1988513598",
+      "dist": 400,
+      "kind": "station"
+    },
+    {
+      "id": "place/n554257833",
+      "name": "Shivaji Stadium",
+      "cat": "station",
+      "x": -666.87,
+      "z": -752.03,
+      "osm": "node/554257833",
+      "dist": 400,
+      "kind": "station"
+    },
+    {
+      "id": "place/n1988513599",
+      "name": "Tilak Bridge",
+      "cat": "station",
+      "x": 1885.19,
+      "z": -713.08,
+      "osm": "node/1988513599",
+      "dist": 400,
+      "kind": "station"
+    },
+    {
+      "id": "place/w1387018877",
+      "name": "Arya Samaj Anarkali",
+      "cat": "worship",
+      "x": -1568.44,
+      "z": -1692.08,
+      "osm": "way/1387018877",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n5799058795",
+      "name": "Arya Samaj Mandir",
+      "cat": "worship",
+      "x": -513.57,
+      "z": -668.87,
+      "osm": "node/5799058795",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w1393463454",
+      "name": "Bhagwan Bharat Gyansthali Tirth",
+      "cat": "worship",
+      "x": -754.41,
+      "z": -1196.2,
+      "osm": "way/1393463454",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w80926767",
+      "name": "Cathedral Church of The Redemption",
+      "cat": "worship",
+      "x": -1568.25,
+      "z": 475.97,
+      "osm": "way/80926767",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n12185793091",
+      "name": "Dargah Hazrat Baba Rangeele Shah Chisthi Nizami",
+      "cat": "worship",
+      "x": -670.31,
+      "z": -422.09,
+      "osm": "node/12185793091",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n6566929640",
+      "name": "Dargah Shah Abdul Salam Faridi (RA)",
+      "cat": "worship",
+      "x": -190.95,
+      "z": -1298.05,
+      "osm": "node/6566929640",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n6223283567",
+      "name": "Dargah Sharif Hazrat",
+      "cat": "worship",
+      "x": 1420.24,
+      "z": -464.65,
+      "osm": "node/6223283567",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n6470072751",
+      "name": "Free Church",
+      "cat": "worship",
+      "x": -267.28,
+      "z": -447.17,
+      "osm": "node/6470072751",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w1251964714",
+      "name": "Ganesh Ji Mandir",
+      "cat": "worship",
+      "x": -243.13,
+      "z": -944.57,
+      "osm": "way/1251964714",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w359804883",
+      "name": "Gurdwara Rakab Ganj Sahib",
+      "cat": "worship",
+      "x": -1275.84,
+      "z": 441.53,
+      "osm": "way/359804883",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w111695183",
+      "name": "Gurudwara Bangla Sahib Sikh Temple",
+      "cat": "worship",
+      "x": -880.28,
+      "z": -461.16,
+      "osm": "way/111695183",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w111696900",
+      "name": "Gurudwara Rakab Ganj Sahib",
+      "cat": "worship",
+      "x": -1295.34,
+      "z": 352.47,
+      "osm": "way/111696900",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w1302216314",
+      "name": "Iccha Poornee Pracheen Hanuman Mandir",
+      "cat": "worship",
+      "x": -737.47,
+      "z": -1610.24,
+      "osm": "way/1302216314",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w1448399384",
+      "name": "Jama Masjid, New Delhi",
+      "cat": "worship",
+      "x": -760.65,
+      "z": 378.43,
+      "osm": "way/1448399384",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w369659755",
+      "name": "Kaka Nagar Mosque",
+      "cat": "worship",
+      "x": 1942.62,
+      "z": 1925.59,
+      "osm": "way/369659755",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n4030184789",
+      "name": "Kali Mandir",
+      "cat": "worship",
+      "x": 663.29,
+      "z": -1562.94,
+      "osm": "node/4030184789",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n2833952243",
+      "name": "Lakshmi Narayan Temple",
+      "cat": "worship",
+      "x": -1882.44,
+      "z": -1157.0,
+      "osm": "node/2833952243",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w1375516511",
+      "name": "Mahabodhi Vihara, Delhi Branch",
+      "cat": "worship",
+      "x": -1914.34,
+      "z": -1109.37,
+      "osm": "way/1375516511",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w1386149661",
+      "name": "Mankameshwar Mandir",
+      "cat": "worship",
+      "x": -1157.84,
+      "z": -1710.97,
+      "osm": "way/1386149661",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w1478588144",
+      "name": "Masjid Abdul Ghani",
+      "cat": "worship",
+      "x": -17.56,
+      "z": -1661.72,
+      "osm": "way/1478588144",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w1478610223",
+      "name": "Masjid Abdus Salam",
+      "cat": "worship",
+      "x": -161.85,
+      "z": -1292.36,
+      "osm": "way/1478610223",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n13452417149",
+      "name": "Masjid Irvin Road",
+      "cat": "worship",
+      "x": -372.67,
+      "z": -945.1,
+      "osm": "node/13452417149",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n13275078419",
+      "name": "Masjid Kasturba Gandhi Marg",
+      "cat": "worship",
+      "x": 891.12,
+      "z": 228.85,
+      "osm": "node/13275078419",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w289883322",
+      "name": "Mata Sundari Gurdwara",
+      "cat": "worship",
+      "x": 1521.41,
+      "z": -1409.52,
+      "osm": "way/289883322",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n6495330869",
+      "name": "Moti Masjid",
+      "cat": "worship",
+      "x": 12.08,
+      "z": -1307.93,
+      "osm": "node/6495330869",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n4881467124",
+      "name": "Prachin Hanuman Mandir",
+      "cat": "worship",
+      "x": -308.04,
+      "z": -919.9,
+      "osm": "node/4881467124",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w264247415",
+      "name": "Ramakrishna Mission",
+      "cat": "worship",
+      "x": -837.36,
+      "z": -1945.81,
+      "osm": "way/264247415",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w80926769",
+      "name": "Sacred Heart Catholic Cathedral",
+      "cat": "worship",
+      "x": -1110.66,
+      "z": -722.17,
+      "osm": "way/80926769",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n10230313074",
+      "name": "Saint Thomas Church",
+      "cat": "worship",
+      "x": -1449.47,
+      "z": -1920.14,
+      "osm": "node/10230313074",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n14049604342",
+      "name": "Seventh-Day Adventist Church",
+      "cat": "worship",
+      "x": 946.41,
+      "z": -533.91,
+      "osm": "node/14049604342",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w1386161117",
+      "name": "Shri Agarwal Digamber Jain Mandir",
+      "cat": "worship",
+      "x": -541.44,
+      "z": -1141.2,
+      "osm": "way/1386161117",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w1271711135",
+      "name": "Shri Chitragupta Mandir",
+      "cat": "worship",
+      "x": -944.54,
+      "z": -1989.06,
+      "osm": "way/1271711135",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n11448911934",
+      "name": "Shri Hanuman Mandir",
+      "cat": "worship",
+      "x": -1188.94,
+      "z": -1226.22,
+      "osm": "node/11448911934",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w1355299965",
+      "name": "Sidh Pracheen Shiv Mandir",
+      "cat": "worship",
+      "x": -1181.72,
+      "z": -225.45,
+      "osm": "way/1355299965",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w839844482",
+      "name": "Sri Bangla Sahib Gurudwara",
+      "cat": "worship",
+      "x": -905.77,
+      "z": -477.5,
+      "osm": "way/839844482",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/w351809760",
+      "name": "Sri Lanka Buddhist Pilgrims' Rest House",
+      "cat": "worship",
+      "x": -17.76,
+      "z": -2012.44,
+      "osm": "way/351809760",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n2699334246",
+      "name": "Sri Ramakrishna Temple",
+      "cat": "worship",
+      "x": -838.83,
+      "z": -1928.23,
+      "osm": "node/2699334246",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n7040198985",
+      "name": "St. Peter\u2019s Jacobite Syrian Orthodox",
+      "cat": "worship",
+      "x": -1298.23,
+      "z": -763.98,
+      "osm": "node/7040198985",
+      "dist": 380,
+      "kind": "place_of_worship"
+    },
+    {
+      "id": "place/n11175761443",
+      "name": "White Hindu temple",
+      "cat": "worship",
+      "x": -534.85,
+      "z": -1917.35,
+      "osm": "node/11175761443",
+      "dist": 380,
+      "kind": "place_of_worship"
+    }
+  ]
+}

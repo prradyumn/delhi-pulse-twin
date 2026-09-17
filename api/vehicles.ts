@@ -17,6 +17,14 @@
  *   OTD_VEHICLE_URL=<override the endpoint if OTD moves it>
  */
 
+/**
+ * Vercel's Edge Runtime exposes `process.env`, but this file is compiled on its own — it is not
+ * part of web/tsconfig.json and the root has no `@types/node`. Declaring the one member actually
+ * used is smaller and more honest than pulling a Node type package into a worker bundle that has
+ * no Node in it: everything else on `process` genuinely is unavailable here.
+ */
+declare const process: { env: Record<string, string | undefined> };
+
 const DEFAULT_URL = "https://otd.delhi.gov.in/api/realtime/VehiclePositions.pb";
 /** Cache briefly at the edge: the feed updates every ~10 s and OTD rate-limits per key. */
 const CACHE_SECONDS = 8;

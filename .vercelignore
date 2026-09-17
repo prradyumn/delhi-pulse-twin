@@ -1,0 +1,23 @@
+# What Vercel does not need to build or serve this app.
+#
+# The build is `cd web && npm ci && npm run build`, and the deployed artefacts are web/dist plus
+# the edge function in api/. Everything below is authoring apparatus: it is the reason the app is
+# trustworthy, but none of it is read at build or request time.
+
+.venv/
+spike/
+blender/
+pipeline/
+snapshots/
+docs/
+*.docx
+.githooks/
+Makefile
+CLAUDE.md
+
+# built fresh by the build command
+web/dist/
+web/node_modules/
+
+# the QA harness drives a browser; it never runs on Vercel
+web/tools/

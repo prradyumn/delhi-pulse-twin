@@ -60,7 +60,7 @@ const server = createServer(async (req, res) => {
   // The live-bus endpoint, answering exactly as an unconfigured deployment does.
   //
   // Not a convenience: without it this harness misrepresents every real deployment. Vercel always
-  // has api/vehicles.ts and vite preview always has the plugin, and both return 501 with an
+  // has api/vehicles.ts (at the repo root, where Vercel requires it) and vite preview always has the plugin, and both return 501 with an
   // "unconfigured" body when there is no key. A bare static server returns 404 instead, and the
   // browser logs that as a console error even though the adapter handles it — which is how the
   // console-error gate went red the moment the manifest started permitting the adapter. Serving

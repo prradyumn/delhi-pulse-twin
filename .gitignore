@@ -4,9 +4,25 @@ dist/
 __pycache__/
 *.pyc
 .DS_Store
-web/public/data/
+.vscode/
 blender/_intermediate/
+
+# 159 MB of raw Overpass extracts. Inputs to `make data`, not outputs of it, and far too large to
+# commit. Re-fetchable with `make spike` + `python pipeline/fetch_landmarks.py`.
 spike/_raw/
+
+# web/public/data/ is NOT ignored, on purpose.
+#
+# It was, until the app needed to deploy. The generated dataset is 5.8 MB and it is the product:
+# the entire claim of this project is that the demo runs from bundled, versioned snapshot data with
+# every live provider disabled. A deployment that cannot serve that data is not this project.
+#
+# It also cannot be rebuilt at deploy time. `make data` needs spike/_raw (159 MB, ignored above)
+# and a Python 3.12 + pyproj/shapely toolchain; Vercel's build has neither. So the built artefact
+# is what ships, and `make data` is how it is regenerated and re-committed.
+#
+# Regenerate and review the diff before committing: the manifest records retrieval timestamps and
+# which live adapters the build permits, both of which depend on the machine that ran it.
 
 # Secrets. The OTD key is a server-side credential: it must never reach the client bundle or a
 # commit. Added before the first env file existed, deliberately.
@@ -14,3 +30,7 @@ spike/_raw/
 .env.*
 !.env.example
 secrets/
+.vercel
+
+# Vercel CLI local build output
+.vercel/

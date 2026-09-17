@@ -1,0 +1,405 @@
+{
+  "dataset_version": "v1",
+  "transform_version": "0.1.0",
+  "built_at": "2026-09-03",
+  "study_area": {
+    "id": "central-delhi-01",
+    "status": "LOCKED",
+    "bbox_wgs84": [
+      77.1975,
+      28.6039,
+      77.2385,
+      28.6401
+    ],
+    "measured_extent_m": [
+      3935,
+      4086
+    ],
+    "measured_area_km2": 16.08,
+    "crs_storage": "EPSG:4326",
+    "crs_projected": "EPSG:32643",
+    "local_origin_utm": {
+      "status": "DERIVED",
+      "easting": 716843.49,
+      "northing": 3168119.03,
+      "note": "CENTRE of the bbox in UTM 43N. Chosen over the SW corner so runtime coords are symmetric (about +/-2000 m), the camera orbits the true origin, and float32 precision headroom is maximised."
+    },
+    "up_axis": "Y",
+    "axis_mapping": "utm_easting - origin_e -> +X (east) ; elevation -> +Y (up) ; -(utm_northing - origin_n) -> +Z (south)",
+    "runtime_extent": {
+      "x": [
+        -1967.5,
+        1967.5
+      ],
+      "z": [
+        -2043,
+        2043
+      ]
+    },
+    "clip": "All geometry is clipped to the bbox. Overpass returns complete ways, which spilled up to 760 m outside the box before clipping. Buildings are kept or dropped whole by centroid (they are small, so no visible seam); ground polygons and all lines are cut at the boundary."
+  },
+  "tiles": {
+    "size_m": 1000,
+    "grid": [
+      4,
+      4
+    ],
+    "role": "SPATIAL INDEX ONLY \u2014 not an asset-splitting scheme. Spike-0 measured ~96k triangles of ordinary buildings for the whole box, so per-tile GLBs were dropped as over-engineering. Tiles remain the lookup key for entity picking and corridor metrics."
+  },
+  "corridors": [
+    {
+      "id": "baba-kharak-singh-marg",
+      "label": "Baba Kharak Singh Marg",
+      "role": "transit-hero",
+      "layers": [
+        "roads",
+        "traffic",
+        "transit",
+        "weather"
+      ],
+      "no_transit_reason": null
+    },
+    {
+      "id": "barakhamba-road",
+      "label": "Barakhamba Road",
+      "role": "commercial-congestion",
+      "layers": [
+        "roads",
+        "traffic",
+        "transit",
+        "weather"
+      ],
+      "no_transit_reason": null
+    },
+    {
+      "id": "kartavya-path",
+      "label": "Kartavya Path",
+      "role": "orientation-spine",
+      "layers": [
+        "roads",
+        "traffic",
+        "weather"
+      ],
+      "no_transit_reason": "A ceremonial boulevard \u2014 no bus route runs on it. Spike-0 measured 0 of 210 OSM bus route relations touching it. The bus-frequency scenario must visibly disable itself here with this reason stated, never silently return zero."
+    }
+  ],
+  "landmarks": {
+    "required": [
+      {
+        "id": "india-gate",
+        "status": "LOCKED",
+        "osm": "way/361709652",
+        "lonlat": [
+          77.2294919,
+          28.6129323
+        ],
+        "osm_height_m": null,
+        "serves": "kartavya-path",
+        "kind": "massing",
+        "assumed_height_m": 42.0,
+        "note": "Published monument height (42 m). OSM carries no height tag for way/361709652."
+      },
+      {
+        "id": "old-parliament-house",
+        "status": "LOCKED",
+        "osm": "relation/6087635",
+        "lonlat": [
+          77.208192,
+          28.6171862
+        ],
+        "osm_height_m": 21,
+        "serves": "orientation west",
+        "note": "Circular colonnade. Replaces the proposed 'Sansad Bhavan', which does not exist in OSM under that name.",
+        "kind": "massing"
+      },
+      {
+        "id": "cp-central-park",
+        "status": "LOCKED",
+        "osm": "way/164675825",
+        "lonlat": [
+          77.2197083,
+          28.6328099
+        ],
+        "osm_height_m": null,
+        "serves": "both bus corridors",
+        "note": "Rajiv Chowk Central Park plus the colonnaded inner ring around it \u2014 modelled as a ring, not one building. Rajiv Chowk Central Park is open ground, not a building. The colonnaded inner ring around it is separate building stock and is already in the buildings layer.",
+        "kind": "open"
+      }
+    ],
+    "optional": [
+      {
+        "id": "rashtrapati-bhavan",
+        "osm": "relation/5354966",
+        "lonlat": [
+          77.1995283,
+          28.6143716
+        ],
+        "osm_height_m": 20,
+        "kind": "massing"
+      },
+      {
+        "id": "north-block",
+        "osm": "relation/5507630",
+        "lonlat": [
+          77.2057833,
+          28.6151215
+        ],
+        "osm_height_m": 30,
+        "kind": "massing"
+      },
+      {
+        "id": "south-block",
+        "osm": "relation/5507631",
+        "lonlat": [
+          77.2056557,
+          28.6129715
+        ],
+        "osm_height_m": 30,
+        "kind": "massing"
+      },
+      {
+        "id": "new-parliament-house",
+        "osm": "relation/12737019",
+        "lonlat": [
+          77.2102196,
+          28.6171196
+        ],
+        "osm_height_m": 39.6,
+        "kind": "massing"
+      },
+      {
+        "id": "jantar-mantar",
+        "osm": "way/223456559",
+        "lonlat": [
+          77.2165964,
+          28.6270993
+        ],
+        "osm_height_m": null,
+        "kind": "open",
+        "note": "The OSM footprint is the walled enclosure, not the masonry instruments inside it. Rendering it as a block would misrepresent the site."
+      }
+    ],
+    "kind_note": "kind=massing extrudes the verified footprint; kind=open renders as a flat plaza or lawn with a label and no massing. Heights resolve in order: OSM height tag (observed) -> assumed_height_m from a published dimension (estimated) -> none."
+  },
+  "height_rule": {
+    "version": "0.2",
+    "storey_m": 3.5,
+    "order": [
+      "osm height tag -> observed",
+      "osm building:levels x storey_m -> observed",
+      "satellite median building height (Open Buildings 2.5D) -> remote_sensed",
+      "class default -> estimated",
+      "area override -> estimated"
+    ],
+    "class_levels": {
+      "commercial": 5,
+      "office": 5,
+      "retail": 4,
+      "apartments": 4,
+      "residential": 3,
+      "government": 3,
+      "public": 3,
+      "civic": 3,
+      "hotel": 6,
+      "school": 2,
+      "hospital": 4,
+      "house": 2,
+      "hut": 1,
+      "shed": 1,
+      "garage": 1,
+      "roof": 1,
+      "yes": 3
+    },
+    "area_overrides": [
+      {
+        "if_area_lt_m2": 50,
+        "levels": 1
+      },
+      {
+        "if_area_gt_m2": 8000,
+        "max_levels": 4
+      }
+    ],
+    "disclosure": "Height provenance is shown in the UI in three states, not two: observed from an OSM tag, measured from satellite, or estimated by class rule. v0.1 left 91.8% of the box on an authored guess; v0.2 puts most of it on a measurement with a published 1.5 m MAE, and the remaining estimated share is named in the buildings layer provenance rather than footnoted.",
+    "remote_sensed": {
+      "dataset": "Google Research Open Buildings 2.5D Temporal v1, band building_height",
+      "year": 2023,
+      "licence": "CC-BY 4.0 and ODbL 1.0",
+      "attribution": "Building heights (c) Google Research Open Buildings 2.5D Temporal, derived from Copernicus Sentinel-2",
+      "published_mae_m": 1.5,
+      "effective_resolution_m": 4.0,
+      "statistic": "median of footprint pixels above 1 m",
+      "gate": {
+        "min_pixels": 8,
+        "min_footprint_coverage": 0.35,
+        "min_credible_height_m": 3.0
+      },
+      "_why_median": "Five statistics were scored against the 241 buildings in this box holding a real OSM height tag, stratified by height band. The median of positive pixels has the flattest bias across 0-45 m, where 213 of them sit. Chosen for low bias rather than lowest MAE: in a 3D city, systematic bias distorts the skyline and misplaces every shadow, while scatter averages out over 3,000 buildings.",
+      "measured_against_osm": {
+        "n": 234,
+        "satellite_mae_m": 6.47,
+        "satellite_bias_m": -2.64,
+        "rule_v0_1_mae_m": 10.16,
+        "rule_v0_1_bias_m": -7.31,
+        "_bias_by_band_m": {
+          "0-8": {
+            "rule": 3.31,
+            "sat": -0.79
+          },
+          "8-15": {
+            "rule": 1.04,
+            "sat": -0.07
+          },
+          "15-25": {
+            "rule": -5.57,
+            "sat": -2.95
+          },
+          "25-45": {
+            "rule": -18.73,
+            "sat": -0.17
+          },
+          "45+": {
+            "rule": -45.23,
+            "sat": -15.21
+          }
+        },
+        "_caveat": "The OSM height sample is selection-biased towards tall and notable buildings (its p90 is 45.5 m, which is not central Delhi), so the per-band table is the honest read and the overall figure flatters both estimators."
+      },
+      "known_limitation": "Above 45 m this under-reads by 12-18 m. Sentinel-2 derived heights saturate on towers. Uncorrected on purpose: the sample showing the bias is 28 buildings."
+    }
+  },
+  "budgets": {
+    "initial_transfer_mb": {
+      "target": 6,
+      "hard_gate": 15,
+      "note": "Target cut from 12 to 6 MB after Spike-0 measured the real geometry volume. The 15 MB PRD gate stays as the hard ceiling."
+    },
+    "first_meaningful_view_s": 5,
+    "interactive_s": 7,
+    "fps_floor": 30,
+    "fps_primary_device": 45,
+    "js_heap_mb": 400,
+    "draw_calls_default_view": 250,
+    "triangles_default_view_m": 3,
+    "buildings_glb_kb": 900,
+    "landmark_lod0_kb": 400,
+    "landmark_lod1_kb": 120,
+    "landmark_lod2_kb": 30,
+    "max_texture_px": 1024,
+    "texture_memory_mb": 64,
+    "gpu_ms_max": 16.7,
+    "_gpu_note": "GPU milliseconds, measured with EXT_disjoint_timer_query_webgl2 at a parked camera. This is the budget that actually limits visual quality, and it was invisible until instrumented: CPU frame time read 1.4 ms while the GPU was spending 19. Two findings came straight out of it \u2014 the shadow map was 73% of GPU time (fixed by rendering it on demand rather than every frame, 10.1 ms reclaimed), and screen-space AO cost ~18 ms and doubled submitted geometry, so it is opt-in only and the AO comes from a Blender bake instead. Note headless reports devicePixelRatio 1; a Retina display is 4x the pixels, so a headless pass is necessary but not sufficient.",
+    "_measured": {
+      "device": "Apple M1 / 8 GB, ANGLE Metal, 1600x913 at dpr 1",
+      "date": "2026-09-03",
+      "wide_view_gpu_ms": 19.4,
+      "close_view_gpu_ms": 12.3,
+      "street_level_gpu_ms": 2.6,
+      "shadow_map_share_before_fix_pct": 73,
+      "screen_space_ao_gpu_ms": 33.2,
+      "_history": {
+        "wide_view_gpu_ms_before_lod_gates": 33.1,
+        "note": "The wide view was 10.8 ms earlier on 2026-09-03, before the reach, routes and street furniture layers. It then read 33.1 ms, and altitude gates on rooftop detail, street furniture and pedestrians brought it to 19.4 ms with a 1% repeat spread. It is still OVER the 16.7 ms budget and the gate is red."
+      },
+      "_instability_warning": "This device drifts by up to 2x within a single session under sustained load: the SAME commit measured 12.9 ms and then 21-25 ms at the same camera an hour apart, and one build read 23.3 then 41.3 ms in consecutive passes. A single sample is not evidence. tools/qa.mjs therefore measures each camera twice and takes the LOWER median - contention and throttling can only add time to a frame, never remove it - and prints the repeat spread so an unstable machine is visible. Note that a small spread does NOT prove the machine is healthy: a sustained-throttled GPU is stably slow. Every absolute figure here wants re-measuring on a cool device."
+    }
+  },
+  "assets": {
+    "buildings": {
+      "path": "data/@v1/buildings.json",
+      "bytes": 604631,
+      "sha256": "d0f2e05ca57f40d1"
+    },
+    "roads": {
+      "path": "data/@v1/roads.json",
+      "bytes": 133250,
+      "sha256": "a7d0511ad728e08f"
+    },
+    "corridors": {
+      "path": "data/@v1/corridors.json",
+      "bytes": 12493,
+      "sha256": "47049886bd7657fa"
+    },
+    "ground": {
+      "path": "data/@v1/ground.json",
+      "bytes": 99474,
+      "sha256": "f14d0a5cedcfe847"
+    },
+    "water": {
+      "path": "data/@v1/water.json",
+      "bytes": 4059,
+      "sha256": "cac06eea7dc066fa"
+    },
+    "rail": {
+      "path": "data/@v1/rail.json",
+      "bytes": 18342,
+      "sha256": "3e24a763bcf23b1c"
+    },
+    "landmarks": {
+      "path": "data/@v1/landmarks.json",
+      "bytes": 33152,
+      "sha256": "133e2dcae39a1c64"
+    },
+    "places": {
+      "path": "data/@v1/places.json",
+      "bytes": 79999,
+      "sha256": "1f293cc5da302621"
+    },
+    "trees": {
+      "path": "data/@v1/trees.json",
+      "bytes": 275089,
+      "sha256": "2c7b336f3ef68a5a"
+    },
+    "streetscape": {
+      "path": "data/@v1/streetscape.json",
+      "bytes": 103532,
+      "sha256": "a57a284cce7acbb7"
+    },
+    "building_parts": {
+      "path": "data/@v1/building-parts.json",
+      "bytes": 34510,
+      "sha256": "b8513fa5b28e2d54"
+    },
+    "metro": {
+      "path": "data/@v1/metro.json",
+      "bytes": 5421,
+      "sha256": "aa869e50ef8fb7e8"
+    },
+    "transit": {
+      "path": "data/@v1/transit.json",
+      "bytes": 24125,
+      "sha256": "1889e96ab07af720"
+    },
+    "weather": {
+      "path": "data/@v1/weather/baseline.json",
+      "bytes": 1446,
+      "sha256": "5443b149ad9d53b8"
+    },
+    "scenario_model": {
+      "path": "data/@v1/scenario-model-0.1.json",
+      "bytes": 3883,
+      "sha256": "805383963e1a8e35"
+    }
+  },
+  "total_uncompressed_bytes": 1433406,
+  "attribution": [
+    "\u00a9 OpenStreetMap contributors (ODbL 1.0)",
+    "Bus routes from OpenStreetMap route relations, operator Delhi Transport Corporation",
+    "Weather baseline authored for this prototype"
+  ],
+  "health": {
+    "live_adapters": [
+      "open_meteo_air_quality",
+      "open_meteo_weather",
+      "otd_vehicle_positions"
+    ],
+    "live_adapters_from_env": [
+      {
+        "adapter": "otd_vehicle_positions",
+        "variable": "OTD_API_KEY"
+      }
+    ],
+    "note": "No live provider is REQUIRED. Every layer in this manifest is bundled and the guided demo completes with all adapters disabled. Anything listed here is additive: the app only contacts a provider named in this list, so a build without a key never fires a request that cannot succeed.",
+    "env_note": "Adapters needing a credential stay FALSE in the committed config, because a clone without the key would fire requests that can only fail. They are enabled per build from the environment instead: this build found the variables listed in live_adapters_from_env. The committed scope lock is therefore the same for everyone, and what a given deployment actually contacts is a property of that deployment."
+  }
+}

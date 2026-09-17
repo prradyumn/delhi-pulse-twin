@@ -54,7 +54,8 @@ build was the better artefact for forms this regular, and for what these models 
     make data       # OSM extract -> web/public/data/@v1/
     make assets     # headless Blender: landmark LODs -> GLB, budget-gated
     make dev        # web app dev server
-    make check      # data + typecheck + build + budget gate
+    make check      # data + typecheck + build + budget gate + 90 browser checks
+    make reel       # record the demo reel (needs a build; ~90 s)
 
 `make data` also fetches the landmark footprints, which need their own query: India Gate is tagged
 `historic=monument` rather than `building`, and the relation-backed footprints need stitching.
@@ -95,6 +96,13 @@ static server has no `/api/vehicles`, and the key must never reach the browser.
 | Live buses | Real DTC positions. Expect **about two inside the box** in daylight and **zero at night** — 1,300+ buses are moving across Delhi and this box is 16 km² of it. The chip distinguishes all three states and replay keeps running underneath. |
 | Everything else | Bundled. Pull the network cable and the demo still completes. |
 
+**If you need it on a slide rather than live**, `make reel` records an 80-second tour through the
+real UI — the opening claims, the height-provenance reveal, one building's own story, the live air
+panel, India Gate, the Kartavya Path axis, and dusk over Connaught Place. It drives the actual
+controls, so it cannot show anything a viewer could not reproduce. Output lands in
+`spike/results/reel/` as both `.webm` and `.mp4`; the recording is gitignored because it is 36 MB a
+take and the script is the reproducible thing.
+
 **A five-minute path**, if you want one that is already sequenced: click *Take the 4-minute guided
 story* on the opening card. Ten steps, ending at India Gate at dusk. It sets the camera, clock,
 corridor and scenario for each step, so nothing has to be driven by hand.
@@ -128,6 +136,30 @@ every entity you click.
 produce. Reset re-reads the baseline rather than undoing state. No output says "will". Where a
 corridor has no transit at all, the bus-frequency scenario disables itself and says why instead of
 returning zero.
+
+## Deploying
+
+Vercel, from the repo root. The layout is what Vercel requires, not a preference:
+
+    api/vehicles.ts        the live-bus proxy — Vercel ONLY discovers functions in api/ at the
+                           project root, and it declares its own edge runtime
+    web/                   the Vite app; built by `cd web && npm ci && npm run build`
+    web/public/data/@v1/   the 5.8 MB bundled dataset, committed because it IS the product and
+                           cannot be rebuilt in a Vercel build (no Python, no 159 MB of raw OSM)
+    vercel.json            build command, output directory, cache headers
+    .vercelignore          the pipeline, Blender stage, spike inputs and docs, none of which are
+                           read at build or request time
+
+One environment variable, and it is optional:
+
+| | |
+|---|---|
+| `OTD_API_KEY` | Delhi Open Transit Data, for live bus positions. Without it `/api/vehicles` answers 200 with an `unconfigured` body, the layer rail reports it, and the app runs on deterministic replay — the scope-locked default. |
+
+Verify a deployment in three checks: the page loads and the layer rail shows 19 of 20 layers ready;
+`/api/vehicles` returns protobuf rather than JSON; and the masthead chip says how many live buses
+are inside the box. `npx vercel build` reproduces the whole thing locally and will tell you if the
+function stopped being discovered.
 
 ## Attribution
 

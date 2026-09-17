@@ -8,13 +8,15 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --port 4173",
-    "budget": "node tools/budget.mjs"
+    "budget": "node tools/budget.mjs",
+    "reel": "node tools/reel.mjs"
   },
   "dependencies": {
     "three": "^0.169.0"
   },
   "devDependencies": {
     "@types/three": "^0.169.0",
+    "playwright": "^1.63.0",
     "typescript": "^5.6.3",
     "vite": "^5.4.11"
   }

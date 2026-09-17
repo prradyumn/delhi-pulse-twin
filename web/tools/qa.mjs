@@ -345,6 +345,27 @@ if (picked?.open) {
   check(picked.modes.length > 0, "the selection drawer stated no data mode");
   console.log(`  selection     ${picked.kind} · modes ${picked.modes.join("/")} · drawer on top`);
 }
+// The reveal toggle is the last row of a scrolling rail that sat under the legend, so the control
+// that discloses which heights are guessed was unclickable at a 900px viewport. Geometry, not
+// existence, is the assertion — the element was always in the DOM.
+const reveal = JSON.parse(await evalJs(`(() => {
+  const b = document.querySelector('[aria-label="Reveal estimated building heights"]');
+  if (!b) return JSON.stringify({ found: false });
+  b.scrollIntoView({ block: 'nearest' });
+  const r = b.getBoundingClientRect();
+  const at = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+  return JSON.stringify({
+    found: true,
+    covered: !(at === b || b.contains(at)),
+    by: at ? (at.closest('[id]')?.id ?? at.tagName) : null,
+    inView: r.top >= 0 && r.bottom <= innerHeight + 1,
+  });
+})()`));
+check(reveal.found, "the reveal-estimated-heights toggle is missing");
+check(reveal.found && !reveal.covered,
+      `the reveal toggle is covered by #${reveal.by} — the height-disclosure control cannot be clicked`);
+check(reveal.found && reveal.inView, "the reveal toggle sits outside the viewport");
+
 await shot("01b-selection");
 await evalJs(`document.querySelector('#drawer .phead button')?.click()`);
 await sleep(300);

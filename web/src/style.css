@@ -115,11 +115,33 @@ button { cursor: pointer; background: none; border: none; }
   border: 3px solid transparent; background-clip: content-box;
 }
 
-/* 20 layers no longer fit above the legend, so the rail scrolls inside its own box. It can never
-   fit them, so the bottom fade is unconditional and honest — it always means "more below". */
-#rail { top: 66px; left: 12px; width: 232px; max-height: calc(100vh - 430px); overflow-y: auto; }
+/* ---------------------------------------------------------------- left column
+   The rail used to reserve a fixed 430px for the legend below it. The legend is not a fixed
+   height — it grows by three swatches when "Reveal estimated heights" is on — so at a 900px
+   viewport the two overlapped by 87px and the legend swallowed clicks meant for the bottom of the
+   rail. The reveal toggle is the last row in that rail, so the control that discloses which
+   heights are guessed could not be reached. Found by a script trying to click it.
+
+   So the left side is a column that divides the space it actually has: the legend takes what it
+   needs, the rail takes the rest and scrolls. No arithmetic to keep in sync with a panel's
+   contents. */
+#leftrail {
+  position: fixed; top: 66px; left: 12px; bottom: 96px; width: 232px; z-index: 10;
+  display: flex; flex-direction: column; gap: 10px;
+  pointer-events: none;
+}
+#leftrail > * { pointer-events: auto; }
+#leftrail > #rail {
+  position: static; width: auto; max-height: none;
+  flex: 1 1 auto; min-height: 96px; overflow-y: auto;
+}
+#leftrail > #legend { position: static; width: auto; flex: 0 0 auto; }
+
+/* 20 layers rarely fit, so the bottom fade means "more below". It is suppressed once the rail is
+   scrolled to the end, so the last row is never dimmed for no reason. */
 #rail { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent);
                 mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent); }
+#rail[data-at-end="1"] { -webkit-mask-image: none; mask-image: none; }
 
 .lrow {
   display: grid; grid-template-columns: 14px 1fr auto; align-items: center; gap: 9px;
@@ -160,7 +182,7 @@ button { cursor: pointer; background: none; border: none; }
 .toggle[aria-pressed="true"]::after { transform: translateX(15px); background: var(--accent); }
 
 /* ---------------------------------------------------------------- legend */
-#legend { left: 12px; bottom: 96px; width: 232px; }
+/* position comes from #leftrail */
 .lgrow { display: flex; align-items: center; gap: 8px; padding: 3px 0; font-size: 12px; color: var(--text-2); }
 .lgrow .sw { width: 16px; height: 9px; border-radius: 1px; flex: 0 0 auto; }
 .ramp { display: flex; height: 9px; margin: 5px 0 4px; border-radius: 1px; overflow: hidden; }

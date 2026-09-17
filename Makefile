@@ -1,4 +1,4 @@
-.PHONY: help setup spike data test assets qa qa-shots qa-render dev build preview budget check clean
+.PHONY: help setup spike data test assets qa qa-shots qa-render dev build preview budget check clean reel
 
 PY := .venv/bin/python
 BLENDER := /Applications/Blender.app/Contents/MacOS/Blender
@@ -15,6 +15,7 @@ help:
 	@echo "  build      typecheck + production build"
 	@echo "  qa         browser QA: renders, frame time, scenarios, FR-01 degradation"
 	@echo "  budget     fail if any asset or transfer budget is breached"
+	@echo "  reel       record the demo reel through the real UI -> spike/results/reel/"
 	@echo "  check      data + build + budget, in that order"
 
 setup:
@@ -76,6 +77,11 @@ qa-shots:
 
 budget:
 	cd web && node tools/budget.mjs
+
+# Drives the built app through the real controls and records it. Needs a build and, for the mp4,
+# ffmpeg on PATH; without ffmpeg it keeps the webm and says so.
+reel:
+	cd web && npm run build && npm run reel
 
 check: data build
 	cd web && node tools/budget.mjs --dist

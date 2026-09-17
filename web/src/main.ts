@@ -321,7 +321,17 @@ async function boot() {
   // each other. See ui/rightRail.ts — the drawer used to open underneath the lab.
   const right = rightRail();
   right.mount(lab.node, det.node, exposure.node);
-  document.body.append(mast.node, rail0.node, leg.node, right.node, tbar.node);
+  // The left side is a column for the same reason: the legend is not a fixed height, so the rail
+  // cannot reserve a fixed gap for it. See the #leftrail note in style.css.
+  const left = el("div", { id: "leftrail" }, rail0.node, leg.node);
+  document.body.append(mast.node, left, right.node, tbar.node);
+  // the bottom fade means "there is more below", so it goes away once there is not
+  const markEnd = () => rail0.node.setAttribute(
+    "data-at-end",
+    rail0.node.scrollTop + rail0.node.clientHeight >= rail0.node.scrollHeight - 2 ? "1" : "0");
+  rail0.node.addEventListener("scroll", markEnd, { passive: true });
+  new ResizeObserver(markEnd).observe(rail0.node);
+  markEnd();
   rail0.update(reports);
   recompute();
 

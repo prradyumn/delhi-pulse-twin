@@ -103,7 +103,9 @@ export function layerRail(order: string[], onToggle: (id: string, on: boolean) =
       body.append(row);
     }
 
-    // The reveal toggle is a trust control, not a display option: ~92% of this box is estimated.
+    // The reveal toggle is a trust control, not a display option. It was ~92% of this box when the
+    // rule was the only source of heights; the satellite raster cut it to 11.6%, and the point of
+    // the control is that the remainder is still visible rather than quietly blended in.
     const sub = el("div", { class: "subrow" },
       el("span", { text: "Reveal estimated heights" }),
       toggleButton(s.revealEstimated, () => onReveal(!store.get().revealEstimated),

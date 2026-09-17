@@ -32,7 +32,12 @@ const CACHE_SECONDS = 8;
 export const config = { runtime: "edge" };
 
 export default async function handler(): Promise<Response> {
-  const key = process.env.OTD_API_KEY;
+  // Trimmed, because the single most common way this variable arrives wrong is a trailing
+  // newline from a copy-paste into a dashboard field. `encodeURIComponent` faithfully turns that
+  // into %0A, OTD answers 401, and the proxy reports a 502 upstream error that looks like the
+  // provider's fault rather than a whitespace character. Cost: nothing. A key with meaningful
+  // leading or trailing whitespace does not exist.
+  const key = process.env.OTD_API_KEY?.trim();
   if (!key) {
     return new Response(
       JSON.stringify({

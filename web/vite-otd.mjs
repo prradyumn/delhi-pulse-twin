@@ -67,7 +67,8 @@ export function otdVehicles({ root, mode = "development" } = {}) {
       // "" as the prefix loads every variable, not just VITE_ ones — this runs in Node, and the
       // key is deliberately never handed to the client bundle.
       const env = loadEnv(mode, root ?? cfg.root ?? process.cwd(), "");
-      key = process.env.OTD_API_KEY || env.OTD_API_KEY || "";
+      // trimmed for the same reason as api/vehicles.ts: a trailing newline becomes %0A and 401s
+      key = (process.env.OTD_API_KEY || env.OTD_API_KEY || "").trim();
       base = process.env.OTD_VEHICLE_URL || env.OTD_VEHICLE_URL || DEFAULT_URL;
       cfg.logger.info(key
         ? `  otd  live vehicle feed enabled at /api/vehicles`

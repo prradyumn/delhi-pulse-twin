@@ -71,13 +71,16 @@ panel a measurement rather than a pinned number.
 
 **Before you present**, on the machine that will be presenting:
 
-    set -a; . ./.env.local; set +a     # OTD_API_KEY — without it, live buses stay off
+    set -a; . ./.env.local; set +a     # the pipeline is a separate process; it needs the key exported
     make check                         # data -> build -> budget gate -> 87 browser checks
     make dev                           # serve it — this is the server that proxies the bus feed
 
 `make check` runs the whole gate: it regenerates `web/public/data/@v1/` (which is **not** in git),
 typechecks, builds, fails on any breached budget, and then drives the built app in headless Chrome
 through both scenarios, the selection drawer, the live-bus decoder and all ten story steps.
+
+Only the Python pipeline needs the key exported by hand — Vite is pointed at the repo root with
+`envDir`, so `make dev` and `make preview` pick up `.env.local` on their own.
 
 `make data` must run **with the key in the environment**: the manifest is the authority on which
 providers the app may contact, and a build made without the key permits no live buses, whatever is

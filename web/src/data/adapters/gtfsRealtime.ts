@@ -126,7 +126,14 @@ class Reader {
   skip(wire: number) {
     if (wire === 0) this.varint();
     else if (wire === 1) this.p += 8;
-    else if (wire === 2) this.p += this.varint();
+    // `this.p += this.varint()` is wrong, and wrong in a way that reads as correct: `+=` takes
+    // the value of `this.p` BEFORE evaluating the right-hand side, so the bytes the length varint
+    // itself consumed are handed back. A one-byte length under-advanced the reader by one byte,
+    // the next tag was read from inside the previous field, and the whole message shredded from
+    // there. It survived review and shipped because the only feed it had ever been run against
+    // was Delhi's empty midnight one: a bare FeedHeader of varints, where nothing is ever skipped
+    // over a length-delimited field. The first feed with a bus in it failed on the first entity.
+    else if (wire === 2) { const len = this.varint(); this.p += len; }
     else if (wire === 5) this.p += 4;
     else throw new Error(`unknown wire type ${wire}`);
   }

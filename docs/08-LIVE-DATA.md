@@ -262,3 +262,73 @@ still honours 501 and 404 for a deployment running an older proxy.
 | Open-Meteo pollen / UV | keyless | Already wired for UV. Pollen is European-only, so not useful here. |
 | OpenSky Network | keyless, rate-limited | Aircraft positions. IGI is outside the box; the Airport Express line is in it. Marginal. |
 | data.gov.in CPCB | free key | Official Indian AQI. Overlaps OpenAQ, historically less reliable uptime. |
+
+---
+
+# The first daytime feed, and the bug that had been waiting for it
+
+Measured 17 September 2026, 20:47 IST — the first time the decoder was ever handed a feed with a
+bus in it.
+
+| | |
+|---|---|
+| payload | **138,088 bytes** (the midnight feed was 15) |
+| vehicles | **1,334**, across 456 distinct routes |
+| inside the 16 km² box | **2** |
+| feed age | 4 s |
+| `speed_ms`, `timestamp`, `route_id`, `trip_id`, `vehicle_id`, `vehicle_label`, `start_time` | **100%** of observations |
+| `schedule_relationship` | ADDED 1,081 · SCHEDULED 253 |
+
+## What the app actually did with it: nothing
+
+The live-bus layer reported `unavailable`, error **`unknown wire type 3`**. Every daytime feed
+since the key arrived would have failed the same way. The feature that this document calls "the
+real thing" had never once worked.
+
+The fault is one line of `gtfsRealtime.ts`:
+
+```js
+else if (wire === 2) this.p += this.varint();      // wrong
+else if (wire === 2) { const len = this.varint(); this.p += len; }   // right
+```
+
+`+=` evaluates its left operand **before** the right-hand side, so `this.p` is captured *before*
+`varint()` advances it, and the bytes the length prefix itself occupied are handed back. A
+one-byte length under-advances the reader by one byte; the next tag is then read from inside the
+previous field, and the message shreds from there. The thrown wire type is whatever garbage the
+misaligned byte happened to encode — 3 in the browser, 7 on the next capture. `bytes()` two lines
+below does the same job correctly, because it assigns the length to a local first.
+
+## Why review, the type checker and 70 browser checks all missed it
+
+The line is correct-looking, correctly typed, and **never executed** by the only feed the decoder
+had ever met. Delhi's midnight feed is a bare `FeedHeader`: three varint fields, no nested
+message, so nothing is ever skipped over a length-delimited field. `decodeFeed` returned
+`{ vehicles: [] }` and that was recorded above as the honest answer — which it was. The empty
+feed proved the transport, the proxy, the key and the header parse. It could not prove the parser,
+and this document said the feed was "verified" on the strength of it.
+
+The lesson is narrower than "test more": **a fixture that exercises none of the branches is not
+coverage, and an honest empty answer can hide a total failure of the thing producing it.**
+
+## The guard
+
+`web/tools/fixtures/otd-vehicles-sample.pb` — a `FeedHeader` plus eleven whole `FeedEntity`
+records, cut from the 20:47 capture. Whole top-level records are kept and concatenated, so
+**nothing is re-encoded**: a fixture built by an encoder of ours would test our encoder against
+our decoder and agree with itself, which is precisely how this shipped.
+
+`make qa` now runs those bytes through the app's own decoder, and — when the build permits the
+adapter — serves them at `/api/vehicles` and asserts the whole path: proxy contract, adapter,
+layer status, `mode: observed`, and the replay layer yielding to real positions.
+
+Verified against the live feed after the fix: `2 LIVE BUSES · feed 7 s old · 2 of 1258 vehicles
+inside the study box`, layer `observed`, no console errors.
+
+## What a demo should expect
+
+**About two buses.** 1,334 vehicles are moving across Delhi and the study box is 16 km² of it, so
+two to a handful is the normal daytime state, and zero is normal at night. The masthead chip
+distinguishes the three cases — no feed, a feed with nothing in the box, and real positions — and
+the replay layer keeps running underneath rather than leaving an empty street. This is not a
+shortfall to apologise for on stage; it is the honest size of the thing, and the chip says so.

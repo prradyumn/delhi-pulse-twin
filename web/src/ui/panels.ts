@@ -23,8 +23,12 @@ export function masthead(m: Manifest) {
 
   const node = el("header", { id: "mast" },
     el("div", { class: "brand" },
-      el("strong", { text: "Delhi Pulse Twin" }),
-      el("span", { text: `${m.study_area.id} · ${m.dataset_version} · transform ${m.transform_version}` })),
+      el("strong", { text: "Delhi Pulse Twin",
+                     title: `${m.study_area.id} · dataset ${m.dataset_version} · transform ${m.transform_version}` }),
+      // Short enough to survive beside the clock, the vehicle readout and the timings. The full
+      // string — study area included — is the tooltip, and Data status carries all of it anyway.
+      el("span", { text: `${m.dataset_version} · transform ${m.transform_version}`,
+                   title: `${m.study_area.id} · dataset ${m.dataset_version} · transform ${m.transform_version}` })),
     el("div", { class: "spacer" }),
     clock, moving, fps,
     feed, walkBtn, reachBtn, airBtn, placesBtn, statusBtn, storyBtn);

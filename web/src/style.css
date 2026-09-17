@@ -75,8 +75,11 @@ button { cursor: pointer; background: none; border: none; }
   overflow: hidden; text-overflow: ellipsis;
 }
 /* The masthead grew a live-feed chip, a vehicle readout and cpu/gpu timings, and the dataset id
-   started colliding with the clock. The id is the least urgent thing up here, so it yields first. */
+   started colliding with the clock. The id is the least urgent thing up here, so it yields first —
+   but it yields whole. Ellipsing it to "cent..." spends the same pixels to say nothing; the full
+   string stays in the tooltip and in Data status, which is where anyone checking it would look. */
 #mast .brand { flex: 0 1 auto; min-width: 0; overflow: hidden; }
+@media (max-width: 1800px) { #mast .brand span { display: none; } }
 #mast .spacer { flex: 1 1 auto; min-width: 8px; }
 #mast .stat { flex: 0 0 auto; }
 @media (max-width: 1500px) { #mast .brand span { display: none; } }
@@ -98,8 +101,25 @@ button { cursor: pointer; background: none; border: none; }
 .chip.on { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 
 /* ---------------------------------------------------------------- left rail */
-/* 14 layers no longer fit above the legend, so the rail scrolls inside its own box */
+/* Every scrolling box in the chrome. The default macOS overlay scrollbar is invisible until you
+   already know to scroll, which is exactly backwards: a panel that clips a row mid-glyph reads as
+   a rendering fault rather than as "there is more below". */
+#rail, #rightrail, #places .pbody, .card {
+  scrollbar-width: thin; scrollbar-color: var(--line-2) transparent;
+}
+#rail::-webkit-scrollbar, #rightrail::-webkit-scrollbar,
+#places .pbody::-webkit-scrollbar, .card::-webkit-scrollbar { width: 9px; }
+#rail::-webkit-scrollbar-thumb, #rightrail::-webkit-scrollbar-thumb,
+#places .pbody::-webkit-scrollbar-thumb, .card::-webkit-scrollbar-thumb {
+  background: var(--line-2); border-radius: 5px;
+  border: 3px solid transparent; background-clip: content-box;
+}
+
+/* 20 layers no longer fit above the legend, so the rail scrolls inside its own box. It can never
+   fit them, so the bottom fade is unconditional and honest — it always means "more below". */
 #rail { top: 66px; left: 12px; width: 232px; max-height: calc(100vh - 430px); overflow-y: auto; }
+#rail { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent);
+                mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent); }
 
 .lrow {
   display: grid; grid-template-columns: 14px 1fr auto; align-items: center; gap: 9px;
@@ -185,13 +205,23 @@ button { cursor: pointer; background: none; border: none; }
 }
 .rainsel button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 
-/* ---------------------------------------------------------------- right panels */
-#drawer, #lab {
-  top: 66px; right: 12px; width: 336px;
-  max-height: calc(100vh - 190px); overflow-y: auto;
+/* ---------------------------------------------------------------- right panels
+   One column, not four panels fighting over one corner. The lab, the selection drawer, the
+   exposure panel and the reach panel all used to sit at `top: 66px; right: 12px` with the same
+   z-index, so document order decided which one you could see. See ui/rightRail.ts. */
+#rightrail {
+  position: fixed; top: 66px; right: 12px; bottom: 96px; width: 372px; z-index: 10;
+  display: flex; flex-direction: column; gap: 10px;
+  overflow-y: auto; overscroll-behavior: contain;
+  /* an empty column must not swallow clicks meant for the city underneath it */
+  pointer-events: none;
 }
-#lab { top: 66px; }
-#drawer.stacked { top: auto; bottom: 96px; max-height: 42vh; }
+#rightrail > * { pointer-events: auto; flex: 0 0 auto; }
+#rightrail > .panel {
+  position: static; top: auto; right: auto; width: auto;
+  max-height: none; overflow: visible;
+}
+@media (max-width: 1240px) { #rightrail { width: 330px; } }
 
 .kv { display: grid; grid-template-columns: 108px 1fr; gap: 5px 10px; font-size: 12.5px; }
 .kv dt { color: var(--text-3); font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
@@ -318,7 +348,7 @@ h3.sub:first-child { margin-top: 0; padding-top: 0; border-top: none; }
 @media (max-width: 1100px) { #places { left: 12px; top: 300px; } }
 
 /* ---------------------------------------------------------------- exposure lab */
-#exposure { top: 66px; right: 12px; width: 360px; max-height: calc(100vh - 190px); overflow-y: auto; }
+/* position and height come from #rightrail */
 
 .pmhead {
   border-left: 3px solid var(--accent); padding: 10px 0 10px 12px;
@@ -374,8 +404,7 @@ h3.sub:first-child { margin-top: 0; padding-top: 0; border-top: none; }
 /* ---------------------------------------------------------------- reach panel */
 /* Sits under the exposure panel's slot on the right, and is tall because the assumptions matter
    as much as the finding: an isochrone that does not say what it charged you for is a decoration. */
-#reach { top: 66px; right: 12px; width: 372px; max-height: calc(100vh - 190px); overflow-y: auto; }
-@media (max-width: 1240px) { #reach { width: 330px; } }
+/* position and height come from #rightrail */
 
 .rlegend {
   display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 8px 0 4px;

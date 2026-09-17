@@ -30,6 +30,14 @@ const MIME = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css
                ".json": "application/json", ".glb": "model/gltf-binary",
                ".svg": "image/svg+xml", ".png": "image/png" };
 
+/** Real bytes captured from the live OTD feed, trimmed to a header plus eleven whole entities.
+ *  Whole top-level records are kept and concatenated, so nothing here is re-encoded: it is what
+ *  Delhi sent. Regenerate with tools/fixtures/README.md. */
+const FIXTURE = existsSync(join(ROOT, "tools", "fixtures", "otd-vehicles-sample.pb"))
+  ? await readFile(join(ROOT, "tools", "fixtures", "otd-vehicles-sample.pb"))
+  : null;
+let serveFixture = false;
+
 const failures = [];
 const notes = [];
 let checks = 0;
@@ -59,11 +67,24 @@ const server = createServer(async (req, res) => {
   // the documented contract fixes the misrepresentation and exercises the client's unconfigured
   // path, which is the path most viewers will actually take.
   if (url === "/api/vehicles") {
+    // Default: the unconfigured contract, as above. With the fixture armed, real captured OTD
+    // bytes instead — so the live path is exercised without a key and without the network.
+    if (serveFixture && FIXTURE) {
+      res.writeHead(200, { "content-type": "application/x-protobuf" });
+      res.end(FIXTURE);
+      return;
+    }
     res.writeHead(200, { "content-type": "application/json" });
     res.end(JSON.stringify({
       error: "unconfigured",
       detail: "qa.mjs serves the unconfigured contract: no OTD key in the test environment.",
     }));
+    return;
+  }
+  // the same bytes, fetchable directly, for the decoder check
+  if (url === "/qa/otd-vehicles-sample.pb" && FIXTURE) {
+    res.writeHead(200, { "content-type": "application/x-protobuf" });
+    res.end(FIXTURE);
     return;
   }
 
@@ -280,6 +301,54 @@ console.log(`  furniture     ${fc.lamps} lamps, ${fc.shelters} shelters, ${fc.si
 check(consoleErrors.length === 0,
       `${consoleErrors.length} console error(s): ${consoleErrors.slice(0, 3).join(" | ")}`);
 
+// ================================================================ 2b. select -> evidence (FR-10)
+//
+// This harness never clicked the city, and so never noticed that the selection drawer had been
+// opening *underneath* the scenario lab for as long as both shared `top: 66px; right: 12px`.
+// Everything about the drawer was correct except that no one could see it. So the assertion is
+// not "the drawer opened" — it is "the drawer is the thing painted at the drawer's own position".
+async function clickScene(x, y) {
+  for (const type of ["mousePressed", "mouseReleased"]) {
+    await send("Input.dispatchMouseEvent", { type, x, y, button: "left", clickCount: 1, buttons: 1 });
+  }
+  await sleep(500);
+}
+let picked = null;
+for (const [x, y] of [[620, 500], [500, 620], [760, 430], [900, 560], [430, 470], [1000, 430]]) {
+  await clickScene(x, y);
+  picked = JSON.parse(await evalJs(`(() => {
+    const n = document.getElementById('drawer');
+    if (!n || n.classList.contains('hidden')) return JSON.stringify({ open: false });
+    const r = n.getBoundingClientRect();
+    const at = document.elementFromPoint(r.left + r.width / 2, r.top + 20);
+    return JSON.stringify({
+      open: true,
+      kind: n.querySelector('h2')?.textContent ?? null,
+      // what the user's eye actually lands on at the drawer's own top edge
+      topmost: at ? (at.closest('[id]')?.id ?? at.tagName) : null,
+      // A drawer taller than its column is fine — the column scrolls. What is not fine is a
+      // drawer positioned off the side, or one with no usable height showing.
+      onScreen: r.top >= 0 && r.top < innerHeight - 200 && r.left >= 0 && r.right <= innerWidth + 1,
+      modes: [...n.querySelectorAll('.badge')].map(b => b.textContent.trim()),
+      // textContent, not innerText: the labels are uppercased by CSS, so innerText says "PROVIDER"
+      provider: /Provider/.test(n.textContent),
+    });
+  })()`));
+  if (picked.open) break;
+}
+check(picked?.open, "six clicks into the default view selected nothing — the scene is not pickable");
+if (picked?.open) {
+  check(picked.topmost === "drawer",
+        `the selection drawer opened but #${picked.topmost} is painted over it — the click looks like it did nothing`);
+  check(picked.onScreen, "the selection drawer opened outside the viewport or with no room to read it");
+  check(picked.provider, "the selection drawer carried no provenance block (FR-10)");
+  check(picked.modes.length > 0, "the selection drawer stated no data mode");
+  console.log(`  selection     ${picked.kind} · modes ${picked.modes.join("/")} · drawer on top`);
+}
+await shot("01b-selection");
+await evalJs(`document.querySelector('#drawer .phead button')?.click()`);
+await sleep(300);
+
 // ================================================================ 3. bus-frequency scenario
 const busFreq = JSON.parse(await evalJs(`(async () => {
   const B = t => [...document.querySelectorAll('button')].find(b=>b.textContent.trim()===t);
@@ -406,11 +475,20 @@ const rt = JSON.parse(await evalJs(`(async () => {
   // read the panel while the good result is still up: the deliberate failure below replaces it
   const panel = document.getElementById('reach')?.innerText || '';
   // a destination well outside the box must fail, and must not leave the last answer standing
+  return JSON.stringify({ one, panel });
+})()`));
+// shot first: the deliberate failure below replaces this answer, and a screenshot named
+// "route" that shows an error state is no use to anyone reviewing the build
+await shot("04c-route");
+const rtBad = JSON.parse(await evalJs(`(async () => {
+  const t = window.__twin;
+  // a destination well outside the box must fail, and must not leave the last answer standing
   const bad = t.reach.route(-60, -900, 60000, 60000);
   await new Promise(r=>setTimeout(r,150));
   const afterBad = document.getElementById('reach')?.innerText || '';
-  return JSON.stringify({ one, bad, panel, afterBad });
+  return JSON.stringify({ bad, afterBad });
 })()`));
+rt.bad = rtBad.bad; rt.afterBad = rtBad.afterBad;
 
 check(!!rt.one && !rt.one.error, `route query failed: ${rt.one?.error ?? "no result"}`);
 if (rt.one && !rt.one.error) {
@@ -437,7 +515,7 @@ check(!/Two ways to walk it/.test(rt.afterBad),
 check(/not the lever/i.test(rt.panel),
       "the route panel did not state the measured ceiling on route choice");
 check(/2\.2%/.test(rt.panel), "the route panel did not quote the measured 2.2% ceiling");
-await shot("04c-route");
+await shot("04d-route-out-of-network");
 
 
 
@@ -461,10 +539,19 @@ const exposure = JSON.parse(await evalJs(`(async () => {
     who: p?.querySelector('.pmwho')?.textContent ?? null,
     modes: [...(p?.querySelectorAll('.ex-mode') ?? [])].map(x=>x.textContent),
     hasObservedBadge: !!p?.querySelector('.badge'),
-    assumptions: (p?.querySelectorAll('.limits li') ?? []).length
+    assumptions: (p?.querySelectorAll('.limits li') ?? []).length,
+    // the reach panel is open at this point in the run, and both used to occupy the same corner
+    topmost: (() => {
+      if (!p || p.classList.contains('hidden')) return null;
+      const r = p.getBoundingClientRect();
+      const at = document.elementFromPoint(r.left + r.width / 2, r.top + 20);
+      return at ? (at.closest('[id]')?.id ?? at.tagName) : null;
+    })(),
   });
 })()`));
 check(exposure.open, "exposure panel did not open");
+check(exposure.topmost === "exposure",
+      `the exposure panel opened but #${exposure.topmost} is painted over it`);
 check(exposure.pm !== null, "exposure panel showed no PM2.5 figure");
 check(/guideline/i.test(exposure.who ?? ""),
       "exposure panel did not anchor PM2.5 against the WHO guideline");
@@ -473,6 +560,126 @@ check(exposure.assumptions >= 5,
       `only ${exposure.assumptions} assumptions listed — a dose figure needs its coefficients stated`);
 console.log(`  exposure      PM2.5 ${exposure.pm} µg/m³, ${exposure.modes.length} modes, ${exposure.assumptions} assumptions`);
 await shot("03-exposure");
+
+// ================================================================ 6b. live buses, real bytes
+//
+// The GTFS-Realtime reader was written and reviewed against Delhi's *empty* midnight feed — a
+// bare FeedHeader of varints. It therefore never skipped a length-delimited field, and never ran
+// the line that got the skip wrong. The first daytime feed, 1,296 buses, failed on the first
+// entity and the layer reported `unavailable`. Nothing caught it because nothing in this harness
+// had ever handed the decoder a vehicle. So it does now, from bytes the feed actually sent.
+if (!FIXTURE) {
+  notes.push("no OTD fixture at tools/fixtures/otd-vehicles-sample.pb — live-bus decoding unchecked");
+} else {
+  const dec = JSON.parse(await evalJs(`(async () => {
+    const r = await fetch('/qa/otd-vehicles-sample.pb', { cache: 'no-store' });
+    const bytes = new Uint8Array(await r.arrayBuffer());
+    try { return JSON.stringify({ ok: true, ...window.__twin.decodeFeed(bytes) }); }
+    catch (e) { return JSON.stringify({ ok: false, error: String(e && e.message || e) }); }
+  })()`));
+  check(dec.ok, `the GTFS-Realtime decoder threw on real feed bytes: ${dec.error}`);
+  if (dec.ok) {
+    check(dec.count === 11, `decoded ${dec.count} vehicles from the fixture, expected 11`);
+    check(!!dec.feedTime, "decoded no feed timestamp");
+    const v = dec.first;
+    check(!!v && v.lat > 28 && v.lat < 29 && v.lon > 76 && v.lon < 78,
+          `first decoded vehicle is not in Delhi: ${JSON.stringify(v && [v.lat, v.lon])}`);
+    check(!!v && typeof v.routeId === "string" && typeof v.id === "string",
+          "decoded a position but no route or vehicle identity — the nested messages are being mis-read");
+    console.log(`  live decode   ${dec.count} vehicles from real bytes · first ${v?.id} route ${v?.routeId}`);
+  }
+
+  // ...and the whole path: proxy contract -> adapter -> layer -> the replay yielding to it.
+  // Only when this build is permitted to contact OTD at all, because the manifest is the
+  // authority on that and a build made without a key must not be failed for obeying it.
+  const permitted = JSON.parse(await evalJs(
+    `JSON.stringify(window.__twin.manifest.health.live_adapters.includes('otd_vehicle_positions'))`));
+  if (!permitted) {
+    notes.push("this build does not permit otd_vehicle_positions, so the live-bus layer path is unchecked "
+               + "(rebuild with OTD_API_KEY set to cover it)");
+  } else {
+    serveFixture = true;
+    await load();
+    await evalJs(CLICK("Explore freely"));
+    await sleep(3500);
+    const live = JSON.parse(await evalJs(`JSON.stringify({
+      report: (window.__twin.reports || []).find(r => r.id === 'livebuses') ?? null,
+      replayVisible: (window.__twin.reports || []).find(r => r.id === 'buses')?.status ?? null,
+      chip: (() => { const c = document.querySelector('#mast [data-state]');
+                     return c ? { state: c.getAttribute('data-state'), label: c.innerText.trim() } : null; })(),
+    })`));
+    serveFixture = false;
+    check(live.report?.status === "ready",
+          `live-bus layer is "${live.report?.status}" on a real feed: ${live.report?.error ?? "no error given"}`);
+    check((live.report?.features ?? 0) > 0,
+          "the live-bus layer reported ready with no vehicles placed");
+    check(live.report?.provenance?.mode === "observed",
+          `live positions carry mode "${live.report?.provenance?.mode}" — real vehicles are observed`);
+    console.log(`  live buses    ${live.report?.features} placed in box · layer ${live.report?.status} · ${live.report?.provenance?.mode}`);
+    check(consoleErrors.length === 0,
+          `${consoleErrors.length} console error(s) on the live-bus path: ${consoleErrors.slice(0, 2).join(" | ")}`);
+    await shot("05-live-buses");
+  }
+}
+
+// ================================================================ 6c. the guided story
+//
+// The five-minute guided story is the Phase 4 exit gate and the thing a reviewer is actually
+// shown, and nothing here had ever run it. A story step that throws halfway leaves the demo
+// stranded in front of an audience, which is the worst possible place to find out.
+await load();
+const story = JSON.parse(await evalJs(`(async () => {
+  const steps = [];
+  // Enter the story the way a viewer does: the onboarding scrim covers everything, so its own
+  // button is the only way through. Wait for it rather than assume it — on a loaded machine the
+  // overlay can still be a second away when the settle timer expires.
+  let card = null;
+  for (let i = 0; i < 40 && !card; i++) {
+    card = [...document.querySelectorAll('.scrim .card .actions button')]
+      .find(b => /guided story/i.test(b.textContent)) ?? null;
+    if (!card) await new Promise(r => setTimeout(r, 250));
+  }
+  if (!card) return JSON.stringify({ steps: [], noOnboarding: true, scrimGone: false, finishOffered: false });
+  card.click();
+  await new Promise(r => setTimeout(r, 1200));
+  for (let i = 0; i < 24; i++) {
+    const n = document.getElementById('story');
+    if (!n || n.classList.contains('hidden')) break;
+    const r = n.getBoundingClientRect();
+    const at = document.elementFromPoint(r.left + r.width / 2, r.top + 14);
+    steps.push({
+      title: n.querySelector('h3')?.textContent ?? null,
+      body: n.querySelector('p')?.textContent?.length ?? 0,
+      progress: n.querySelector('.prog')?.textContent ?? null,
+      topmost: at ? (at.closest('[id]')?.id ?? at.tagName) : null,
+      onScreen: r.top >= 0 && r.bottom <= innerHeight + 1,
+    });
+    const next = [...n.querySelectorAll('button')].find(b => /next|→|›/i.test(b.textContent));
+    if (!next || next.disabled) break;
+    next.click();
+    await new Promise(r => setTimeout(r, 1100));
+  }
+  const last = document.getElementById('story');
+  return JSON.stringify({
+    steps,
+    finishOffered: [...(last?.querySelectorAll('button') ?? [])].some(b => /finish/i.test(b.textContent)),
+    scrimGone: !document.querySelector('.scrim'),
+  });
+})()`));
+check(!story.noOnboarding, "the onboarding overlay never appeared, so the story was never entered");
+check(story.scrimGone, "the onboarding overlay survived its own guided-story button");
+check(story.steps.length >= 8,
+      `the guided story stopped after ${story.steps.length} step(s) — it is the demo path`);
+check(story.steps.every(s => s.title && s.body > 60),
+      "a guided-story step rendered without a title or with almost no body text");
+check(story.steps.every(s => s.topmost === "story"),
+      `a guided-story step was painted over by #${story.steps.find(s => s.topmost !== "story")?.topmost}`);
+check(story.steps.every(s => s.onScreen), "a guided-story step rendered outside the viewport");
+check(story.finishOffered, "the last story step offered no way to finish");
+check(consoleErrors.length === 0,
+      `${consoleErrors.length} console error(s) during the guided story: ${consoleErrors.slice(0, 2).join(" | ")}`);
+console.log(`  guided story  ${story.steps.length} steps, all rendered and on top, no errors`);
+await shot("06-guided-story");
 
 // ================================================================ 7. FR-01 degradation
 const MOVE = ["corridors.json", "ground.json"];

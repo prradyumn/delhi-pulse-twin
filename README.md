@@ -20,20 +20,22 @@ primary benchmark device. See [`docs/06-SPIKE-0-RESULTS.md`](docs/06-SPIKE-0-RES
 | Study box | `77.1975, 28.6039 → 77.2385, 28.6401` · 3,935 × 4,086 m · **LOCKED** |
 | Projection | EPSG:32643 (UTM 43N), local origin at the box centre `716843.49 E, 3168119.03 N` |
 | Corridors | Baba Kharak Singh Marg (75 bus routes) · Barakhamba Road (15) · Kartavya Path (0, by nature) |
-| Buildings | 3,203 footprints, **8.2%** with a measured height — the rest estimated by rule v0.1 |
+| Buildings | 3,196 footprints — 261 heights from an OSM tag, 2,564 read from a satellite raster, **11.6%** still estimated by class rule v0.2 |
 | Transit | 166 stops, 3 routes selected from 210 OSM DTC route relations |
-| Landmarks | 8 verified footprints; 6 massing, 2 open ground; 18 GLB LODs, all budget-gated |
-| Measured | **60 fps · 14 draw calls · 80,663 triangles · 0.71 MB gzip** (gate: 15 MB) |
-| Tests | 90/90 data invariants; FR-01 independent-failure confirmed by deleting layer files |
+| Landmarks | 8 verified footprints; 6 built parametrically from their own OSM footprint, 2 open ground; 18 GLB LODs, all budget-gated |
+| Live | Open-Meteo air quality + weather (keyless); Delhi OTD GTFS-Realtime vehicle positions behind a server-side key |
+| Measured | **60 fps · 2.1 ms/frame · 151 draw calls · 937,419 triangles · 0.91 MB gzip initial transfer** (gate: 15 MB) |
+| Tests | 161 data invariants · 87 browser checks; FR-01 independent-failure confirmed by deleting layer files |
 
 Verified by running: the OSM audit across three candidate boxes, the density and height audit,
 corridor bus-coverage scoring, the pipeline, the Blender bake and landmark export, Draco, the axis
 round-trip, clip bounds, the QA contact sheets, both scenarios end to end, all ten guided-story
 steps, click-to-inspect provenance, export contents, and the budget gate.
 
-**Still to do:** the Phase 4 landmark modelling sprint (all 6 buildable landmarks are correctly
-placed and scaled massing blocks today, not authored models), the 5-user moderated test, and the
-schedule decision deferred to the Phase 1 gate.
+**Still to do:** the 5-user moderated test, and the schedule decision deferred to the Phase 1 gate.
+The landmark sprint is done as scripts rather than a headed Blender session — see
+[`docs/07-RENDER-CORRECTNESS.md`](docs/07-RENDER-CORRECTNESS.md) part five for why a parametric
+build was the better artefact for forms this regular, and for what these models do *not* claim.
 
 ## Layout
 
@@ -61,6 +63,56 @@ From nothing to a running city:
 
     make setup && make data && make assets && make check && make dev
 
+## Showing it
+
+The demo runs from bundled data and cannot be broken by a dead network. The live feeds are an
+upgrade on top of that, and they are worth having on, because they are what makes the air-quality
+panel a measurement rather than a pinned number.
+
+**Before you present**, on the machine that will be presenting:
+
+    set -a; . ./.env.local; set +a     # OTD_API_KEY — without it, live buses stay off
+    make check                         # data -> build -> budget gate -> 87 browser checks
+    make dev                           # serve it — this is the server that proxies the bus feed
+
+`make check` runs the whole gate: it regenerates `web/public/data/@v1/` (which is **not** in git),
+typechecks, builds, fails on any breached budget, and then drives the built app in headless Chrome
+through both scenarios, the selection drawer, the live-bus decoder and all ten story steps.
+
+`make data` must run **with the key in the environment**: the manifest is the authority on which
+providers the app may contact, and a build made without the key permits no live buses, whatever is
+in `.env.local` at run time. `make dev` (or `make preview`) is required for live buses too — a bare
+static server has no `/api/vehicles`, and the key must never reach the browser.
+
+**What will be live**, and what to say about each:
+
+| | |
+|---|---|
+| Air quality | Live, keyless, and the strongest thing here. PM2.5 against the WHO guideline, plus *why* — mixing-layer depth, ventilation index, fine fraction. Modelled at ~11 km, so it explains the region, not the street, and the panel says so. |
+| Live buses | Real DTC positions. Expect **about two inside the box** in daylight and **zero at night** — 1,300+ buses are moving across Delhi and this box is 16 km² of it. The chip distinguishes all three states and replay keeps running underneath. |
+| Everything else | Bundled. Pull the network cable and the demo still completes. |
+
+**A five-minute path**, if you want one that is already sequenced: click *Take the 4-minute guided
+story* on the opening card. Ten steps, ending at India Gate at dusk. It sets the camera, clock,
+corridor and scenario for each step, so nothing has to be driven by hand.
+
+**If you want to drive it yourself**, the four things worth showing, in order:
+
+1. **Click any building.** The drawer names the height, whether it was measured or assigned, and by
+   which rule — then the provider, licence, retrieval date and CRS underneath. This is the product's
+   argument in one click.
+2. **Scenario Lab → Baba Kharak Singh Marg → Bus frequency 2×** → *Run scenario*. Then switch to
+   **Kartavya Path** and watch the scenario disable itself and say why.
+3. **Air & exposure.** The dose split by mode, and the finding that on a bus journey the *waiting*
+   is about half the inhaled dose — which makes bus frequency an air-quality lever.
+4. **Reach → Can a cleaner route help?** The measured answer is usually *no*, and the panel says so
+   with the number. A tool that reports a null result is doing the harder thing.
+
+**If something looks wrong on the night:** every layer fails independently and reports its own
+status in the left rail — a missing data file degrades that layer and nothing else (`make qa`
+proves this by deleting two of them). *Data status* in the masthead lists every layer, its mode and
+its provenance. Nothing needs to be restarted to recover a failed live feed; it re-polls.
+
 ## The two things this project is careful about
 
 **Data mode is a type, not a caption.** `Provenance` is a required field on every layer, carrying
@@ -77,5 +129,7 @@ returning zero.
 ## Attribution
 
 Base geography, buildings, roads, rail and bus routes: © OpenStreetMap contributors, ODbL 1.0.
-Bus route relations carry operator Delhi Transport Corporation. Weather baseline authored for this
-prototype. Delhi OTD GTFS is **not** used — see `docs/04-DATA-REGISTER.md` (D3, D5) for why.
+Bus route relations carry operator Delhi Transport Corporation. Building heights from Google Open
+Buildings 2.5D. Air quality and weather from Open-Meteo / Copernicus CAMS. Live vehicle positions
+from Delhi Open Transit Data (GTFS-Realtime). The **static** OTD GTFS files are still not used —
+they carry no `shapes.txt`, so no route geometry; see `docs/04-DATA-REGISTER.md` (D3, D5).

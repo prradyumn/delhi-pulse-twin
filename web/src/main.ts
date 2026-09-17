@@ -26,6 +26,8 @@ import { buildWalkGraph } from "./analysis/network";
 import { reachContext, computeReach, routeBetween,
          type ReachMode, type ReachContext, type ReachResult } from "./analysis/reach";
 import { reachPanel } from "./ui/reachPanel";
+import { rightRail } from "./ui/rightRail";
+import { decodeFeed } from "./data/adapters/gtfsRealtime";
 import type { FacadeMaps } from "./layers/facade";
 import { BusLayer } from "./layers/buses";
 import { placePicker, type Place } from "./ui/places";
@@ -315,8 +317,11 @@ async function boot() {
     (playing) => { store.set({ playing }); },
     (b) => { store.set({ rain: b }); });
 
-  document.body.append(mast.node, rail0.node, leg.node, det.node, lab.node,
-                       exposure.node, tbar.node);
+  // The four right-hand panels share one slot; the column keeps them from painting over
+  // each other. See ui/rightRail.ts — the drawer used to open underneath the lab.
+  const right = rightRail();
+  right.mount(lab.node, det.node, exposure.node);
+  document.body.append(mast.node, rail0.node, leg.node, right.node, tbar.node);
   rail0.update(reports);
   recompute();
 
@@ -480,7 +485,7 @@ async function boot() {
     },
     (v) => reachLayer.setOpacity(v),
   );
-  document.body.append(reachRail.node);
+  right.mount(reachRail.node);
   mast.reachBtn.addEventListener("click", () => {
     reachRail.toggle();
     mast.reachBtn.classList.toggle("on", reachRail.isOpen());
@@ -1009,6 +1014,13 @@ async function boot() {
       visible: () => reachLayer.visible,
     },
     pixelLoad: () => stage.pixelLoad(),
+    /** The GTFS-Realtime reader, addressable so the harness can run real captured feed bytes
+     *  through it. It shipped broken against any feed containing a vehicle — see the note on
+     *  `Reader.skip` — because the only feed it had ever met was Delhi's empty midnight one. */
+    decodeFeed: (bytes: Uint8Array) => {
+      const { feedTime, vehicles } = decodeFeed(bytes);
+      return { feedTime, count: vehicles.length, first: vehicles[0] ?? null };
+    },
     ready: true,
   };
 }

@@ -16,7 +16,7 @@ help:
 	@echo "  qa         browser QA: renders, frame time, scenarios, FR-01 degradation"
 	@echo "  budget     fail if any asset or transfer budget is breached"
 	@echo "  reel       record the demo reel through the real UI -> spike/results/reel/"
-	@echo "  check      data + build + budget, in that order"
+	@echo "  check      data + build + deploy config + budget + browser QA"
 
 setup:
 	/opt/homebrew/bin/python3.12 -m venv .venv
@@ -84,6 +84,7 @@ reel:
 	cd web && npm run build && npm run reel
 
 check: data build
+	node web/tools/vercel-check.mjs
 	cd web && node tools/budget.mjs --dist
 	cd web && node tools/qa.mjs
 

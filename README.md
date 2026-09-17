@@ -150,6 +150,29 @@ Vercel, from the repo root. The layout is what Vercel requires, not a preference
     .vercelignore          the pipeline, Blender stage, spike inputs and docs, none of which are
                            read at build or request time
 
+`vercel.json` sets `additionalProperties: false`, so it cannot carry comments — not even
+`_`-prefixed ones. One unknown key rejects the whole file and fails the deployment *before the
+build starts*: a 0 ms build, status Error, nothing in the logs. This file carried a `_note` key
+from the day it was written, which is why the project had never once deployed successfully. So the
+reasons live here instead:
+
+- **`api/vehicles.ts` is at the repo root, not in `web/`.** Vercel only discovers functions under
+  `api/` or `pages/api/` at the project root. A `functions` glob pointing anywhere else is the
+  documented "Incorrect Function Glob Pattern" error, and the function is simply never built.
+- **The function declares its own runtime** (`export const config = { runtime: "edge" }`), so it
+  needs no entry in `vercel.json`.
+- **`PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` is inline in the install command.** `playwright` is a
+  devDependency for `tools/reel.mjs`, and `npm ci` would otherwise run its postinstall and pull
+  ~150 MB of browsers into every build. It cannot simply be omitted with `--omit=dev`, because
+  vite and typescript are devDependencies too. Setting it inline rather than in `build.env` is
+  deliberate: that key is deprecated, and inline provably applies to the install step.
+- **Cache headers are split by mutability.** `/assets/` is content-hashed by Vite, so it is
+  immutable for a year. `/data/` is rewritten in place by `make data`, so it gets five minutes and
+  stale-while-revalidate.
+
+`make check` validates all of this offline — `web/tools/vercel-check.mjs` fails the build on an
+unknown key or a missing function, so the file cannot silently stop deploying again.
+
 One environment variable, and it is optional:
 
 | | |
